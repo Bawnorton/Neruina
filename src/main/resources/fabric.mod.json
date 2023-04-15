@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "neruina",
+	"version": "${version}",
+	"name": "Neruina",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/neruina/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.bawnorton.neruina.Neruina"
+		],
+		"client": [
+			"com.bawnorton.neruina.NeruinaClient"
+		]
+	},
+	"mixins": [
+		"neruina.mixins.json",
+		{
+			"config": "neruina.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.14.19",
+		"minecraft": "~1.19.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
