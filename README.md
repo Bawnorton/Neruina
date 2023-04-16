@@ -3,9 +3,9 @@
 ### This is a mod that prevents ticking entity and ticking block entity / tile entity crashes from bricking worlds.
 
 ## When an Entity causes a ticking crash:
-- #### Entities will be immediately killed, dropping any inventory they have.
-- #### Block Entities / Tile Entities will no longer tick, you can still access the block inventory if it has one.
-- #### If another mod causes the player to crash on tick, the player will be kicked instead.
+- #### That Entity will be immediately killed, dropping any inventory they have.
+- #### That Block Entity / Tile Entity will no longer tick, you can still access the block inventory if it has one.
+- #### If another mod causes the Player to crash on tick, the Player will be kicked instead.
 
 ### Installation
 #### Requires Fabric
