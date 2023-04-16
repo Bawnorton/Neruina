@@ -1,8 +1,9 @@
 {
 	"required": true,
-	"package": "com.bawnorton.neruina.mixin.client",
+	"package": "com.bawnorton.neruina_test.mixin.client",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
+		"LivingEntityRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -12,7 +12,11 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-	maven { url = "https://jitpack.io" }
+	// Add repositories to retrieve artifacts from in here.
+	// You should only use this when depending on other mods because
+	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
+	// for more information about repositories.
 }
 
 loom {
@@ -25,7 +29,6 @@ loom {
         }
     }
 
-	accessWidenerPath = file("src/main/resources/neruina.accesswidener")
 }
 
 dependencies {
@@ -35,9 +38,8 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-    //	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:0.2.0-beta.6")))
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 

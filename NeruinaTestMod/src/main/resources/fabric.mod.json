@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "neruina",
+	"id": "neruina_test",
 	"version": "${version}",
-	"name": "Neruina",
-	"description": "A mod that prevents ticking related crashes from bricking worlds",
+	"name": "Neruina Test Mod",
+	"description": "A mod that tests the Neruina Mod.",
 	"authors": [
 		"Bawnorton"
 	],
@@ -12,28 +12,28 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/neruina/icon.png",
+	"icon": "assets/neruina_test/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.bawnorton.neruina.Neruina"
+			"com.bawnorton.neruina_test.NeruinaTest"
 		],
 		"client": [
-			"com.bawnorton.neruina.NeruinaClient"
+			"com.bawnorton.neruina_test.NeruinaTestClient"
 		]
 	},
 	"mixins": [
-		"neruina.mixins.json",
+		"neruina_test.mixins.json",
 		{
-			"config": "neruina.client.mixins.json",
+			"config": "neruina_test.client.mixins.json",
 			"environment": "client"
 		}
 	],
-	"accessWidener": "neruina.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.14.19",
-		"minecraft": "~1.19",
-		"java": ">=17"
+		"minecraft": "~1.19.4",
+		"java": ">=17",
+		"fabric-api": "*"
 	},
 	"suggests": {
 		"another-mod": "*"
