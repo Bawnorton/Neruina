@@ -29,6 +29,7 @@ loom {
         }
     }
 
+	accessWidenerPath = file("src/main/resources/neruina_test.accesswidener")
 }
 
 dependencies {

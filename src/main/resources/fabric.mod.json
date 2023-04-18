@@ -8,8 +8,8 @@
 		"Bawnorton"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://bawnorton.com",
+		"sources": "https://github.com/Benjamin-Norton/Neruina"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/neruina/icon.png",
@@ -32,7 +32,7 @@
 	"accessWidener": "neruina.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.14.19",
-		"minecraft": "~1.19",
+		"minecraft": "~1.18",
 		"java": ">=17",
 		"fabric-api": "*"
 	},

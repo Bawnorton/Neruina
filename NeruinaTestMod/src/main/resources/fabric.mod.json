@@ -29,9 +29,10 @@
 			"environment": "client"
 		}
 	],
+	"accessWidener": "neruina_test.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.14.19",
-		"minecraft": "~1.19.4",
+		"minecraft": "~1.18.2",
 		"java": ">=17",
 		"fabric-api": "*"
 	},

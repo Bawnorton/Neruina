@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.UUID;
 import java.util.function.Consumer;
 
 @Mixin(World.class)
@@ -49,7 +50,7 @@ public abstract class WorldMixin {
             Neruina.addErrored(entity);
             if (entity.world instanceof ServerWorld serverWorld) {
                 PlayerManager playerManager = serverWorld.getServer().getPlayerManager();
-                ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), false), () -> playerManager.getCurrentPlayerCount() >= 1);
+                ConditionalRunnable.create(() -> playerManager.getPlayerList().forEach(player -> player.sendMessage(Text.of(message), false)), () -> playerManager.getCurrentPlayerCount() >= 1);
             }
         }
     }

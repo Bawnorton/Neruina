@@ -25,7 +25,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
             Text text = Text.of(message);
             if (instance.world instanceof ServerWorld serverWorld) {
                 PlayerManager playerManager = serverWorld.getServer().getPlayerManager();
-                ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), false), () -> playerManager.getCurrentPlayerCount() > 0);
+                ConditionalRunnable.create(() -> playerManager.getPlayerList().forEach(player -> player.sendMessage(Text.of(message), false)), () -> playerManager.getCurrentPlayerCount() >= 1);
             }
             instance.networkHandler.disconnect(Text.of("§b[Neruina]: §cYou have been kicked due to a ticking exception on the player. Please remove the culprit mod or contact an admin."));
         }

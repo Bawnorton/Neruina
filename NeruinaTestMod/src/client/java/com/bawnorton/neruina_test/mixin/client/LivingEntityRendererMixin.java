@@ -40,7 +40,7 @@ public abstract class LivingEntityRendererMixin extends EntityRenderer<LivingEnt
 	@Redirect(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"))
 	private VertexConsumer getBuffer(VertexConsumerProvider vertexConsumerProvider, RenderLayer renderLayer) {
 		if(livingEntity instanceof CrashingEntity) {
-			return new OverlayVertexConsumer(vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(NeruinaTest.id("textures/block/crashing_block.png"))), matrixStack.peek().getPositionMatrix(), matrixStack.peek().getNormalMatrix(), 1.0F);
+			return new OverlayVertexConsumer(vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(NeruinaTest.id("textures/block/crashing_block.png"))), matrixStack.peek().getPositionMatrix(), matrixStack.peek().getNormalMatrix());
 		}
 		return vertexConsumerProvider.getBuffer(renderLayer);
 	}
