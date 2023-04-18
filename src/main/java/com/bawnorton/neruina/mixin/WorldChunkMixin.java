@@ -1,6 +1,7 @@
 package com.bawnorton.neruina.mixin;
 
 import com.bawnorton.neruina.Neruina;
+import com.bawnorton.neruina.networking.Networking;
 import com.bawnorton.neruina.thread.ConditionalRunnable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -50,6 +51,7 @@ public abstract class WorldChunkMixin {
                 Neruina.addErrored(blockEntity);
                 if (world instanceof ServerWorld serverWorld) {
                     PlayerManager playerManager = serverWorld.getServer().getPlayerManager();
+                    playerManager.getPlayerList().forEach(player -> Networking.sendBadBlockEntityPacket(player, pos));
                     ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), false), () -> playerManager.getCurrentPlayerCount() > 0);
                 }
             }

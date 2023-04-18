@@ -1,12 +1,13 @@
 {
-	"required": true,
-	"package": "com.bawnorton.neruina.mixin.client",
-	"compatibilityLevel": "JAVA_17",
-	"client": [
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"mixins": [
-	]
+  "required": true,
+  "package": "com.bawnorton.neruina.mixin.client",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "GameRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+  ]
 }
