@@ -2,6 +2,7 @@ package com.bawnorton.neruina.render.overlay;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
@@ -62,9 +63,11 @@ public abstract class RenderManager {
 
     private static boolean isValidBlock(BlockPos pos) {
         BlockEntity blockEntity = null;
+        BlockState blockState = null;
         if (client.world != null) {
             blockEntity = client.world.getBlockEntity(pos);
+            blockState = client.world.getBlockState(pos);
         }
-        return blockEntity != null;
+        return blockEntity != null && blockState != null;
     }
 }
