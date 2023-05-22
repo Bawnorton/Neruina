@@ -1,6 +1,7 @@
 package com.bawnorton.neruina;
 
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -17,6 +18,7 @@ public class Neruina implements ModInitializer {
 	private static final List<BlockEntity> ERRORED_BLOCK_ENTITIES = new ArrayList<>();
 	private static final List<Entity> ERRORED_ENTITIES = new ArrayList<>();
 	private static final List<ItemStack> ERRORED_ITEM_STACKS = new ArrayList<>();
+	private static final List<BlockState> ERRORED_BLOCK_STATES = new ArrayList<>();
 
 	@Override
 	public void onInitialize() {
@@ -53,5 +55,17 @@ public class Neruina implements ModInitializer {
 
 	public static void addErrored(ItemStack item) {
 		ERRORED_ITEM_STACKS.add(item);
+	}
+
+	public static boolean isErrored(BlockState blockState) {
+		return ERRORED_BLOCK_STATES.contains(blockState);
+	}
+
+	public static void addErrored(BlockState blockState) {
+		ERRORED_BLOCK_STATES.add(blockState);
+	}
+
+	public static void removeErrored(BlockState blockState) {
+		ERRORED_BLOCK_STATES.remove(blockState);
 	}
 }

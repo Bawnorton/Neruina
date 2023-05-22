@@ -51,7 +51,7 @@ public abstract class WorldChunkMixin {
                 Neruina.addErrored(blockEntity);
                 if (world instanceof ServerWorld serverWorld) {
                     PlayerManager playerManager = serverWorld.getServer().getPlayerManager();
-                    playerManager.getPlayerList().forEach(player -> Networking.sendBadBlockEntityPacket(player, pos));
+                    playerManager.getPlayerList().forEach(player -> Networking.sendBadBlockPacket(player, pos));
                     ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), false), () -> playerManager.getCurrentPlayerCount() > 0);
                 }
             }
