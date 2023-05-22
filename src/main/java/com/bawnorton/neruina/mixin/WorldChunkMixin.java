@@ -53,7 +53,7 @@ public abstract class WorldChunkMixin {
                     PlayerManager playerManager = serverWorld.getServer().getPlayerManager();
                     ConditionalRunnable.create(() -> playerManager.getPlayerList().forEach(player -> {
                         player.sendMessage(Text.of(message), false);
-                        Networking.sendBadBlockEntityPacket(player, pos);
+                        Networking.sendBadBlockPacket(player, pos);
                     }), () -> playerManager.getCurrentPlayerCount() >= 1);
                 }
             }

@@ -9,11 +9,11 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 public class Networking {
-    public static Identifier BAD_BLOCK_ENTITY = new Identifier(Neruina.MOD_ID, "bad_block_entity");
+    public static final Identifier BAD_BLOCK = new Identifier(Neruina.MOD_ID, "bad_block_entity");
 
-    public static void sendBadBlockEntityPacket(ServerPlayerEntity player, BlockPos pos) {
+    public static void sendBadBlockPacket(ServerPlayerEntity player, BlockPos pos) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBlockPos(pos);
-        ServerPlayNetworking.send(player, BAD_BLOCK_ENTITY, buf);
+        ServerPlayNetworking.send(player, BAD_BLOCK, buf);
     }
 }
