@@ -8,6 +8,7 @@
 ## When an Entity causes a ticking crash:
 - #### That Entity will be immediately killed, dropping any inventory they have.
 - #### That Block Entity / Tile Entity will no longer tick, you can still access the block inventory if it has one.
+  -  If the mod is also installed on the client (optional), the block will be highlighted through walls with a red box so the player will be able to see which block is erroring.
 - #### If another mod causes the Player to crash on tick, the Player will be kicked instead.
 
 ### Installation
