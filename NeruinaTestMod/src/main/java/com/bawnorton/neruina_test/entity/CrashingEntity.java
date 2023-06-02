@@ -12,7 +12,7 @@ public class CrashingEntity extends PathAwareEntity {
     @Override
     public void tick() {
         super.tick();
-        if(this.world != null) {
+        if(getWorld() != null) {
             throw new RuntimeException("Crashing entity crashed!");
         }
     }

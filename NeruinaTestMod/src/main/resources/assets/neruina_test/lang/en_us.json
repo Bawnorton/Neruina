@@ -1,6 +1,7 @@
 {
   "itemGroup.neruina_test.items": "Neruina Crash Testing Items",
   "block.neruina_test.crashing_block": "Crashing Block",
+  "block.neruina_test.crashing_random_tick_block": "Crashing Random Tick Block",
   "item.neruina_test.crashing_item": "Crashing Item",
   "entity.neruina_test.crashing_entity": "Crashing Entity",
   "item.neruina_test.crashing_entity_spawn_egg": "Crashing Entity Spawn Egg"
