@@ -23,7 +23,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
             String message = String.format("§b[Neruina]: §cCaught Ticking Player, %s has been kicked.", instance.getName().getString());
             Neruina.LOGGER.warn(message, e);
             Text text = Text.of(message);
-            if (instance.world instanceof ServerWorld serverWorld) {
+            if (instance.getWorld() instanceof ServerWorld serverWorld) {
                 PlayerManager playerManager = serverWorld.getServer().getPlayerManager();
                 ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), false), () -> playerManager.getCurrentPlayerCount() > 0);
             }

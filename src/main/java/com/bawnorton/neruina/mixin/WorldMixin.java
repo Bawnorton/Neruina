@@ -33,7 +33,7 @@ public abstract class WorldMixin {
         try {
             if(Neruina.isErrored(entity)) {
                 if(entity instanceof PlayerEntity) return;
-                if(entity.world.isClient) return;
+                if(entity.getWorld().isClient) return;
 
                 entity.kill();
                 entity.remove(Entity.RemovalReason.KILLED);
@@ -45,9 +45,9 @@ public abstract class WorldMixin {
         } catch (RuntimeException e) {
             BlockPos pos = entity.getBlockPos();
             String message = String.format("§b[Neruina]: §cCaught Ticking Entity [%s] at position [x=%s, y=%s, z=%s]. It has been killed.", entity.getName().getString(), pos.getX(), pos.getY(), pos.getZ());
-            Neruina.LOGGER.warn((entity.world.isClient? "Client: " : "Server: ") + message, e);
+            Neruina.LOGGER.warn((entity.getWorld().isClient? "Client: " : "Server: ") + message, e);
             Neruina.addErrored(entity);
-            if (entity.world instanceof ServerWorld serverWorld) {
+            if (entity.getWorld() instanceof ServerWorld serverWorld) {
                 PlayerManager playerManager = serverWorld.getServer().getPlayerManager();
                 ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), false), () -> playerManager.getCurrentPlayerCount() >= 1);
             }
