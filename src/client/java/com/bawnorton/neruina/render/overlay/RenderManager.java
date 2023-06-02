@@ -3,6 +3,7 @@ package com.bawnorton.neruina.render.overlay;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -63,12 +64,17 @@ public abstract class RenderManager {
     }
 
     private static boolean isValidBlock(BlockPos pos) {
-        BlockEntity blockEntity = null;
         BlockState blockState = null;
+        BlockEntity blockEntity = null;
+        boolean hasBlockEntity = false;
         if (client.world != null) {
-            blockEntity = client.world.getBlockEntity(pos);
             blockState = client.world.getBlockState(pos);
+            if(blockState.getBlock() instanceof BlockWithEntity) {
+                blockEntity = client.world.getBlockEntity(pos);
+                hasBlockEntity = true;
+            }
         }
-        return blockEntity != null && blockState != Blocks.AIR.getDefaultState();
+        if(hasBlockEntity && blockEntity != null) return true;
+        return blockState != null && blockState.getBlock() != Blocks.AIR;
     }
 }

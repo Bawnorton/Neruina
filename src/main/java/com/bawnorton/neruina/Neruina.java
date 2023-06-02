@@ -5,6 +5,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +20,7 @@ public class Neruina implements ModInitializer {
 	private static final List<BlockEntity> ERRORED_BLOCK_ENTITIES = new ArrayList<>();
 	private static final List<Entity> ERRORED_ENTITIES = new ArrayList<>();
 	private static final List<ItemStack> ERRORED_ITEM_STACKS = new ArrayList<>();
-	private static final List<BlockState> ERRORED_BLOCK_STATES = new ArrayList<>();
+	private static final List<ImmutablePair<BlockPos, BlockState>> ERRORED_BLOCK_STATES = new ArrayList<>();
 
 	@Override
 	public void onInitialize() {
@@ -57,11 +59,15 @@ public class Neruina implements ModInitializer {
 		ERRORED_ITEM_STACKS.add(item);
 	}
 
-	public static boolean isErrored(BlockState blockState) {
-		return ERRORED_BLOCK_STATES.contains(blockState);
+	public static boolean isErrored(BlockPos pos, BlockState state) {
+		return ERRORED_BLOCK_STATES.contains(new ImmutablePair<>(pos, state));
 	}
 
-	public static void addErrored(BlockState blockState) {
-		ERRORED_BLOCK_STATES.add(blockState);
+	public static void addErrored(BlockPos pos, BlockState state) {
+		ERRORED_BLOCK_STATES.add(new ImmutablePair<>(pos, state));
+	}
+
+	public static void removeErrored(BlockPos pos, BlockState state) {
+		ERRORED_BLOCK_STATES.remove(new ImmutablePair<>(pos, state));
 	}
 }
