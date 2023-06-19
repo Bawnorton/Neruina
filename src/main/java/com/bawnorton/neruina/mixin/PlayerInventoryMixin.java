@@ -22,7 +22,7 @@ public abstract class PlayerInventoryMixin {
                 return;
             }
             original.call(instance, world, entity, slot, selected);
-        } catch (RuntimeException e) {
+        } catch (Throwable e) {
             String message = String.format("§b[Neruina]: §cCaught Ticking Item Stack [%s] in slot [%s]. Please remove it.", instance.getItem().getName().getString(), slot);
             Neruina.LOGGER.warn((world.isClient? "Client: " : "Server: ") + message, e);
             Neruina.addErrored(instance);
