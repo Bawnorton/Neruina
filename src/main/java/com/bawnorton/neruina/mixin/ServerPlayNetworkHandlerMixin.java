@@ -19,7 +19,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
     private void tick(ServerPlayerEntity instance, Operation<Void> original) {
         try {
             original.call(instance);
-        } catch (RuntimeException e) {
+        } catch (Throwable e) {
             String message = String.format("§b[Neruina]: §cCaught Ticking Player, %s has been kicked.", instance.getName().getString());
             Neruina.LOGGER.warn(message, e);
             Text text = Text.of(message);
