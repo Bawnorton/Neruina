@@ -34,7 +34,7 @@ public abstract class ServerWorldMixin {
                 return;
             }
             original.call(instance, world, pos, random);
-        } catch (RuntimeException e) {
+        } catch (Throwable e) {
             String message = String.format("§b[Neruina]: §cCaught Ticking BlockState from random tick [%s] at position [x=%s, y=%s, z=%s]. Please resolve.", instance.getBlock().getName().getString(), pos.getX(), pos.getY(), pos.getZ());
             Neruina.LOGGER.warn("Server: " + message, e);
             Neruina.addErrored(pos, instance);

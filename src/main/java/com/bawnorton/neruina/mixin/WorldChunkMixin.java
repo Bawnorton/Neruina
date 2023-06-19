@@ -45,7 +45,7 @@ public abstract class WorldChunkMixin {
                     return;
                 }
                 original.call(instance, world, pos, state, blockEntity);
-            } catch (RuntimeException e) {
+            } catch (Throwable e) {
                 String message = String.format("§b[Neruina]: §cCaught Ticking Block Entity [%s] at position [x=%s, y=%s, z=%s]. Please resolve.", state.getBlock().getName().getString(), pos.getX(), pos.getY(), pos.getZ());
                 Neruina.LOGGER.warn((world.isClient? "Client: " : "Server: ") + message, e);
                 Neruina.addErrored(blockEntity);

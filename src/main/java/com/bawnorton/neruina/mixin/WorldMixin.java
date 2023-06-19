@@ -43,7 +43,7 @@ public abstract class WorldMixin {
                 return;
             }
             original.call(instance, param);
-        } catch (RuntimeException e) {
+        } catch (Throwable e) {
             BlockPos pos = entity.getBlockPos();
             String message = String.format("§b[Neruina]: §cCaught Ticking Entity [%s] at position [x=%s, y=%s, z=%s]. It has been killed.", entity.getName().getString(), pos.getX(), pos.getY(), pos.getZ());
             Neruina.LOGGER.warn((entity.world.isClient? "Client: " : "Server: ") + message, e);
