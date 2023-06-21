@@ -1,6 +1,6 @@
 # Neruina
 
-### This is a mod that prevents ticking entity and ticking block entity / tile entity crashes from bricking worlds.
+### This is a mod that prevents ticking crashes from bricking worlds.
 
 [![Modrinth](https://img.shields.io/modrinth/dt/neruina?colour=00AF5C&label=downloads&logo=modrinth)](https://modrinth.com/mod/neruina)
 [![CurseForge](https://cf.way2muchnoise.eu/full_851046_downloads.svg)](https://curseforge.com/minecraft/mc-mods/neruina)
