@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "neruina",
+  "version": "${version}",
+  "name": "Neruina",
+  "description": "This is a mod that prevents ticking entity and ticking block entity / tile entity crashes from bricking worlds.",
+  "authors": [
+    "Bawnorton"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Benjamin-Norton/Neruina",
+    "sources": "https://github.com/Benjamin-Norton/Neruina",
+    "issues": "https://github.com/Benjamin-Norton/Neruina/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/neruina/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.bawnorton.neruina.fabric.NeruinaFabric"
+    ]
+  },
+  "mixins": [
+    "neruina.mixins.json",
+    "neruina-common.mixins.json"
+  ],
+  "depends": {
+    "minecraft": ">=1.20"
+  }
+}

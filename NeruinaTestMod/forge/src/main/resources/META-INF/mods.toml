@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "neruina_test"
+version = "${version}"
+displayName = "Neruina Test"
+authors = "Bawnorton"
+description = '''
+This is a mod that tests the functionality of Neruina.
+'''
+#logoFile = ""
+
+[[dependencies.neruina_test]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.neruina_test]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.neruina_test]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.0.8,)"
+ordering = "AFTER"
+side = "BOTH"

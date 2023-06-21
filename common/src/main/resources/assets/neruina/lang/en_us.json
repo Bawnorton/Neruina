@@ -1,0 +1,8 @@
+{
+  "neruina.ticking.entity": "§b[Neruina]: §cCaught Ticking Entity [%s] at position [x=%s, y=%s, z=%s]. It has been killed.",
+  "neruina.ticking.block_entity": "§b[Neruina]: §cCaught Ticking Block Entity [%s] at position [x=%s, y=%s, z=%s]. Please resolve.",
+  "neruina.ticking.block_state": "§b[Neruina]: §cCaught Ticking BlockState from random tick [%s] at position [x=%s, y=%s, z=%s]. Please resolve.",
+  "neruina.ticking.player": "§b[Neruina]: §cCaught Ticking Player, %s has been kicked.",
+  "neruina.ticking.item_stack": "§b[Neruina]: §cCaught Ticking Item Stack [%s] in slot [%s]. Please remove it.",
+  "neruina.kick.message": "§b[Neruina]: §cYou have been kicked due to a ticking exception on the player. Please remove the culprit mod or contact an admin."
+}

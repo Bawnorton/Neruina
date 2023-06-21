@@ -1,0 +1,3 @@
+accessWidener   v2  named
+accessible class net/minecraft/world/chunk/WorldChunk$DirectBlockEntityTickInvoker
+accessible method net/minecraft/world/chunk/WorldChunk removeBlockEntityTicker (Lnet/minecraft/util/math/BlockPos;)V

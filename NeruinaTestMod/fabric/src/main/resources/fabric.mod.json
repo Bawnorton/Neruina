@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "neruina_test",
+  "version": "${version}",
+  "name": "NeruinaTest",
+  "description": "This is a mod that tests the functionality of Neruina.",
+  "authors": [
+    "Bawnorton"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Benjamin-Norton/Neruina",
+    "sources": "https://github.com/Benjamin-Norton/Neruina",
+    "issues": "https://github.com/Benjamin-Norton/Neruina/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/neruina_test/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.bawnorton.neruina_test.fabric.NeruinaTestFabric"
+    ],
+    "client": [
+      "com.bawnorton.neruina_test.fabric.NeruinaTestClientFabric"
+    ]
+  },
+  "mixins": [
+    "neruina_test.mixins.json",
+    "neruina_test-common.mixins.json"
+  ],
+  "depends": {
+    "minecraft": ">=1.20",
+    "architectury": ">=9.0.8"
+  }
+}
