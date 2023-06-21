@@ -59,6 +59,7 @@ remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
+    archiveClassifier = "forge+${rootProject.minecraft_version}"
 }
 
 jar {
