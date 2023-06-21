@@ -11,3 +11,5 @@
 - #### That Item will stop ticking in the inventory but still persist and function in recipes and most uses, nothing is lost.
 - #### If another mod causes the Player to crash on tick, the Player will be kicked instead.
 
+## Demo:
+https://github.com/Benjamin-Norton/Neruina/assets/18416784/d9c6130a-7d80-41f7-bdfc-99ef19ebb9f5
