@@ -8,7 +8,7 @@
 ## When an Entity, Block or Item causes a ticking crash:
 - #### That Entity will be immediately killed, dropping any inventory they have.
 - #### That Block Entity / Tile Entity or Block State (for random ticks) will no longer tick, you can still access the block inventory if it has one.
-- #### That Item will stop ticking in the inventory but still persist and function in recipes and most uses, nothing is lost.
+- #### That Item will stop ticking in the inventory but will still persist and function in recipes and most uses, nothing is lost.
 - #### If another mod causes the Player to crash on tick, the Player will be kicked instead.
 
 ## Demo:
