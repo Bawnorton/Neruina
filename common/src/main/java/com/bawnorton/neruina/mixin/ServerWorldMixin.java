@@ -5,6 +5,7 @@ import com.bawnorton.neruina.thread.ConditionalRunnable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.block.BlockState;
+import net.minecraft.network.message.MessageType;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -37,7 +38,7 @@ public abstract class ServerWorldMixin {
             Neruina.LOGGER.warn("Server: " + message, e);
             Neruina.addErrored(pos, instance);
             PlayerManager playerManager = world.getServer().getPlayerManager();
-            ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), false), () -> playerManager.getCurrentPlayerCount() > 0);
+            ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), MessageType.SYSTEM), () -> playerManager.getCurrentPlayerCount() > 0);
         }
     }
 }

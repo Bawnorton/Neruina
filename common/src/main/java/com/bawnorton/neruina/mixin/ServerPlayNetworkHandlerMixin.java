@@ -4,6 +4,7 @@ import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.thread.ConditionalRunnable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.network.message.MessageType;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -23,9 +24,9 @@ public abstract class ServerPlayNetworkHandlerMixin {
             String message = Text.translatable("neruina.ticking.player", instance.getName().getString()).getString();
             Neruina.LOGGER.warn(message, e);
             Text text = Text.of(message);
-            if (instance.getWorld() instanceof ServerWorld serverWorld) {
-                PlayerManager playerManager = serverWorld.getServer().getPlayerManager();
-                ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), false), () -> playerManager.getCurrentPlayerCount() > 0);
+            if (instance.getWorld() != null) {
+                PlayerManager playerManager = instance.getWorld().getServer().getPlayerManager();
+                ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), MessageType.SYSTEM), () -> playerManager.getCurrentPlayerCount() > 0);
             }
             instance.networkHandler.disconnect(Text.of(Text.translatable("neruina.kick.message").getString()));
         }
