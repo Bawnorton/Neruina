@@ -7,10 +7,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.network.message.MessageType;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
@@ -46,12 +46,12 @@ public abstract class WorldChunkMixin {
                 }
                 original.call(instance, world, pos, state, blockEntity);
             } catch (Throwable e) {
-                String message = Text.translatable("neruina.ticking.block_entity", state.getBlock().getName(), pos.getX(), pos.getY(), pos.getZ()).getString();
+                String message = new TranslatableText("neruina.ticking.block_entity", state.getBlock().getName(), pos.getX(), pos.getY(), pos.getZ()).getString();
                 Neruina.LOGGER.warn((world.isClient? "Client: " : "Server: ") + message, e);
                 Neruina.addErrored(blockEntity);
                 if (world instanceof ServerWorld serverWorld) {
                     PlayerManager playerManager = serverWorld.getServer().getPlayerManager();
-                    ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), MessageType.SYSTEM), () -> playerManager.getCurrentPlayerCount() > 0);
+                    ConditionalRunnable.create(() -> playerManager.getPlayerList().forEach(player -> player.sendMessage(Text.of(message), false)), () -> playerManager.getCurrentPlayerCount() >= 1);
                 }
             }
         }

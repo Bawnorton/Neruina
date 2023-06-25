@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[41,)"
+loaderVersion = "[40,)"
 #issueTrackerURL = ""
 license = "MIT"
 
@@ -16,13 +16,13 @@ This is a mod that prevents ticking entity and ticking block entity / tile entit
 [[dependencies.neruina]]
 modId = "forge"
 mandatory = true
-versionRange = "[41,)"
+versionRange = "[40,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.neruina]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19,)"
+versionRange = "[1.18.2,)"
 ordering = "NONE"
 side = "BOTH"

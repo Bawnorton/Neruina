@@ -6,10 +6,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.message.MessageType;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -45,12 +45,12 @@ public abstract class WorldMixin {
             original.call(instance, param);
         } catch (Throwable e) {
             BlockPos pos = entity.getBlockPos();
-            String message = Text.translatable("neruina.ticking.entity", entity.getName().getString(), pos.getX(), pos.getY(), pos.getZ()).getString();
+            String message = new TranslatableText("neruina.ticking.entity", entity.getName().getString(), pos.getX(), pos.getY(), pos.getZ()).getString();
             Neruina.LOGGER.warn((entity.getWorld().isClient? "Client: " : "Server: ") + message, e);
             Neruina.addErrored(entity);
             if (entity.getWorld() instanceof ServerWorld serverWorld) {
                 PlayerManager playerManager = serverWorld.getServer().getPlayerManager();
-                ConditionalRunnable.create(() -> playerManager.broadcast(Text.of(message), MessageType.SYSTEM), () -> playerManager.getCurrentPlayerCount() >= 1);
+                ConditionalRunnable.create(() -> playerManager.getPlayerList().forEach(player -> player.sendMessage(Text.of(message), false)), () -> playerManager.getCurrentPlayerCount() >= 1);
             }
         }
     }

@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +24,7 @@ public abstract class PlayerInventoryMixin {
             }
             original.call(instance, world, entity, slot, selected);
         } catch (Throwable e) {
-            String message = Text.translatable("neruina.ticking.item_stack", instance.getItem().getName().getString(), slot).getString();
+            String message = new TranslatableText("neruina.ticking.item_stack", instance.getItem().getName().getString(), slot).getString();
             Neruina.LOGGER.warn((world.isClient? "Client: " : "Server: ") + message, e);
             Neruina.addErrored(instance);
             if (world.isClient && entity instanceof PlayerEntity player) {
