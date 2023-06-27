@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(targets = "net.minecraft.entity.TickOptimizer", remap = false)
 public abstract class TickOptimizerMixin {
     @WrapOperation(method = "handleGuardEntityTick", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"))
-    public void catchTickingEntities(Object param, Operation<Void> original) {
+    public static void catchTickingEntities(Object param, Operation<Void> original) {
         Entity entity = (Entity) param;
         try {
             if(Neruina.isErrored(entity)) {

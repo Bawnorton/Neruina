@@ -23,7 +23,7 @@ public class NeruinaMixinPluginImpl implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetName, String className) {
         if(className.contains("itshallnottick")) {
-            return isModLoaded("itshallnottick");
+            return isModLoaded("itshallnottick") || isModLoaded("noseenotick");
         }
         return true;
     }
