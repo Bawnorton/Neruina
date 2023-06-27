@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.Consumer;
 
-@Mixin(World.class)
+@Mixin(value = World.class, priority = 1500)
 public abstract class WorldMixin {
     @Inject(method = "shouldUpdatePostDeath", at = @At("HEAD"), cancellable = true)
     public void shouldUpdatePostDeath(Entity entity, CallbackInfoReturnable<Boolean> cir) {
