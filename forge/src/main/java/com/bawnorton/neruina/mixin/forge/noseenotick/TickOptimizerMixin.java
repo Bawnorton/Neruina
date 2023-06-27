@@ -5,7 +5,6 @@ import com.bawnorton.neruina.thread.ConditionalRunnable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.TickOptimizer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.world.ServerWorld;
@@ -19,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(targets = "net.minecraft.entity.TickOptimizer", remap = false)
 public abstract class TickOptimizerMixin {
     @WrapOperation(method = "handleGuardEntityTick", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"))
-    public static void catchTickingEntities(Object param, Operation<Void> original) {
+    private static void catchTickingEntities(Object param, Operation<Void> original) {
         Entity entity = (Entity) param;
         try {
             if(Neruina.isErrored(entity)) {
