@@ -15,13 +15,15 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 
+import java.util.function.Consumer;
+
 import static com.bawnorton.neruina.Neruina.LOGGER;
 
 @Pseudo
 @Mixin(targets = "dev.wuffs.itshallnottick.TickOptimizer", remap = false)
 public abstract class TickOptimizerMixin {
     @WrapOperation(method = "handleGuardEntityTick", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"))
-    public void catchTickingEntities(Object param, Operation<Void> original) {
+    private static void catchTickingEntities(Consumer<Entity> consumer, Object param, Operation<Void> original) {
         Entity entity = (Entity) param;
         try {
             if(Neruina.isErrored(entity)) {
@@ -34,7 +36,7 @@ public abstract class TickOptimizerMixin {
                 Neruina.removeErrored(entity);
                 return;
             }
-            original.call(param);
+            original.call(consumer, param);
         } catch (Throwable e) {
             BlockPos pos = entity.getBlockPos();
             String message = new TranslatableText("neruina.ticking.entity", entity.getName().getString(), pos.getX(), pos.getY(), pos.getZ()).getString();
