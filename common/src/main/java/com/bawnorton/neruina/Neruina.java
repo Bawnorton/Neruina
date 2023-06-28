@@ -28,6 +28,7 @@ public class Neruina {
     }
 
     public static boolean isErrored(BlockEntity blockEntity) {
+        if(ERRORED_BLOCK_ENTITIES.size() == 0) return false;
         return ERRORED_BLOCK_ENTITIES.contains(blockEntity);
     }
 
@@ -40,6 +41,7 @@ public class Neruina {
     }
 
     public static boolean isErrored(Entity entity) {
+        if(ERRORED_ENTITIES.size() == 0) return false;
         return ERRORED_ENTITIES.contains(entity);
     }
 
@@ -52,6 +54,7 @@ public class Neruina {
     }
 
     public static boolean isErrored(ItemStack item) {
+        if(ERRORED_ITEM_STACKS.size() == 0) return false;
         return ERRORED_ITEM_STACKS.contains(item);
     }
 
@@ -60,6 +63,7 @@ public class Neruina {
     }
 
     public static boolean isErrored(BlockPos pos, BlockState state) {
+        if(ERRORED_BLOCK_STATES.size() == 0) return false;
         return ERRORED_BLOCK_STATES.contains(new ImmutablePair<>(pos, state));
     }
 
