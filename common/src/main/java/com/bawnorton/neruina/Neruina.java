@@ -10,22 +10,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Neruina {
     public static final String MOD_ID = "neruina";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    private static final List<BlockEntity> ERRORED_BLOCK_ENTITIES = new ArrayList<>();
-    private static final List<Entity> ERRORED_ENTITIES = new ArrayList<>();
-    private static final List<ItemStack> ERRORED_ITEM_STACKS = new ArrayList<>();
-    private static final List<ImmutablePair<BlockPos, BlockState>> ERRORED_BLOCK_STATES = new ArrayList<>();
+    private static final Set<BlockEntity> ERRORED_BLOCK_ENTITIES = new HashSet<>();
+    private static final Set<Entity> ERRORED_ENTITIES = new HashSet<>();
+    private static final Set<ItemStack> ERRORED_ITEM_STACKS = new HashSet<>();
+    private static final Set<ImmutablePair<BlockPos, BlockState>> ERRORED_BLOCK_STATES = new HashSet<>();
 
     public static void init() {
         LOGGER.info("Initializing Neruina");
     }
 
     public static boolean isErrored(BlockEntity blockEntity) {
+        if(ERRORED_BLOCK_ENTITIES.size() == 0) return false;
         return ERRORED_BLOCK_ENTITIES.contains(blockEntity);
     }
 
@@ -38,6 +41,7 @@ public class Neruina {
     }
 
     public static boolean isErrored(Entity entity) {
+        if(ERRORED_ENTITIES.size() == 0) return false;
         return ERRORED_ENTITIES.contains(entity);
     }
 
@@ -50,6 +54,7 @@ public class Neruina {
     }
 
     public static boolean isErrored(ItemStack item) {
+        if(ERRORED_ITEM_STACKS.size() == 0) return false;
         return ERRORED_ITEM_STACKS.contains(item);
     }
 
@@ -58,6 +63,7 @@ public class Neruina {
     }
 
     public static boolean isErrored(BlockPos pos, BlockState state) {
+        if(ERRORED_BLOCK_STATES.size() == 0) return false;
         return ERRORED_BLOCK_STATES.contains(new ImmutablePair<>(pos, state));
     }
 
