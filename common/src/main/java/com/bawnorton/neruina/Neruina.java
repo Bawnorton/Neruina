@@ -10,16 +10,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Neruina {
     public static final String MOD_ID = "neruina";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    private static final List<BlockEntity> ERRORED_BLOCK_ENTITIES = new ArrayList<>();
-    private static final List<Entity> ERRORED_ENTITIES = new ArrayList<>();
-    private static final List<ItemStack> ERRORED_ITEM_STACKS = new ArrayList<>();
-    private static final List<ImmutablePair<BlockPos, BlockState>> ERRORED_BLOCK_STATES = new ArrayList<>();
+    private static final Set<BlockEntity> ERRORED_BLOCK_ENTITIES = new HashSet<>();
+    private static final Set<Entity> ERRORED_ENTITIES = new HashSet<>();
+    private static final Set<ItemStack> ERRORED_ITEM_STACKS = new HashSet<>();
+    private static final Set<ImmutablePair<BlockPos, BlockState>> ERRORED_BLOCK_STATES = new HashSet<>();
 
     public static void init() {
         LOGGER.info("Initializing Neruina");
