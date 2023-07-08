@@ -1,5 +1,7 @@
 package com.bawnorton.neruina.fabric;
 
+import com.bawnorton.neruina.NeruinaMixinPlugin;
+import com.bawnorton.neruina.annotation.ConditionalMixin;
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -20,8 +22,8 @@ public class NeruinaMixinPluginImpl implements IMixinConfigPlugin {
     }
 
     @Override
-    public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        return true;
+    public boolean shouldApplyMixin(String targetName, String className) {
+        return NeruinaMixinPlugin.testClass(className);
     }
 
     @Override

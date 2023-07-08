@@ -1,6 +1,7 @@
 package com.bawnorton.neruina.mixin;
 
 import com.bawnorton.neruina.Neruina;
+import com.bawnorton.neruina.annotation.ConditionalMixin;
 import com.bawnorton.neruina.thread.ConditionalRunnable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -19,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.function.Consumer;
 
 @Mixin(World.class)
+@ConditionalMixin(modid = "noseenotick", applyIfPresent = false)
 public abstract class WorldMixin {
     @Inject(method = "shouldUpdatePostDeath", at = @At("HEAD"), cancellable = true)
     public void shouldUpdatePostDeath(Entity entity, CallbackInfoReturnable<Boolean> cir) {

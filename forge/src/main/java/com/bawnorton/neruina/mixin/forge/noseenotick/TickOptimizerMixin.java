@@ -1,6 +1,7 @@
 package com.bawnorton.neruina.mixin.forge.noseenotick;
 
 import com.bawnorton.neruina.Neruina;
+import com.bawnorton.neruina.annotation.ConditionalMixin;
 import com.bawnorton.neruina.thread.ConditionalRunnable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -18,6 +19,7 @@ import java.util.function.Consumer;
 
 @Pseudo
 @Mixin(targets = "net.minecraft.entity.TickOptimizer", remap = false)
+@ConditionalMixin(modid = "noseenotick")
 public abstract class TickOptimizerMixin {
     @WrapOperation(method = "handleGuardEntityTick", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"))
     private static void catchTickingEntities(Consumer<Entity> consumer, Object param, Operation<Void> original) {
