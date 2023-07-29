@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static org.spongepowered.asm.util.Bytecode.getDescriptor;
-
 public class NeruinaMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
