@@ -8,7 +8,9 @@
   ],
   "mixins": [
     "itshallnottick.TickOptimizerMixin",
-    "itshallnottick.WorldMixin"
+    "itshallnottick.WorldMixin",
+    "noseenotick.TickOptimizerMixin",
+    "noseenotick.WorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1

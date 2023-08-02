@@ -1,5 +1,6 @@
 package com.bawnorton.neruina.forge;
 
+import com.bawnorton.neruina.NeruinaMixinPlugin;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.objectweb.asm.tree.ClassNode;
@@ -22,10 +23,7 @@ public class NeruinaMixinPluginImpl implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetName, String className) {
-        if(className.contains("itshallnottick")) {
-            return isModLoaded("itshallnottick");
-        }
-        return true;
+        return NeruinaMixinPlugin.testClass(className);
     }
 
     @Override

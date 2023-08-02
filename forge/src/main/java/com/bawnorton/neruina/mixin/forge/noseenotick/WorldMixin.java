@@ -1,4 +1,4 @@
-package com.bawnorton.neruina.mixin.forge.itshallnottick;
+package com.bawnorton.neruina.mixin.forge.noseenotick;
 
 import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.annotation.ConditionalMixin;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(World.class)
-@ConditionalMixin(modid = "itshallnottick")
+@ConditionalMixin(modid = "noseenotick")
 public abstract class WorldMixin {
     @Inject(method = "shouldUpdatePostDeath", at = @At("HEAD"), cancellable = true)
     public void shouldUpdatePostDeath(Entity entity, CallbackInfoReturnable<Boolean> cir) {
