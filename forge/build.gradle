@@ -34,7 +34,10 @@ dependencies {
 
     implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:${rootProject.mixin_extras_version}"))
     implementation(include("com.github.llamalad7.mixinextras:mixinextras-forge:${rootProject.mixin_extras_version}"))
-    
+
+    implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:${rootProject.mixin_squared_version}"))
+    implementation(include("com.github.bawnorton.mixinsquared:mixinsquared-forge:${rootProject.mixin_squared_version}"))
+
     implementation forgeRuntimeLibrary("curse.maven:no-see-no-tick-833405:4596138")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
