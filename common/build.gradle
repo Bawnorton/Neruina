@@ -13,7 +13,8 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
 //    modApi "dev.architectury:architectury:${rootProject.architectury_version}"
 
-    implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:0.2.0-beta.8"))
+    implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:${rootProject.mixin_extras_version}"))
+    implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:${rootProject.mixin_squared_version}"))
 }
 
 publishing {

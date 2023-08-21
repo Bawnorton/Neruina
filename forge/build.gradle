@@ -35,6 +35,9 @@ dependencies {
     implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:${rootProject.mixin_extras_version}"))
     implementation(include("com.github.llamalad7.mixinextras:mixinextras-forge:${rootProject.mixin_extras_version}"))
 
+    implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:${rootProject.mixin_squared_version}"))
+    implementation(include("com.github.bawnorton.mixinsquared:mixinsquared-forge:${rootProject.mixin_squared_version}"))
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }
