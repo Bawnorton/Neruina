@@ -2,6 +2,8 @@ package com.bawnorton.neruina;
 
 import com.bawnorton.neruina.annotation.ConditionalMixin;
 import com.bawnorton.neruina.annotation.VersionedMixin;
+import com.bawnorton.neruina.version.VersionComparison;
+import com.bawnorton.neruina.version.VersionString;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.Type;
@@ -53,63 +55,15 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
                 }
                 if(node.desc.equals(Type.getDescriptor(VersionedMixin.class))) {
                     String versionString = Annotations.getValue(node, "value");
-                    Pattern pattern = Pattern.compile(".+?(?=[0-9])");
-                    Matcher matcher = pattern.matcher(versionString);
-                    if(!matcher.find()) throw new RuntimeException("Invalid version string: " + versionString);
-
-                    String comparisonString = matcher.group(0);
-                    VersionComparison comparison = VersionComparison.fromString(comparisonString);
+                    VersionString version = new VersionString(versionString);
                     String mcVersion = FabricLoader.getInstance().getModContainer("minecraft").orElseThrow().getMetadata().getVersion().getFriendlyString();
-                    String[] versionParts = mcVersion.split("\\.");
-                    String[] versionStringParts = versionString.substring(comparisonString.length()).split("\\.");
-
-                    while (versionParts.length != versionStringParts.length) {
-                        if(versionParts.length < versionStringParts.length) {
-                            String[] newVersionParts = new String[versionParts.length + 1];
-                            System.arraycopy(versionParts, 0, newVersionParts, 0, versionParts.length);
-                            newVersionParts[versionParts.length] = "0";
-                            versionParts = newVersionParts;
-                        } else {
-                            String[] newVersionStringParts = new String[versionStringParts.length + 1];
-                            System.arraycopy(versionStringParts, 0, newVersionStringParts, 0, versionStringParts.length);
-                            newVersionStringParts[versionStringParts.length] = "0";
-                            versionStringParts = newVersionStringParts;
-                        }
+                    if(version.isVersionValid(mcVersion)) {
+                        Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is being applied because " + mcVersion + " is " + versionString);
+                        return true;
+                    } else {
+                        Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is not being applied because " + mcVersion + " is not " + versionString);
+                        return false;
                     }
-
-                    for(int i = 0; i < versionParts.length; i++) {
-                        int versionPart = Integer.parseInt(versionParts[i]);
-                        int versionStringPart = Integer.parseInt(versionStringParts[i]);
-                        if(versionPart == versionStringPart) continue;
-                        switch (comparison) {
-                            case EQUALS -> {
-                                Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is not being applied because " + mcVersion + " does not " + versionString);
-                                return false;
-                            }
-                            case GREATER_THAN -> {
-                                boolean result = versionPart > versionStringPart;
-                                Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is" + (result ? " " : " not ") + "being applied because " + mcVersion + " is" + (result ? " " : " not ") + versionString);
-                                return result;
-                            }
-                            case LESS_THAN -> {
-                                boolean result = versionPart < versionStringPart;
-                                Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is" + (result ? " " : " not ") + "being applied because " + mcVersion + " is" + (result ? " " : " not ") + versionString);
-                                return result;
-                            }
-                            case GREATER_THAN_OR_EQUAL_TO -> {
-                                boolean result = versionPart >= versionStringPart;
-                                Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is" + (result ? " " : " not ") + "being applied because " + mcVersion + " is" + (result ? " " : " not ") + versionString);
-                                return result;
-                            }
-                            case LESS_THAN_OR_EQUAL_TO -> {
-                                boolean result = versionPart <= versionStringPart;
-                                Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is" + (result ? " " : " not ") + "being applied because " + mcVersion + " is" + (result ? " " : " not ") + versionString);
-                                return result;
-                            }
-                        }
-                    }
-                    Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is being applied because " + mcVersion + " is " + versionString);
-                    return true;
                 }
             }
         } catch (ClassNotFoundException | IOException e) {
@@ -141,24 +95,5 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
     @ExpectPlatform
     public static boolean isModLoaded(String modid) {
         throw new AssertionError();
-    }
-
-    private enum VersionComparison {
-        EQUALS,
-        GREATER_THAN,
-        LESS_THAN,
-        GREATER_THAN_OR_EQUAL_TO,
-        LESS_THAN_OR_EQUAL_TO;
-
-        public static VersionComparison fromString(String group) {
-            return switch (group) {
-                case "=" -> EQUALS;
-                case ">" -> GREATER_THAN;
-                case "<" -> LESS_THAN;
-                case ">=" -> GREATER_THAN_OR_EQUAL_TO;
-                case "<=" -> LESS_THAN_OR_EQUAL_TO;
-                default -> throw new RuntimeException("Invalid version comparison: " + group);
-            };
-        }
     }
 }

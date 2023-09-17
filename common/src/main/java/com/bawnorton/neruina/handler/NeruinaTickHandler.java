@@ -2,6 +2,7 @@ package com.bawnorton.neruina.handler;
 
 import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.thread.ConditionalRunnable;
+import com.bawnorton.neruina.version.Version;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -14,7 +15,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -36,11 +36,11 @@ public abstract class NeruinaTickHandler {
             }
             original.call(instance, world, entity, slot, selected);
         } catch (Throwable e) {
-            String message = Text.translatable("neruina.ticking.item_stack", instance.getItem().getName().getString(), slot).getString();
+            String message = Version.translatableText("neruina.ticking.item_stack", instance.getItem().getName().getString(), slot).getString();
             Neruina.LOGGER.warn((world.isClient? "Client: " : "Server: ") + message, e);
             addErrored(instance);
             if (world.isClient && entity instanceof PlayerEntity player) {
-                player.sendMessage(Text.of(message), false);
+                player.sendMessage(Version.textOf(message), false);
             }
         }
     }
@@ -54,9 +54,9 @@ public abstract class NeruinaTickHandler {
             if (instance.getWorld() instanceof ServerWorld serverWorld) {
                 if(serverWorld.getServer().isDedicated()) {
                     messagePlayers(serverWorld, message);
-                    instance.networkHandler.disconnect(Text.of(Text.translatable("neruina.kick.message").getString()));
+                    instance.networkHandler.disconnect(Version.textOf(Version.translatableText("neruina.kick.message").getString()));
                 } else {
-                    Neruina.LOGGER.error(Text.translatable("neruina.cannot.handle").getString());
+                    Neruina.LOGGER.error(Version.translatableText("neruina.cannot.handle").getString());
                     throw e;
                 }
             }
@@ -70,7 +70,7 @@ public abstract class NeruinaTickHandler {
             }
             original.call(instance, world, pos, random);
         } catch (Throwable e) {
-            String message = Text.translatable("neruina.ticking.block_state", instance.getBlock().getName(), pos.getX(), pos.getY(), pos.getZ()).getString();
+            String message = Version.translatableText("neruina.ticking.block_state", instance.getBlock().getName(), pos.getX(), pos.getY(), pos.getZ()).getString();
             Neruina.LOGGER.warn("Server: " + message, e);
             addErrored(pos, instance);
             messagePlayers(world, message);
@@ -88,7 +88,7 @@ public abstract class NeruinaTickHandler {
             }
             original.call(instance, world, pos, state, blockEntity);
         } catch (Throwable e) {
-            String message = Text.translatable("neruina.ticking.block_entity", state.getBlock().getName(), pos.getX(), pos.getY(), pos.getZ()).getString();
+            String message = Version.translatableText("neruina.ticking.block_entity", state.getBlock().getName(), pos.getX(), pos.getY(), pos.getZ()).getString();
             Neruina.LOGGER.warn((world.isClient? "Client: " : "Server: ") + message, e);
             addErrored(blockEntity);
             if (world instanceof ServerWorld serverWorld) {
@@ -124,7 +124,7 @@ public abstract class NeruinaTickHandler {
 
     private static void messagePlayers(ServerWorld world, String message) {
         PlayerManager playerManager = world.getServer().getPlayerManager();
-        ConditionalRunnable.create(() -> playerManager.getPlayerList().forEach(player -> player.sendMessage(Text.of(message), false)), () -> playerManager.getCurrentPlayerCount() >= 1);
+        ConditionalRunnable.create(() -> playerManager.getPlayerList().forEach(player -> player.sendMessage(Version.textOf(message), false)), () -> playerManager.getCurrentPlayerCount() >= 1);
     }
 
     public static boolean isErrored(BlockEntity blockEntity) {
