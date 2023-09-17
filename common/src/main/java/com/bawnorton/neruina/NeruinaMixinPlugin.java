@@ -44,10 +44,10 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
                     String modid = Annotations.getValue(node, "modid");
                     boolean applyIfPresent = Annotations.getValue(node, "applyIfPresent", Boolean.TRUE);
                     if(isModLoaded(modid)) {
-                        Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is" + (applyIfPresent ? " " : " not ") + "being applied because " + modid + " is loaded");
+                        Neruina.LOGGER.debug("NeruinaMixinPlugin: " + className + " is" + (applyIfPresent ? " " : " not ") + "being applied because " + modid + " is loaded");
                         shouldApply = applyIfPresent;
                     } else {
-                        Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is" + (!applyIfPresent ? " " : " not ") + "being applied because " + modid + " is not loaded");
+                        Neruina.LOGGER.debug("NeruinaMixinPlugin: " + className + " is" + (!applyIfPresent ? " " : " not ") + "being applied because " + modid + " is not loaded");
                         shouldApply = !applyIfPresent;
                     }
                 }
@@ -58,9 +58,9 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
                     VersionString version = new VersionString(versionString);
                     String mcVersion = FabricLoader.getInstance().getModContainer("minecraft").orElseThrow().getMetadata().getVersion().getFriendlyString();
                     if(version.isVersionValid(mcVersion)) {
-                        Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is being applied because " + mcVersion + " is " + versionString);
+                        Neruina.LOGGER.debug("NeruinaMixinPlugin: " + className + " is being applied because " + mcVersion + " is " + versionString);
                     } else {
-                        Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is not being applied because " + mcVersion + " is not " + versionString);
+                        Neruina.LOGGER.debug("NeruinaMixinPlugin: " + className + " is not being applied because " + mcVersion + " is not " + versionString);
                         shouldApply = false;
                     }
                 }
