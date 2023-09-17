@@ -1,5 +1,7 @@
 package com.bawnorton.neruina.version;
 
+import com.bawnorton.neruina.Neruina;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,8 +56,15 @@ public class VersionString {
             }
         }
         for (int i = 0; i < parts.length; i++) {
-            int versionPart = Integer.parseInt(versionParts[i]);
-            int part = Integer.parseInt(parts[i]);
+            int versionPart;
+            int part;
+            try {
+                versionPart = Integer.parseInt(versionParts[i]);
+                part = Integer.parseInt(parts[i]);
+            } catch (NumberFormatException e) {
+                Neruina.LOGGER.warn("Could not parse version string: " + version + " or version string is for a non-release version, which is not supported.");
+                return false;
+            }
             if (versionPart == part) continue;
 
             switch (getComparison()) {
