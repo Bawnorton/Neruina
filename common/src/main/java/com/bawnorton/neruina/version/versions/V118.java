@@ -9,7 +9,8 @@ public abstract class V118 {
     public static Text translatable(String key, Object... args) {
         try {
             Class<?> translatableTextClass = Class.forName("net.minecraft.text.TranslatableText");
-            return (Text) translatableTextClass.getConstructor(String.class).newInstance(key);
+            if(args.length == 0) return (Text) translatableTextClass.getConstructor(String.class).newInstance(key);
+            else return (Text) translatableTextClass.getConstructor(String.class, Object[].class).newInstance(key, args);
         } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException |
                  NoSuchMethodException e) {
             Neruina.LOGGER.error("Failed to get translatable text for key " + key + "!", e);
