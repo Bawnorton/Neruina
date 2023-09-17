@@ -83,7 +83,7 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
                         if(versionPart == versionStringPart) continue;
                         switch (comparison) {
                             case EQUALS -> {
-                                Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is not being applied because " + mcVersion + " is " + versionString);
+                                Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is not being applied because " + mcVersion + " does not " + versionString);
                                 return false;
                             }
                             case GREATER_THAN -> {
