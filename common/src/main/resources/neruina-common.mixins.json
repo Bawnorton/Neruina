@@ -12,7 +12,8 @@
     "ServerWorldMixin",
     "WorldChunkMixin",
     "WorldChunkMixin$DirectBlockEntityTickInvokerMixin",
-    "WorldMixin"
+    "WorldMixin",
+    "v118.ServerWorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1

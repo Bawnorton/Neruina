@@ -63,7 +63,7 @@ public abstract class NeruinaTickHandler {
         }
     }
 
-    public static void safelyTickBlockState$notTheCauseOfTickLag(BlockState instance, ServerWorld world, BlockPos pos, Random random, Operation<Void> original) {
+    public static void safelyTickBlockState$notTheCauseOfTickLag(BlockState instance, ServerWorld world, BlockPos pos, /* java.util.Random or net.minecraft.util.math.random.Random */ Object random, Operation<Void> original) {
         try {
             if (isErrored(pos, instance)) {
                 return;

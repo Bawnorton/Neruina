@@ -8,9 +8,9 @@
     "Bawnorton"
   ],
   "contact": {
-    "homepage": "https://github.com/Benjamin-Norton/Neruina",
-    "sources": "https://github.com/Benjamin-Norton/Neruina",
-    "issues": "https://github.com/Benjamin-Norton/Neruina/issues"
+    "homepage": "https://github.com/Bawnorton/Neruina",
+    "sources": "https://github.com/Bawnorton/Neruina",
+    "issues": "https://github.com/Bawnorton/Neruina/issues"
   },
   "license": "MIT",
   "icon": "assets/neruina/icon.png",
@@ -25,6 +25,6 @@
     "neruina-common.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.20"
+    "minecraft": ">=1.18.2"
   }
 }
