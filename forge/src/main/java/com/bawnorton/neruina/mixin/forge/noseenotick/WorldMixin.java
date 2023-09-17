@@ -1,7 +1,7 @@
 package com.bawnorton.neruina.mixin.forge.noseenotick;
 
-import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.annotation.ConditionalMixin;
+import com.bawnorton.neruina.handler.NeruinaTickHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class WorldMixin {
     @Inject(method = "shouldUpdatePostDeath", at = @At("HEAD"), cancellable = true)
     public void shouldUpdatePostDeath(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        if(Neruina.isErrored(entity)) {
+        if(NeruinaTickHandler.isErrored(entity)) {
             cir.setReturnValue(false);
         }
     }

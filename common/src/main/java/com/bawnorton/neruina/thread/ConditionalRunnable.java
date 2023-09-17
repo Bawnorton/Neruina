@@ -24,8 +24,7 @@ public class ConditionalRunnable {
                     }
                     task.run();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
             }
         });
         executor.execute(() -> {
