@@ -1,4 +1,4 @@
-package com.bawnorton.neruina.mixin.forge.noseenotick;
+package com.bawnorton.neruina.mixin.forge.itshallnottick.v118;
 
 import com.bawnorton.neruina.annotation.ConditionalMixin;
 import com.bawnorton.neruina.annotation.VersionedMixin;
@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import java.util.function.Consumer;
 
 @Pseudo
-@Mixin(targets = "net.minecraft.entity.TickOptimizer", remap = false)
-@ConditionalMixin(modid = "noseenotick")
-@VersionedMixin(">=1.18.2")
+@Mixin(targets = "dev.wuffs.itshallnottick.TickOptimizer", remap = false)
+@ConditionalMixin(modid = "itshallnottick")
+@VersionedMixin("<=1.18.2")
 public abstract class TickOptimizerMixin {
     @SuppressWarnings("unused")
     @WrapOperation(method = "handleGuardEntityTick", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"))
