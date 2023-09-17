@@ -2,7 +2,6 @@ package com.bawnorton.neruina;
 
 import com.bawnorton.neruina.annotation.ConditionalMixin;
 import com.bawnorton.neruina.annotation.VersionedMixin;
-import com.bawnorton.neruina.version.VersionComparison;
 import com.bawnorton.neruina.version.VersionString;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.fabricmc.loader.api.FabricLoader;
@@ -17,8 +16,6 @@ import org.spongepowered.asm.util.Annotations;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class NeruinaMixinPlugin implements IMixinConfigPlugin {
     @Override
@@ -41,35 +38,37 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
             List<AnnotationNode> annotationNodes = MixinService.getService().getBytecodeProvider().getClassNode(className).visibleAnnotations;
             if(annotationNodes == null) return true;
 
+            boolean shouldApply = true;
             for(AnnotationNode node: annotationNodes) {
                 if(node.desc.equals(Type.getDescriptor(ConditionalMixin.class))) {
                     String modid = Annotations.getValue(node, "modid");
                     boolean applyIfPresent = Annotations.getValue(node, "applyIfPresent", Boolean.TRUE);
                     if(isModLoaded(modid)) {
                         Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is" + (applyIfPresent ? " " : " not ") + "being applied because " + modid + " is loaded");
-                        return applyIfPresent;
+                        shouldApply = applyIfPresent;
                     } else {
                         Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is" + (!applyIfPresent ? " " : " not ") + "being applied because " + modid + " is not loaded");
-                        return !applyIfPresent;
+                        shouldApply = !applyIfPresent;
                     }
                 }
+                if(!shouldApply) return false;
+
                 if(node.desc.equals(Type.getDescriptor(VersionedMixin.class))) {
                     String versionString = Annotations.getValue(node, "value");
                     VersionString version = new VersionString(versionString);
                     String mcVersion = FabricLoader.getInstance().getModContainer("minecraft").orElseThrow().getMetadata().getVersion().getFriendlyString();
                     if(version.isVersionValid(mcVersion)) {
                         Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is being applied because " + mcVersion + " is " + versionString);
-                        return true;
                     } else {
                         Neruina.LOGGER.info("NeruinaMixinPlugin: " + className + " is not being applied because " + mcVersion + " is not " + versionString);
-                        return false;
+                        shouldApply = false;
                     }
                 }
             }
+            return shouldApply;
         } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
-        return true;
     }
 
     @Override

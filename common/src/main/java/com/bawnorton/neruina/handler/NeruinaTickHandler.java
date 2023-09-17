@@ -49,7 +49,7 @@ public abstract class NeruinaTickHandler {
         try {
             original.call(instance);
         } catch (Throwable e) {
-            String message = Text.translatable("neruina.ticking.player", instance.getName().getString()).getString();
+            String message = Version.translatableText("neruina.ticking.player", instance.getName().getString()).getString();
             Neruina.LOGGER.warn(message, e);
             if (instance.getWorld() instanceof ServerWorld serverWorld) {
                 if(serverWorld.getServer().isDedicated()) {
@@ -113,7 +113,7 @@ public abstract class NeruinaTickHandler {
             original.call(instance, param);
         } catch (Throwable e) {
             BlockPos pos = entity.getBlockPos();
-            String message = Text.translatable("neruina.ticking.entity", entity.getName().getString(), pos.getX(), pos.getY(), pos.getZ()).getString();
+            String message = Version.translatableText("neruina.ticking.entity", entity.getName().getString(), pos.getX(), pos.getY(), pos.getZ()).getString();
             Neruina.LOGGER.warn((entity.getWorld().isClient? "Client: " : "Server: ") + message, e);
             addErrored(entity);
             if (entity.getWorld() instanceof ServerWorld serverWorld) {
@@ -122,9 +122,13 @@ public abstract class NeruinaTickHandler {
         }
     }
 
-    private static void messagePlayers(ServerWorld world, String message) {
+    private static void messagePlayers(ServerWorld world, Text message) {
         PlayerManager playerManager = world.getServer().getPlayerManager();
-        ConditionalRunnable.create(() -> playerManager.getPlayerList().forEach(player -> player.sendMessage(Version.textOf(message), false)), () -> playerManager.getCurrentPlayerCount() >= 1);
+        ConditionalRunnable.create(() -> playerManager.getPlayerList().forEach(player -> player.sendMessage(message, false)), () -> playerManager.getCurrentPlayerCount() >= 1);
+    }
+
+    private static void messagePlayers(ServerWorld world, String message) {
+        messagePlayers(world, Version.textOf(message));
     }
 
     public static boolean isErrored(BlockEntity blockEntity) {
