@@ -1,6 +1,7 @@
 package com.bawnorton.neruina.forge;
 
 import com.bawnorton.neruina.NeruinaMixinPlugin;
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.objectweb.asm.tree.ClassNode;
@@ -13,7 +14,6 @@ import java.util.Set;
 public class NeruinaMixinPluginImpl implements IMixinConfigPlugin {
     @Override
     public void onLoad(String s) {
-
     }
 
     @Override
@@ -54,5 +54,9 @@ public class NeruinaMixinPluginImpl implements IMixinConfigPlugin {
             }
         }
         return false;
+    }
+
+    public static String getMinecraftVersion() {
+        return LoadingModList.get().getModFileById("minecraft").versionString();
     }
 }

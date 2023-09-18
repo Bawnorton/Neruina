@@ -39,6 +39,7 @@ dependencies {
     implementation(include("com.github.bawnorton.mixinsquared:mixinsquared-forge:${rootProject.mixin_squared_version}"))
 
 //    implementation forgeRuntimeLibrary("curse.maven:no-see-no-tick-833405:4596138")
+    modCompileOnly(fileTree(dir: "libs", include: "*.jar"))
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

@@ -7,10 +7,7 @@
   "client": [
   ],
   "mixins": [
-    "itshallnottick.TickOptimizerMixin",
     "itshallnottick.WorldMixin",
-    "itshallnottick.v118.TickOptimizerMixin",
-    "noseenotick.TickOptimizerMixin",
     "noseenotick.WorldMixin"
   ],
   "injectors": {

@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.function.Consumer;
 
 @Mixin(World.class)
-@ConditionalMixin(modid = "noseenotick", applyIfPresent = false)
+@ConditionalMixin(modids = {"noseenotick", "itshallnottick"}, applyIfPresent = false)
 public abstract class WorldMixin {
     @Inject(method = "shouldUpdatePostDeath", at = @At("HEAD"), cancellable = true)
     public void shouldUpdatePostDeath(Entity entity, CallbackInfoReturnable<Boolean> cir) {
@@ -24,7 +24,7 @@ public abstract class WorldMixin {
     }
 
     @WrapOperation(method = "tickEntity", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"))
-    public <T extends Entity> void catchTickingEntities(Consumer<T> instance, Object param, Operation<Void> original) {
+    public <T extends Entity> void catchTickingEntities(Consumer<T> instance, T param, Operation<Void> original) {
         NeruinaTickHandler.safelyTickEntities$notTheCauseOfTickLag(instance, param, original);
     }
 }

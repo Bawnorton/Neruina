@@ -49,4 +49,8 @@ public class NeruinaMixinPluginImpl implements IMixinConfigPlugin {
     public static boolean isModLoaded(String modid) {
         return FabricLoader.getInstance().isModLoaded(modid);
     }
+
+    public static String getMinecraftVersion() {
+        return FabricLoader.getInstance().getModContainer("minecraft").orElseThrow().getMetadata().getVersion().getFriendlyString();
+    }
 }

@@ -3,8 +3,8 @@ package com.bawnorton.neruina;
 import com.bawnorton.neruina.annotation.ConditionalMixin;
 import com.bawnorton.neruina.annotation.VersionedMixin;
 import com.bawnorton.neruina.version.VersionString;
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -20,7 +20,7 @@ import java.util.Set;
 public class NeruinaMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
-
+        MixinExtrasBootstrap.init();
     }
 
     @Override
@@ -41,13 +41,13 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
             boolean shouldApply = true;
             for(AnnotationNode node: annotationNodes) {
                 if(node.desc.equals(Type.getDescriptor(ConditionalMixin.class))) {
-                    String modid = Annotations.getValue(node, "modid");
+                    List<String> modids = Annotations.getValue(node, "modids");
                     boolean applyIfPresent = Annotations.getValue(node, "applyIfPresent", Boolean.TRUE);
-                    if(isModLoaded(modid)) {
-                        Neruina.LOGGER.debug("NeruinaMixinPlugin: " + className + " is" + (applyIfPresent ? " " : " not ") + "being applied because " + modid + " is loaded");
+                    if(anyModsLoaded(modids)) {
+                        Neruina.LOGGER.debug("NeruinaMixinPlugin: " + className + " is" + (applyIfPresent ? " " : " not ") + "being applied because " + modids + " are loaded");
                         shouldApply = applyIfPresent;
                     } else {
-                        Neruina.LOGGER.debug("NeruinaMixinPlugin: " + className + " is" + (!applyIfPresent ? " " : " not ") + "being applied because " + modid + " is not loaded");
+                        Neruina.LOGGER.debug("NeruinaMixinPlugin: " + className + " is" + (!applyIfPresent ? " " : " not ") + "being applied because " + modids + " are not loaded");
                         shouldApply = !applyIfPresent;
                     }
                 }
@@ -56,7 +56,7 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
                 if(node.desc.equals(Type.getDescriptor(VersionedMixin.class))) {
                     String versionString = Annotations.getValue(node, "value");
                     VersionString version = new VersionString(versionString);
-                    String mcVersion = FabricLoader.getInstance().getModContainer("minecraft").orElseThrow().getMetadata().getVersion().getFriendlyString();
+                    String mcVersion = getMinecraftVersion();
                     if(version.isVersionValid(mcVersion)) {
                         Neruina.LOGGER.debug("NeruinaMixinPlugin: " + className + " is being applied because " + mcVersion + " is " + versionString);
                     } else {
@@ -91,8 +91,20 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
 
     }
 
+    private static boolean anyModsLoaded(List<String> modids) {
+        for(String modid : modids) {
+            if(isModLoaded(modid)) return true;
+        }
+        return false;
+    }
+
     @ExpectPlatform
-    public static boolean isModLoaded(String modid) {
+    private static boolean isModLoaded(String modid) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static String getMinecraftVersion() {
         throw new AssertionError();
     }
 }
