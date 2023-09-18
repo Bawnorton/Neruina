@@ -24,8 +24,7 @@ public class ConditionalRunnable {
                     }
                     task.run();
                 }
-            } catch (InterruptedException ignored) {
-            }
+            } catch (InterruptedException ignored) {}
         });
         executor.execute(() -> {
             while (!checker.isCompleted()) {
