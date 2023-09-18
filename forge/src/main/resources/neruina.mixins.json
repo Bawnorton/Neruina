@@ -8,6 +8,7 @@
   ],
   "mixins": [
     "itshallnottick.WorldMixin",
+    "itshallnottick.v118.WorldMixin",
     "noseenotick.WorldMixin"
   ],
   "injectors": {

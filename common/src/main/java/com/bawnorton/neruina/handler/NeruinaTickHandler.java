@@ -23,7 +23,6 @@ import net.minecraft.world.chunk.WorldChunk;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -118,7 +117,7 @@ public abstract class NeruinaTickHandler {
         }
     }
 
-    public static <T extends Entity> void safelyTickEntities$notTheCauseOfTickLag(Consumer<T> consumer, T entity, World world, Random random, Operation<Void> original) {
+    public static <T extends Entity> void safelyTickEntities$notTheCauseOfTickLag(Consumer<T> consumer, T entity, World world, /* java Random or mc Random */ Object random, Operation<Void> original) {
         try {
             if (isErrored(entity)) {
                 handleErroredEntity(entity);

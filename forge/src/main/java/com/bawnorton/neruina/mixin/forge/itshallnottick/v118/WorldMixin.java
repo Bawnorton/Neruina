@@ -1,6 +1,7 @@
-package com.bawnorton.neruina.mixin;
+package com.bawnorton.neruina.mixin.forge.itshallnottick.v118;
 
 import com.bawnorton.neruina.annotation.ConditionalMixin;
+import com.bawnorton.neruina.annotation.VersionedMixin;
 import com.bawnorton.neruina.handler.NeruinaTickHandler;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -11,10 +12,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Random;
 import java.util.function.Consumer;
 
-@Mixin(World.class)
-@ConditionalMixin(modids = {"noseenotick", "itshallnottick"}, applyIfPresent = false)
+@Mixin(value = World.class, priority = 1500)
+@ConditionalMixin(modids = "itshallnottick")
+@VersionedMixin("<=1.18.2")
 public abstract class WorldMixin {
     @Inject(method = "shouldUpdatePostDeath", at = @At("HEAD"), cancellable = true)
     public void shouldUpdatePostDeath(Entity entity, CallbackInfoReturnable<Boolean> cir) {
@@ -23,8 +26,9 @@ public abstract class WorldMixin {
         }
     }
 
-    @WrapOperation(method = "tickEntity", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"))
-    public void catchTickingEntities(Consumer<Entity> instance, Object entity, Operation<Void> original) {
-        NeruinaTickHandler.safelyTickEntities$notTheCauseOfTickLag(instance, (Entity) entity, original);
+    @SuppressWarnings({"unused", "MixinAnnotationTarget"})
+    @WrapOperation(method = "tickEntity", at = @At(value = "INVOKE", target = "Ldev/wuffs/itshallnottick/TickOptimizer;entityTicking(Ljava/util/function/Consumer;Lnet/minecraft/entity/Entity;Lnet/minecraft/world/World;Ljava/util/Random;)V"))
+    private void catchTickingEntities(Consumer<Entity> consumer, Entity entity, World world, Random random, Operation<Void> original) {
+        NeruinaTickHandler.safelyTickEntities$notTheCauseOfTickLag(consumer, entity, world, random, original);
     }
 }
