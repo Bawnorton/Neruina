@@ -58,14 +58,7 @@ public abstract class NeruinaTickHandler {
         try {
             original.call(instance);
         } catch (Throwable e) {
-            String message = Version.translatableText("neruina.ticking.player", instance.getName().getString()).getString();
-            Neruina.LOGGER.warn(message, e);
-            if (!instance.getWorld().isClient()) {
-                if(!server.isDedicated()) throw new DoNotHandleException(e);
-
-                messagePlayers(message);
-                instance.networkHandler.disconnect(Version.textOf(Version.translatableText("neruina.kick.message").getString()));
-            }
+            handleTickingPlayer(instance, e);
         }
     }
 
@@ -146,12 +139,30 @@ public abstract class NeruinaTickHandler {
     }
 
     private static void handleEntityTicking(Entity entity, Throwable e) {
+        if(entity instanceof ServerPlayerEntity player) {
+            handleTickingPlayer(player, e);
+            return;
+        } else if (entity instanceof PlayerEntity) {
+            throw new DoNotHandleException(e);
+        }
+
         Vec3d pos = entity.getPos();
         String message = Version.translatableText("neruina.ticking.entity", entity.getName().getString(), Math.floor(pos.getX()), Math.floor(pos.getY()), Math.floor(pos.getZ())).getString();
         Neruina.LOGGER.warn((entity.getEntityWorld().isClient? "Client: " : "Server: ") + message, e);
         addErrored(entity);
         if (!entity.getEntityWorld().isClient()) {
             messagePlayers(message);
+        }
+    }
+
+    private static void handleTickingPlayer(ServerPlayerEntity player, Throwable e) {
+        String message = Version.translatableText("neruina.ticking.player", player.getName().getString()).getString();
+        Neruina.LOGGER.warn(message, e);
+        if (!player.getWorld().isClient()) {
+            if(!server.isDedicated()) throw new DoNotHandleException(e);
+
+            messagePlayers(message);
+            player.networkHandler.disconnect(Version.textOf(Version.translatableText("neruina.kick.message").getString()));
         }
     }
 
