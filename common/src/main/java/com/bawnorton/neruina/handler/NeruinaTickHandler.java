@@ -158,7 +158,7 @@ public abstract class NeruinaTickHandler {
     private static void handleTickingPlayer(ServerPlayerEntity player, Throwable e) {
         String message = Version.translatableText("neruina.ticking.player", player.getName().getString()).getString();
         Neruina.LOGGER.warn(message, e);
-        if (!player.getWorld().isClient()) {
+        if (!player.getEntityWorld().isClient()) {
             if(!server.isDedicated()) throw new DoNotHandleException(e);
 
             messagePlayers(message);
