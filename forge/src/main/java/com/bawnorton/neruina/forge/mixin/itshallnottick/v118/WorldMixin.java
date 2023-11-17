@@ -1,4 +1,4 @@
-package com.bawnorton.neruina.mixin.forge.itshallnottick.v118;
+package com.bawnorton.neruina.forge.mixin.itshallnottick.v118;
 
 import com.bawnorton.neruina.annotation.ConditionalMixin;
 import com.bawnorton.neruina.annotation.VersionedMixin;
@@ -26,7 +26,7 @@ public abstract class WorldMixin {
         }
     }
 
-    @SuppressWarnings({"unused", "MixinAnnotationTarget"})
+    @SuppressWarnings({"MixinAnnotationTarget", "InvalidInjectorMethodSignature", "UnresolvedMixinReference"})
     @WrapOperation(method = "tickEntity", at = @At(value = "INVOKE", target = "Ldev/wuffs/itshallnottick/TickOptimizer;entityTicking(Ljava/util/function/Consumer;Lnet/minecraft/entity/Entity;Lnet/minecraft/world/World;Ljava/util/Random;)V"))
     private void catchTickingEntities(Consumer<Entity> consumer, Entity entity, World world, Random random, Operation<Void> original) {
         NeruinaTickHandler.safelyTickEntities$notTheCauseOfTickLag(consumer, entity, world, random, original);
