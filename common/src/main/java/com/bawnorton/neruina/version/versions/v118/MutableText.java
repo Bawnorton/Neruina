@@ -13,7 +13,7 @@ public class MutableText extends ReflectiveClass {
     private static final MethodHandle appendMethod;
 
     static {
-        representedClass = init( "net.minecraft.text.MutableText",
+        representedClass = init("net.minecraft.text.MutableText",
                 "net.minecraft.network.chat.MutableComponent",
                 "net.minecraft.class_5250",
                 "net.minecraft.src.C_5012_");

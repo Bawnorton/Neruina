@@ -33,7 +33,7 @@ public abstract class ReflectiveClass {
         MethodType methodType = MethodType.methodType(void.class, parameterTypes);
         try {
             return lookup.findConstructor(owner, methodType);
-        } catch (NoSuchMethodException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | IllegalAccessException ignored) {
         }
         throw new RuntimeException("Could not find constructor for " + owner.getName());
     }
