@@ -1,8 +1,8 @@
 package com.bawnorton.neruina.version;
 
 import com.bawnorton.neruina.Platform;
-import com.bawnorton.neruina.version.versions.V118;
-import com.bawnorton.neruina.version.versions.V119;
+import com.bawnorton.neruina.version.versions.v118.V118;
+import com.bawnorton.neruina.version.versions.v119.V119;
 import net.minecraft.text.Text;
 
 public abstract class Version {
@@ -22,6 +22,14 @@ public abstract class Version {
             return V119.of(text);
         } else {
             return V118.of(text);
+        }
+    }
+
+    public static Text formatText(Text message) {
+        if (TEXT_VERSION_STRING.isVersionValid(MC_VERSION)) {
+            return V119.formatText(message);
+        } else {
+            return V118.formatText(message);
         }
     }
 }

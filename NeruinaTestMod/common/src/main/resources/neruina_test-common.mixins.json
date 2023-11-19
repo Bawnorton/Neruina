@@ -6,6 +6,10 @@
   "client": [
   ],
   "mixins": [
+    "CompassItemMixin",
+    "DaylightDectectorBlockMixin",
+    "FarmlandBlockMixin",
+    "ZombieEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

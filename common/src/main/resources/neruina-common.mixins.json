@@ -14,6 +14,7 @@
     "WorldChunkMixin",
     "WorldChunkMixin$DirectBlockEntityTickInvokerMixin",
     "WorldMixin",
+    "invoker.WorldChunkInvoker",
     "v118.ServerWorldMixin"
   ],
   "injectors": {

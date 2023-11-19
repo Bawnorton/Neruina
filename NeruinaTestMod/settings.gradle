@@ -11,4 +11,4 @@ include("common")
 include("fabric")
 include("forge")
 
-rootProject.name = "architectury-neruina_test-test"
+rootProject.name = "NeruinaTestMod"

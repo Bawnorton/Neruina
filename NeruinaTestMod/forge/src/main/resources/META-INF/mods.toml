@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[47,)"
+loaderVersion = "[40,)"
 #issueTrackerURL = ""
 license = "MIT"
 
@@ -16,20 +16,20 @@ This is a mod that tests the functionality of Neruina.
 [[dependencies.neruina_test]]
 modId = "forge"
 mandatory = true
-versionRange = "[47,)"
+versionRange = "[40,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.neruina_test]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20,)"
+versionRange = "[1.18.2,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.neruina_test]]
-modId = "architectury"
+modId = "neruina"
 mandatory = true
-versionRange = "[9.0.8,)"
+versionRange = "[1.0,)"
 ordering = "AFTER"
 side = "BOTH"

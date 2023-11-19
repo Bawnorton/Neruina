@@ -1,8 +1,9 @@
 {
-  "neruina.ticking.entity": "§b[Сервер]: §cОбнаружена ошибка такта сущности [%s] в позиции [x=%s, y=%s, z=%s]. Сущность уничтожена.",
-  "neruina.ticking.block_entity": "§b[Сервер]: §cОбнаружена ошибка такта блочной сущности [%s] в позиции [x=%s, y=%s, z=%s]. Требуется принять меры.",
-  "neruina.ticking.block_state": "§b[Сервер]: §cОбнаружена ошибка такта состояния блока [%s] в позиции [x=%s, y=%s, z=%s]. Требуется принять меры.",
-  "neruina.ticking.player": "§b[Сервер]: §cОбнаружена ошибка такта игрока. %s был выгнан.",
-  "neruina.ticking.item_stack": "§b[Сервер]: §cОбнаружена ошибка такта стака предметов [%s] в слоте [%s]. Требуется удалить его.",
-  "neruina.kick.message": "§b[Сервер]: §cВы были выгнаны из-за ошибки такта на игроке. Удалите мод-нарушитель или обратитесь к администратору сервера."
+  "neruina.ticking.entity": "Обнаружена ошибка такта сущности [%s] в позиции [x=%s, y=%s, z=%s]. Сущность уничтожена.",
+  "neruina.ticking.block_entity": "Обнаружена ошибка такта блочной сущности [%s] в позиции [x=%s, y=%s, z=%s]. Требуется принять меры.",
+  "neruina.ticking.block_state": "Обнаружена ошибка такта состояния блока [%s] в позиции [x=%s, y=%s, z=%s]. Требуется принять меры.",
+  "neruina.ticking.player": "Обнаружена ошибка такта игрока. %s был выгнан.",
+  "neruina.ticking.item_stack": "Обнаружена ошибка такта стака предметов [%s] в слоте [%s]. Требуется удалить его.",
+  "neruina.kick.message": "Вы были выгнаны из-за ошибки такта на игроке. Удалите мод-нарушитель или обратитесь к администратору сервера.",
+  "neruina.kick.reason": "\n\nWhy was I kicked?\n\nWhen a ticking exception occurs on a normal entity Neruina will kill it to prevent the server from crashing, but if that entity happens to be a player, it will kick them instead. If you weren't kicked the server would have crashed."
 }

@@ -12,7 +12,7 @@ public class ConditionalRunnable {
     private ConditionalRunnable(Runnable runnable, ConditionChecker conditionChecker) {
         this.runnable = runnable;
         this.conditionChecker = conditionChecker;
-        this.scheduler = Executors.newScheduledThreadPool(1);
+        this.scheduler = Executors.newScheduledThreadPool(5);
     }
 
     public static void create(Runnable runnable, ConditionChecker conditionChecker) {
@@ -20,7 +20,7 @@ public class ConditionalRunnable {
     }
 
     public void start() {
-        scheduler.scheduleAtFixedRate(this::executeIfConditionSucceeds, 0, 100, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(this::executeIfConditionSucceeds, 0, 10, TimeUnit.MILLISECONDS);
     }
 
     private void executeIfConditionSucceeds() {
