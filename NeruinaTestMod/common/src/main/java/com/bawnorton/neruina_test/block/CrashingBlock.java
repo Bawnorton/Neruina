@@ -26,7 +26,7 @@ public class CrashingBlock extends BlockWithEntity {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return (tickWorld, tickPos, tickState, tickBlockEntity) -> {
-            if(tickBlockEntity.hasWorld()) {
+            if (tickBlockEntity.hasWorld()) {
                 throw new RuntimeException("Crashing block crashed!");
             }
         };

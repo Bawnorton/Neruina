@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 public abstract class WorldMixin {
     @Inject(method = "shouldUpdatePostDeath", at = @At("HEAD"), cancellable = true)
     public void shouldUpdatePostDeath(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        if(NeruinaTickHandler.isErrored(entity)) {
+        if (NeruinaTickHandler.isErrored(entity)) {
             cir.setReturnValue(false);
         }
     }

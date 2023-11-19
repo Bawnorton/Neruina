@@ -9,4 +9,14 @@ public abstract class Platform {
     public static Path getConfigDir() {
         throw new AssertionError();
     }
+
+    @ExpectPlatform
+    public static boolean isModLoaded(String modid) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static String getMinecraftVersion() {
+        throw new AssertionError();
+    }
 }

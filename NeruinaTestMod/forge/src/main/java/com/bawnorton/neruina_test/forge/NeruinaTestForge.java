@@ -28,21 +28,17 @@ import net.minecraftforge.registries.RegistryObject;
 @Mod(NeruinaTest.MOD_ID)
 public class NeruinaTestForge {
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, NeruinaTest.MOD_ID);
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, NeruinaTest.MOD_ID);
-    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, NeruinaTest.MOD_ID);
-    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, NeruinaTest.MOD_ID);
-
-    public static final RegistryObject<EntityType<CrashingEntity>> CRASHING_ENTITY = ENTITIES.register("crashing_entity", () -> EntityType.Builder.create(CrashingEntity::new, SpawnGroup.MISC).build(NeruinaTest.id("crashing_entity").toString()));
-
     public static final RegistryObject<Block> CRASHING_BLOCK = BLOCKS.register("crashing_block", () -> new CrashingBlock(AbstractBlock.Settings.create()));
     public static final RegistryObject<Block> CRASHING_RANDOM_TICK_BLOCK = BLOCKS.register("crashing_random_tick_block", () -> new CrashingRandomTickBlock(AbstractBlock.Settings.create().ticksRandomly()));
-
-    public static final RegistryObject<BlockEntityType<CrashingBlockEntity>> CRASHING_BLOCK_ENTITY = BLOCK_ENTITIES.register("crashing_block_entity", () -> BlockEntityType.Builder.create(CrashingBlockEntity::new, CRASHING_BLOCK.get()).build(null));
-
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, NeruinaTest.MOD_ID);
     public static final RegistryObject<Item> CRASHING_BLOCK_ITEM = ITEMS.register("crashing_block", () -> new BlockItem(CRASHING_BLOCK.get(), new Item.Settings()));
     public static final RegistryObject<Item> CRASHING_RANDOM_TICK_BLOCK_ITEM = ITEMS.register("crashing_random_tick_block", () -> new BlockItem(CRASHING_RANDOM_TICK_BLOCK.get(), new Item.Settings()));
     public static final RegistryObject<Item> CRASHING_ITEM = ITEMS.register("crashing_item", () -> new CrashingItem(new Item.Settings()));
+    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, NeruinaTest.MOD_ID);
+    public static final RegistryObject<EntityType<CrashingEntity>> CRASHING_ENTITY = ENTITIES.register("crashing_entity", () -> EntityType.Builder.create(CrashingEntity::new, SpawnGroup.MISC).build(NeruinaTest.id("crashing_entity").toString()));
     public static final RegistryObject<Item> CRASHING_ENTITY_SPAWN_EGG = ITEMS.register("crashing_entity_spawn_egg", () -> new ForgeSpawnEggItem(CRASHING_ENTITY, 0xF15F12, 0x3EDC89, new Item.Settings()));
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, NeruinaTest.MOD_ID);
+    public static final RegistryObject<BlockEntityType<CrashingBlockEntity>> CRASHING_BLOCK_ENTITY = BLOCK_ENTITIES.register("crashing_block_entity", () -> BlockEntityType.Builder.create(CrashingBlockEntity::new, CRASHING_BLOCK.get()).build(null));
 
     public NeruinaTestForge() {
         EventBuses.registerModEventBus(NeruinaTest.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());

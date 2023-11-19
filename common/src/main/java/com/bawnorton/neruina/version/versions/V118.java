@@ -25,24 +25,22 @@ public abstract class V118 {
             try {
                 literalTextClass = Class.forName(className);
                 break;
-            } catch (ClassNotFoundException ignored) {
-            }
+            } catch (ClassNotFoundException ignored) {}
         }
         for (String className : possibleTranslatableTextClassNames) {
             try {
                 translatableTextClass = Class.forName(className);
                 break;
-            } catch (ClassNotFoundException ignored) {
-            }
+            } catch (ClassNotFoundException ignored) {}
         }
 
-        if(literalTextClass == null) throw new RuntimeException("Could not find literal text class");
-        if(translatableTextClass == null) throw new RuntimeException("Could not find translatable text class");
+        if (literalTextClass == null) throw new RuntimeException("Could not find literal text class");
+        if (translatableTextClass == null) throw new RuntimeException("Could not find translatable text class");
     }
 
     public static Text translatable(String key, Object... args) {
         try {
-            if(args.length == 0) return (Text) translatableTextClass.getConstructor(String.class).newInstance(key);
+            if (args.length == 0) return (Text) translatableTextClass.getConstructor(String.class).newInstance(key);
             else return (Text) translatableTextClass.getConstructor(String.class, Object[].class).newInstance(key, args);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException("Failed to get translatable text of " + key + "!", e);

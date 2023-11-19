@@ -18,7 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldChunk.class)
 public abstract class WorldChunkMixin {
-    @Shadow public abstract @Nullable BlockEntity getBlockEntity(BlockPos pos);
+    @Shadow
+    public abstract @Nullable BlockEntity getBlockEntity(BlockPos pos);
 
     @Inject(method = "removeBlockEntity", at = @At("HEAD"))
     private void removeErrored(BlockPos pos, CallbackInfo ci) {

@@ -1,11 +1,11 @@
 package com.bawnorton.neruina.config;
 
+import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.Platform;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.bawnorton.neruina.Neruina;
 
 import java.io.IOException;
 import java.nio.file.Files;

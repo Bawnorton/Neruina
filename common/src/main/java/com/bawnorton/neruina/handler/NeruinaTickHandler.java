@@ -16,6 +16,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -46,9 +47,10 @@ public abstract class NeruinaTickHandler {
             }
             original.call(instance, world, entity, slot, selected);
         } catch (Throwable e) {
-            if(!Config.getInstance().handleTickingItemStacks) throw new DoNotHandleException(e, DoNotHandleException.Reason.ITEM_STACK_DISABLED);
+            if (!Config.getInstance().handleTickingItemStacks)
+                throw new DoNotHandleException(e, DoNotHandleException.Reason.ITEM_STACK_DISABLED);
             String message = Version.translatableText("neruina.ticking.item_stack", instance.getItem().getName().getString(), slot).getString();
-            Neruina.LOGGER.warn((world.isClient? "Client: " : "Server: ") + message, e);
+            Neruina.LOGGER.warn((world.isClient ? "Client: " : "Server: ") + message, e);
             addErrored(instance);
             if (world.isClient && entity instanceof PlayerEntity player) {
                 player.sendMessage(Version.textOf(message), false);
@@ -60,7 +62,8 @@ public abstract class NeruinaTickHandler {
         try {
             original.call(instance);
         } catch (Throwable e) {
-            if(!Config.getInstance().handleTickingPlayers) throw new DoNotHandleException(e, DoNotHandleException.Reason.PLAYER_DISABLED);
+            if (!Config.getInstance().handleTickingPlayers)
+                throw new DoNotHandleException(e, DoNotHandleException.Reason.PLAYER_DISABLED);
             handleTickingPlayer(instance, e);
         }
     }
@@ -72,7 +75,8 @@ public abstract class NeruinaTickHandler {
             }
             original.call(instance, world, pos, random);
         } catch (Throwable e) {
-            if(!Config.getInstance().handleTickingBlockStates) throw new DoNotHandleException(e, DoNotHandleException.Reason.BLOCK_STATE_DISABLED);
+            if (!Config.getInstance().handleTickingBlockStates)
+                throw new DoNotHandleException(e, DoNotHandleException.Reason.BLOCK_STATE_DISABLED);
             String message = Version.translatableText("neruina.ticking.block_state", instance.getBlock().getName(), pos.getX(), pos.getY(), pos.getZ()).getString();
             Neruina.LOGGER.warn("Server: " + message, e);
             addErrored(pos, instance);
@@ -83,7 +87,7 @@ public abstract class NeruinaTickHandler {
     public static void safelyTickBlockEntity$notTheCauseOfTickLag(BlockEntityTicker<? extends BlockEntity> instance, World world, BlockPos pos, BlockState state, BlockEntity blockEntity, Operation<Void> original) {
         try {
             if (isErrored(blockEntity)) {
-                if(world.isClient) return;
+                if (world.isClient) return;
 
                 WorldChunk chunk = world.getWorldChunk(pos);
                 chunk.removeBlockEntityTicker(pos);
@@ -91,9 +95,10 @@ public abstract class NeruinaTickHandler {
             }
             original.call(instance, world, pos, state, blockEntity);
         } catch (Throwable e) {
-            if(!Config.getInstance().handleTickingBlockEntities) throw new DoNotHandleException(e, DoNotHandleException.Reason.BLOCK_ENTITY_DISABLED);
+            if (!Config.getInstance().handleTickingBlockEntities)
+                throw new DoNotHandleException(e, DoNotHandleException.Reason.BLOCK_ENTITY_DISABLED);
             String message = Version.translatableText("neruina.ticking.block_entity", state.getBlock().getName(), pos.getX(), pos.getY(), pos.getZ()).getString();
-            Neruina.LOGGER.warn((world.isClient? "Client: " : "Server: ") + message, e);
+            Neruina.LOGGER.warn((world.isClient ? "Client: " : "Server: ") + message, e);
             addErrored(blockEntity);
             if (!world.isClient()) {
                 messagePlayers(message);
@@ -111,7 +116,8 @@ public abstract class NeruinaTickHandler {
         } catch (DoNotHandleException e) {
             throw e;
         } catch (Throwable e) {
-            if(!Config.getInstance().handleTickingEntities) throw new DoNotHandleException(e, DoNotHandleException.Reason.ENTITY_DISABLED);
+            if (!Config.getInstance().handleTickingEntities)
+                throw new DoNotHandleException(e, DoNotHandleException.Reason.ENTITY_DISABLED);
             handleEntityTicking(entity, e);
         }
     }
@@ -126,15 +132,16 @@ public abstract class NeruinaTickHandler {
         } catch (DoNotHandleException e) {
             throw e;
         } catch (Throwable e) {
-            if(!Config.getInstance().handleTickingEntities) throw new DoNotHandleException(e, DoNotHandleException.Reason.ENTITY_DISABLED);
+            if (!Config.getInstance().handleTickingEntities)
+                throw new DoNotHandleException(e, DoNotHandleException.Reason.ENTITY_DISABLED);
             handleEntityTicking(entity, e);
         }
     }
 
     private static void handleErroredEntity(Entity entity) {
         try {
-            if(entity instanceof PlayerEntity) return;
-            if(entity.getEntityWorld().isClient()) return;
+            if (entity instanceof PlayerEntity) return;
+            if (entity.getEntityWorld().isClient()) return;
 
             entity.kill();
             entity.remove(Entity.RemovalReason.KILLED);
@@ -146,7 +153,7 @@ public abstract class NeruinaTickHandler {
     }
 
     private static void handleEntityTicking(Entity entity, Throwable e) {
-        if(entity instanceof ServerPlayerEntity player) {
+        if (entity instanceof ServerPlayerEntity player) {
             handleTickingPlayer(player, e);
             return;
         } else if (entity instanceof PlayerEntity) {
@@ -155,7 +162,7 @@ public abstract class NeruinaTickHandler {
 
         Vec3d pos = entity.getPos();
         String message = Version.translatableText("neruina.ticking.entity", entity.getName().getString(), Math.floor(pos.getX()), Math.floor(pos.getY()), Math.floor(pos.getZ())).getString();
-        Neruina.LOGGER.warn((entity.getEntityWorld().isClient? "Client: " : "Server: ") + message, e);
+        Neruina.LOGGER.warn((entity.getEntityWorld().isClient ? "Client: " : "Server: ") + message, e);
         addErrored(entity);
         if (!entity.getEntityWorld().isClient()) {
             messagePlayers(message);
@@ -166,7 +173,8 @@ public abstract class NeruinaTickHandler {
         String message = Version.translatableText("neruina.ticking.player", player.getName().getString()).getString();
         Neruina.LOGGER.warn(message, e);
         if (!player.getEntityWorld().isClient()) {
-            if(!server.isDedicated()) throw new DoNotHandleException(e, DoNotHandleException.Reason.PLAYER_IN_SINGLEPLAYER);
+            if (!server.isDedicated())
+                throw new DoNotHandleException(e, DoNotHandleException.Reason.PLAYER_IN_SINGLEPLAYER);
 
             messagePlayers(message);
             player.networkHandler.disconnect(Version.textOf(Version.translatableText("neruina.kick.message").getString()));
@@ -174,7 +182,7 @@ public abstract class NeruinaTickHandler {
     }
 
     private static void messagePlayers(Text message) {
-        if(!Config.getInstance().broadcastErrors) return;
+        if (!Config.getInstance().broadcastErrors) return;
         PlayerManager playerManager = server.getPlayerManager();
         ConditionalRunnable.create(() -> playerManager.getPlayerList().forEach(player -> player.sendMessage(message, false)), () -> playerManager.getCurrentPlayerCount() >= 1);
     }
@@ -184,7 +192,7 @@ public abstract class NeruinaTickHandler {
     }
 
     public static boolean isErrored(BlockEntity blockEntity) {
-        if(ERRORED_BLOCK_ENTITIES.isEmpty()) return false;
+        if (ERRORED_BLOCK_ENTITIES.isEmpty()) return false;
         return ERRORED_BLOCK_ENTITIES.contains(blockEntity);
     }
 
@@ -197,7 +205,7 @@ public abstract class NeruinaTickHandler {
     }
 
     public static boolean isErrored(Entity entity) {
-        if(ERRORED_ENTITIES.isEmpty()) return false;
+        if (ERRORED_ENTITIES.isEmpty()) return false;
         return ERRORED_ENTITIES.contains(entity);
     }
 
@@ -210,7 +218,7 @@ public abstract class NeruinaTickHandler {
     }
 
     public static boolean isErrored(ItemStack item) {
-        if(ERRORED_ITEM_STACKS.isEmpty()) return false;
+        if (ERRORED_ITEM_STACKS.isEmpty()) return false;
         return ERRORED_ITEM_STACKS.contains(item);
     }
 
@@ -219,7 +227,7 @@ public abstract class NeruinaTickHandler {
     }
 
     public static boolean isErrored(BlockPos pos, BlockState state) {
-        if(ERRORED_BLOCK_STATES.isEmpty()) return false;
+        if (ERRORED_BLOCK_STATES.isEmpty()) return false;
         return ERRORED_BLOCK_STATES.contains(new ImmutablePair<>(pos, state));
     }
 
