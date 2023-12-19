@@ -25,6 +25,13 @@ public abstract class Version {
         }
     }
 
+    /**
+     * For use when sending information to the client as the client may not have neruina installed.
+     */
+    public static Text preTranslatedText(String key, Object... args) {
+        return textOf(translatableText(key, args).getString());
+    }
+
     public static Text formatText(Text message) {
         if (TEXT_VERSION_STRING.isVersionValid(MC_VERSION)) {
             return V119.formatText(message);

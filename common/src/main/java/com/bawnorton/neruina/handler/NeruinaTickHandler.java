@@ -10,6 +10,11 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.MessageScreen;
+import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.toast.SystemToast;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -50,7 +55,7 @@ public abstract class NeruinaTickHandler {
             if (!Config.getInstance().handleTickingItemStacks)
                 throw new DoNotHandleException(e, DoNotHandleException.Reason.ITEM_STACK_DISABLED);
             Text message = Version.translatableText("neruina.ticking.item_stack", instance.getItem().getName().getString(), slot);
-            Neruina.LOGGER.warn("Neruina Caught Exception", e);
+            Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
             addErrored(instance);
             if (world.isClient && entity instanceof PlayerEntity player) {
                 player.sendMessage(Version.formatText(message), false);
@@ -78,7 +83,7 @@ public abstract class NeruinaTickHandler {
             if (!Config.getInstance().handleTickingBlockStates)
                 throw new DoNotHandleException(e, DoNotHandleException.Reason.BLOCK_STATE_DISABLED);
             Text message = Version.translatableText("neruina.ticking.block_state", instance.getBlock().getName(), pos.getX(), pos.getY(), pos.getZ());
-            Neruina.LOGGER.warn("Neruina Caught Exception", e);
+            Neruina.LOGGER.warn("Neruina Caught An Exception, see below for cause", e);
             addErrored(pos, instance);
             messagePlayers(message);
         }
@@ -98,7 +103,7 @@ public abstract class NeruinaTickHandler {
             if (!Config.getInstance().handleTickingBlockEntities)
                 throw new DoNotHandleException(e, DoNotHandleException.Reason.BLOCK_ENTITY_DISABLED);
             Text message = Version.translatableText("neruina.ticking.block_entity", state.getBlock().getName(), pos.getX(), pos.getY(), pos.getZ());
-            Neruina.LOGGER.warn("Neruina Caught Exception", e);
+            Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
             addErrored(blockEntity);
             if (!world.isClient()) {
                 messagePlayers(message);
@@ -156,13 +161,14 @@ public abstract class NeruinaTickHandler {
         if (entity instanceof ServerPlayerEntity player) {
             handleTickingPlayer(player, e);
             return;
-        } else if (entity instanceof PlayerEntity) {
-            throw new DoNotHandleException(e);
+        } else if (entity instanceof ClientPlayerEntity clientPlayer) {
+            handleTickingClient(clientPlayer, e);
+            return;
         }
 
         Vec3d pos = entity.getPos();
         Text message = Version.translatableText("neruina.ticking.entity", entity.getName().getString(), Math.floor(pos.getX()), Math.floor(pos.getY()), Math.floor(pos.getZ()));
-        Neruina.LOGGER.warn("Neruina Caught Exception", e);
+        Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
         addErrored(entity);
         if (!entity.getEntityWorld().isClient()) {
             messagePlayers(message);
@@ -171,14 +177,25 @@ public abstract class NeruinaTickHandler {
 
     private static void handleTickingPlayer(ServerPlayerEntity player, Throwable e) {
         Text message = Version.translatableText("neruina.ticking.player", player.getName().getString());
-        Neruina.LOGGER.warn("Neruina Caught Exception", e);
-        if (!player.getEntityWorld().isClient()) {
-            if (!server.isDedicated())
-                throw new DoNotHandleException(e, DoNotHandleException.Reason.PLAYER_IN_SINGLEPLAYER);
+        Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
+        if (!server.isDedicated())
+            throw new DoNotHandleException(e, DoNotHandleException.Reason.PLAYER_IN_SINGLEPLAYER);
 
-            messagePlayers(message);
-            player.networkHandler.disconnect(Version.textOf(Version.translatableText("neruina.kick.message").getString()));
-        }
+        messagePlayers(message);
+        player.networkHandler.disconnect(Version.preTranslatedText("neruina.kick.message"));
+    }
+
+    private static void handleTickingClient(ClientPlayerEntity clientPlayer, Throwable e) {
+        clientPlayer.getEntityWorld().disconnect();
+        MinecraftClient client = MinecraftClient.getInstance();
+        client.disconnect(new MessageScreen(Version.preTranslatedText("menu.savingLevel")));
+        client.setScreen(new TitleScreen());
+        client.getToastManager().add(SystemToast.create(
+                client,
+                SystemToast.Type.WORLD_ACCESS_FAILURE,
+                Version.preTranslatedText("neruina.toast.title"),
+                Version.preTranslatedText("neruina.toast.desc")
+        ));
     }
 
     private static void messagePlayers(Text message) {
