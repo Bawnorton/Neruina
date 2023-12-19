@@ -186,6 +186,7 @@ public abstract class NeruinaTickHandler {
     }
 
     private static void handleTickingClient(ClientPlayerEntity clientPlayer, Throwable e) {
+        Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
         clientPlayer.getEntityWorld().disconnect();
         MinecraftClient client = MinecraftClient.getInstance();
         client.disconnect(new MessageScreen(Version.preTranslatedText("menu.savingLevel")));
