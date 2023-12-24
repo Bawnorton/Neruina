@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[40,)"
+loaderVersion = "[49,)"
 issueTrackerURL = "https://github.com/Bawnorton/Neruina/issues"
 license = "MIT"
 
@@ -16,13 +16,13 @@ logoFile = "icon.png"
 [[dependencies.neruina]]
 modId = "forge"
 mandatory = true
-versionRange = "[40,)"
+versionRange = "[49,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.neruina]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18.2,)"
+versionRange = "[1.20.4,)"
 ordering = "NONE"
 side = "BOTH"

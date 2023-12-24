@@ -27,6 +27,10 @@ subprojects {
 
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+
+        if(path != ":forge") {
+            mappings("net.fabricmc:yarn:${rootProject.yarn_version}:v2")
+        }
     }
 }
 

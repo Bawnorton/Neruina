@@ -9,8 +9,6 @@ loom {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
-    mappings("net.fabricmc:yarn:${rootProject.yarn_version}:v2")
-
     implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:${rootProject.mixin_squared_version}"))
 }
 

@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[49,)"
+loaderVersion = "[1,)"
 license = "MIT"
 
 [[mods]]
@@ -11,23 +11,22 @@ description = '''
 This is a mod that tests the functionality of Neruina.
 '''
 
+[[mixins]]
+config = "neruina_test-common.mixins.json"
+
+[[mixins]]
+config = "neruina_test.mixins.json"
+
 [[dependencies.neruina_test]]
-modId = "forge"
-mandatory = true
-versionRange = "[49,)"
+modId = "neoforge"
+type = "required"
+versionRange = "[20.4.46-beta,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.neruina_test]]
 modId = "minecraft"
-mandatory = true
+type = "required"
 versionRange = "[1.20.4,)"
 ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.neruina_test]]
-modId = "neruina"
-mandatory = true
-versionRange = "[1.4,)"
-ordering = "AFTER"
 side = "BOTH"
