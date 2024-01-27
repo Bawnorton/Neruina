@@ -113,12 +113,21 @@ public final class NeruinaTickHandler {
         } catch (Throwable e) {
             if (!Config.getInstance().handleTickingBlockStates)
                 throw TickingException.notHandled("handle_ticking_block_states", e);
-            Text message = VersionedText.translatable("neruina.ticking.block_state", instance.getBlock()
-                                                                                             .getName()
-                                                                                             .getString(), pos.getX(), pos.getY(), pos.getZ());
+            Text message = VersionedText.translatable(
+                    "neruina.ticking.block_state",
+                    instance.getBlock()
+                            .getName()
+                            .getString(),
+                    pos.getX(),
+                    pos.getY(),
+                    pos.getZ()
+            );
             Neruina.LOGGER.warn("Neruina Caught An Exception, see below for cause", e);
             addErrored(instance, pos);
-            broadcastToPlayers(world.getServer(), VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e)));
+            broadcastToPlayers(
+                    world.getServer(),
+                    VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e))
+            );
         }
     }
 
@@ -135,13 +144,22 @@ public final class NeruinaTickHandler {
         } catch (Throwable e) {
             if (!Config.getInstance().handleTickingBlockEntities)
                 throw TickingException.notHandled("handle_ticking_block_entities", e);
-            Text message = VersionedText.translatable("neruina.ticking.block_entity", state.getBlock()
-                                                                                           .getName()
-                                                                                           .getString(), pos.getX(), pos.getY(), pos.getZ());
+            Text message = VersionedText.translatable(
+                    "neruina.ticking.block_entity",
+                    state.getBlock()
+                         .getName()
+                         .getString(),
+                    pos.getX(),
+                    pos.getY(),
+                    pos.getZ()
+            );
             Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
             addErrored(blockEntity);
             if (!world.isClient()) {
-                broadcastToPlayers(world.getServer(), VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e)));
+                broadcastToPlayers(
+                        world.getServer(),
+                        VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e))
+                );
             }
         }
     }
@@ -170,9 +188,18 @@ public final class NeruinaTickHandler {
         addErrored(entity);
         if (!entity.getWorld().isClient()) {
             Vec3d pos = entity.getPos();
-            Text message = VersionedText.translatable("neruina.ticking.entity", entity.getName()
-                                                                                      .getString(), Math.floor(pos.x), Math.floor(pos.y), Math.floor(pos.z));
-            broadcastToPlayers(entity.getServer(), VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e)));
+            Text message = VersionedText.translatable(
+                    "neruina.ticking.entity",
+                    entity.getName()
+                          .getString(),
+                    Math.floor(pos.x),
+                    Math.floor(pos.y),
+                    Math.floor(pos.z)
+            );
+            broadcastToPlayers(
+                    entity.getServer(),
+                    VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e))
+            );
         }
     }
 
@@ -188,7 +215,10 @@ public final class NeruinaTickHandler {
         String name = player.getDisplayName() == null ? player.getName().getString() : player.getDisplayName()
                                                                                              .getString();
         Text message = VersionedText.translatable("neruina.ticking.player", name);
-        broadcastToPlayers(server, VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e)));
+        broadcastToPlayers(
+                server,
+                VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e))
+        );
         serverPlayer.networkHandler.disconnect(VersionedText.translatable("neruina.kick.message"));
     }
 
@@ -238,17 +268,28 @@ public final class NeruinaTickHandler {
                         VersionedText.withStyle(
                                 VersionedText.translatable("neruina.open_log"),
                                 style -> style.withColor(Formatting.AQUA)
-                                              .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, Platform.getLogPath()
-                                                                                                                  .toString()))
-                                              .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, VersionedText.translatable("neruina.open_log.tooltip")))
+                                              .withClickEvent(new ClickEvent(
+                                                      ClickEvent.Action.OPEN_FILE,
+                                                      Platform.getLogPath().toString()
+                                              ))
+                                              .withHoverEvent(new HoverEvent(
+                                                      HoverEvent.Action.SHOW_TEXT,
+                                                      VersionedText.translatable("neruina.open_log.tooltip")
+                                              ))
                         )
                 ),
                 Texts.bracketed(
                         VersionedText.withStyle(
                                 VersionedText.translatable("neruina.copy_crash"),
                                 style -> style.withColor(Formatting.RED)
-                                              .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, traceString.toString()))
-                                              .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, VersionedText.translatable("neruina.copy_crash.tooltip")))
+                                              .withClickEvent(new ClickEvent(
+                                                      ClickEvent.Action.COPY_TO_CLIPBOARD,
+                                                      traceString.toString()
+                                              ))
+                                              .withHoverEvent(new HoverEvent(
+                                                      HoverEvent.Action.SHOW_TEXT,
+                                                      VersionedText.translatable("neruina.copy_crash.tooltip")
+                                              ))
                         )
                 )
         );

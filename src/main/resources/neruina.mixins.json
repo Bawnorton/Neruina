@@ -1,22 +1,22 @@
 {
-	"required": true,
-	"package": "com.bawnorton.neruina.mixin",
-	"plugin": "com.bawnorton.neruina.mixin.NeruinaMixinPlugin",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-		"catchers.PlayerInventoryMixin",
-		"catchers.ServerPlayNetworkHandlerMixin",
-		"catchers.ServerWorldMixin",
-		"catchers.WorldChunkMixin",
-		"catchers.WorldChunkMixin$DirectBlockEntityTickInvokerMixin",
-		"catchers.WorldMixin",
-		"compat.itshallnottick.WorldMixin",
-		"compat.noseenotick.WorldMixin",
-		"errorable.ErrorableBlockStateMixin",
-		"errorable.ErrorableMixin",
-		"invoker.WorldChunkInvoker"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "com.bawnorton.neruina.mixin",
+  "plugin": "com.bawnorton.neruina.mixin.NeruinaMixinPlugin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "catchers.PlayerInventoryMixin",
+    "catchers.ServerPlayNetworkHandlerMixin",
+    "catchers.ServerWorldMixin",
+    "catchers.WorldChunkMixin",
+    "catchers.WorldChunkMixin$DirectBlockEntityTickInvokerMixin",
+    "catchers.WorldMixin",
+    "compat.itshallnottick.WorldMixin",
+    "compat.noseenotick.WorldMixin",
+    "errorable.ErrorableBlockStateMixin",
+    "errorable.ErrorableMixin",
+    "invoker.WorldChunkInvoker"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

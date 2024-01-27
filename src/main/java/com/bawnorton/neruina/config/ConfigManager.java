@@ -12,11 +12,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class ConfigManager {
+    public static final Path CONFIG_PATH = Platform.getConfigDir().resolve(Neruina.MOD_ID + ".json");
     private static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .setPrettyPrinting()
             .create();
-    public static final Path CONFIG_PATH = Platform.getConfigDir().resolve(Neruina.MOD_ID + ".json");
+
+    private ConfigManager() {
+    }
 
     public static void loadConfig() {
         Config config = load();
@@ -62,8 +65,5 @@ public final class ConfigManager {
 
     public static void saveConfig() {
         save();
-    }
-
-    private ConfigManager() {
     }
 }

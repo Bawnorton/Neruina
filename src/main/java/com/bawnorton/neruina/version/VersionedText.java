@@ -1,6 +1,8 @@
 package com.bawnorton.neruina.version;
 
-import net.minecraft.text.*;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 
 import java.util.function.UnaryOperator;
 
@@ -20,7 +22,7 @@ public interface VersionedText {
     }
 
     static Text withStyle(Text text, UnaryOperator<Style> style) {
-        if(text instanceof MutableText mutableText) {
+        if (text instanceof MutableText mutableText) {
             mutableText.styled(style);
         }
         return text;
@@ -32,7 +34,7 @@ public interface VersionedText {
         /*? } else { *//*
         MutableText text = new LiteralText("");
         *//*? } */
-        for(Text t : texts) {
+        for (Text t : texts) {
             text.append(t);
         }
         return text;
@@ -44,9 +46,9 @@ public interface VersionedText {
         /*? } else { *//*
         MutableText text = new LiteralText("");
         *//*? } */
-        for(int i = 0; i < texts.length; i++) {
+        for (int i = 0; i < texts.length; i++) {
             text.append(texts[i]);
-            if(i != texts.length - 1) {
+            if (i != texts.length - 1) {
                 text.append(delimiter);
             }
         }

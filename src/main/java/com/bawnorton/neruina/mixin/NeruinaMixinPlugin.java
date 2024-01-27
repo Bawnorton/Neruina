@@ -20,6 +20,13 @@ import java.util.Set;
 public class NeruinaMixinPlugin implements IMixinConfigPlugin {
     private static final Logger LOGGER = LoggerFactory.getLogger("NeruinaMixinPlugin");
 
+    private static boolean anyModsLoaded(List<String> modids) {
+        for (String modid : modids) {
+            if (Platform.isModLoaded(modid)) return true;
+        }
+        return false;
+    }
+
     @Override
     public void onLoad(String mixinPackage) {
         MixinExtrasBootstrap.init();
@@ -33,7 +40,9 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetName, String className) {
         try {
-            List<AnnotationNode> annotationNodes = MixinService.getService().getBytecodeProvider().getClassNode(className).visibleAnnotations;
+            List<AnnotationNode> annotationNodes = MixinService.getService()
+                                                               .getBytecodeProvider()
+                                                               .getClassNode(className).visibleAnnotations;
             if (annotationNodes == null) return true;
 
             boolean shouldApply = true;
@@ -74,13 +83,6 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
 
-    }
-
-    private static boolean anyModsLoaded(List<String> modids) {
-        for (String modid : modids) {
-            if (Platform.isModLoaded(modid)) return true;
-        }
-        return false;
     }
 
 }
