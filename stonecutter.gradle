@@ -1,0 +1,13 @@
+plugins.apply "dev.kikugie.stonecutter"
+
+stonecutter.active "1.20.5-fabric" /* [SC] DO NOT EDIT */
+
+stonecutter.registerChiseled tasks.register("chiseledBuild", stonecutter.chiseled) {
+    setGroup "project"
+    ofTask "build"
+}
+
+stonecutter.registerChiseled tasks.register("chiseledPublishMods", stonecutter.chiseled) {
+    setGroup "project"
+    ofTask "publishMods"
+}

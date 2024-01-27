@@ -1,0 +1,23 @@
+pluginManagement {
+	repositories {
+		maven { url 'https://maven.fabricmc.net/' }
+		maven { url "https://maven.architectury.dev" }
+		maven { url "https://maven.minecraftforge.net/" }
+		maven { url "https://maven.neoforged.net/releases/" }
+		maven { url "https://maven.kikugie.dev/releases/" }
+		mavenCentral()
+		gradlePluginPortal()
+	}
+}
+
+plugins {
+	id("dev.kikugie.stonecutter") version "0.3.2"
+}
+
+stonecutter {
+	shared {
+		versions "1.18.2-fabric", "1.18.2-forge", "1.19.4-fabric", "1.19.4-forge", "1.20.5-fabric", "1.20.5-forge", "1.20.5-neoforge"
+		vcsVersion "1.20.5-fabric"
+	}
+	create rootProject
+}
