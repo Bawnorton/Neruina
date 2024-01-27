@@ -49,17 +49,27 @@ dependencies {
 		modImplementation "net.fabricmc:fabric-loader:${project.deps_fabric_loader}"
 	} else if (isForge) {
 		forge "net.minecraftforge:forge:$minecraft_version-${project.deps_fml}"
+		annotationProcessor implementation("io.github.llamalad7:mixinextras-common:${project.deps_mixin_extras}")
+		include implementation("io.github.llamalad7:mixinextras-forge:${project.deps_mixin_extras}")
+		modCompileOnly "curse.maven:it-shall-not-tick-619355:${project.deps_it_shall_not_tick}"
+		modCompileOnly "curse.maven:no-see-no-tick-833405:${project.deps_no_see_no_tick}"
 	} else if (isNeoForge) {
 		neoForge "net.neoforged:neoforge:${project.deps_neoforge}"
 	}
 }
 
-stonecutter.expression(loader ->
-		loader == "fabric" ? isFabric :
-		loader == "forge" ? isForge :
-		loader == "neoforge" ? isNeoForge :
-		null
-)
+stonecutter.expression(expression -> {
+	switch (expression) {
+		case "fabric":
+			return isFabric
+		case "forge":
+			return isForge
+		case "neoforge":
+			return isNeoForge
+		default:
+			return null
+	}
+})
 
 loom {
 	accessWidenerPath = file("../../src/main/resources/neruina.accesswidener")
