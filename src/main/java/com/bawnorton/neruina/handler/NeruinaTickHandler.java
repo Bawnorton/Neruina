@@ -30,14 +30,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
-
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.function.Consumer;
 
-/*? if >=1.19 {*/
+/*? if >=1.19 {*//*
 import net.minecraft.client.gui.screen.MessageScreen;
-/*? } else {*//*
+/*? } else {*/
 import net.minecraft.client.gui.screen.SaveLevelScreen;
-*//*? }*/
+/*? }*/
 
 public final class NeruinaTickHandler {
     public void safelyTickItemStack(ItemStack instance, World world, Entity entity, int slot, boolean selected, Operation<Void> original) {
@@ -45,17 +46,24 @@ public final class NeruinaTickHandler {
             if (isErrored(instance)) return;
             original.call(instance, world, entity, slot, selected);
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingItemStacks)
+            if (!Config.getInstance().handleTickingItemStacks) {
                 throw TickingException.notHandled("handle_ticking_item_stacks", e);
+            }
             Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
             addErrored(instance);
             if (!world.isClient() && entity instanceof PlayerEntity player) {
                 player.sendMessage(
                         VersionedText.concatDelimited(
                                 VersionedText.LINE_BREAK,
-                                VersionedText.translatable("neruina.ticking.item_stack", instance.getItem()
-                                                                                                 .getName()
-                                                                                                 .getString(), slot),
+                                VersionedText.format(
+                                        VersionedText.translatable(
+                                                "neruina.ticking.item_stack",
+                                                instance.getItem()
+                                                        .getName()
+                                                        .getString(),
+                                                slot
+                                        )
+                                ),
                                 generateActions(e)
                         ),
                         false
@@ -74,8 +82,9 @@ public final class NeruinaTickHandler {
         } catch (TickingException e) {
             throw e;
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingEntities)
+            if (!Config.getInstance().handleTickingEntities) {
                 throw TickingException.notHandled("handle_ticking_entities", e);
+            }
             handleEntityTicking(entity, e);
         }
     }
@@ -90,8 +99,9 @@ public final class NeruinaTickHandler {
         } catch (TickingException e) {
             throw e;
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingEntities)
+            if (!Config.getInstance().handleTickingEntities) {
                 throw TickingException.notHandled("handle_ticking_entities", e);
+            }
             handleEntityTicking(entity, e);
         }
     }
@@ -100,8 +110,9 @@ public final class NeruinaTickHandler {
         try {
             original.call(instance);
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingPlayers)
+            if (!Config.getInstance().handleTickingPlayers) {
                 throw TickingException.notHandled("handle_ticking_players", e);
+            }
             handleTickingPlayer(instance, e);
         }
     }
@@ -111,16 +122,19 @@ public final class NeruinaTickHandler {
             if (isErrored(instance, pos)) return;
             original.call(instance, world, pos, random);
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingBlockStates)
+            if (!Config.getInstance().handleTickingBlockStates) {
                 throw TickingException.notHandled("handle_ticking_block_states", e);
-            Text message = VersionedText.translatable(
-                    "neruina.ticking.block_state",
-                    instance.getBlock()
-                            .getName()
-                            .getString(),
-                    pos.getX(),
-                    pos.getY(),
-                    pos.getZ()
+            }
+            Text message = VersionedText.format(
+                    VersionedText.translatable(
+                            "neruina.ticking.block_state",
+                            instance.getBlock()
+                                    .getName()
+                                    .getString(),
+                            pos.getX(),
+                            pos.getY(),
+                            pos.getZ()
+                    )
             );
             Neruina.LOGGER.warn("Neruina Caught An Exception, see below for cause", e);
             addErrored(instance, pos);
@@ -142,16 +156,19 @@ public final class NeruinaTickHandler {
             }
             original.call(instance, world, pos, state, blockEntity);
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingBlockEntities)
+            if (!Config.getInstance().handleTickingBlockEntities) {
                 throw TickingException.notHandled("handle_ticking_block_entities", e);
-            Text message = VersionedText.translatable(
-                    "neruina.ticking.block_entity",
-                    state.getBlock()
-                         .getName()
-                         .getString(),
-                    pos.getX(),
-                    pos.getY(),
-                    pos.getZ()
+            }
+            Text message = VersionedText.format(
+                    VersionedText.translatable(
+                            "neruina.ticking.block_entity",
+                            state.getBlock()
+                                 .getName()
+                                 .getString(),
+                            pos.getX(),
+                            pos.getY(),
+                            pos.getZ()
+                    )
             );
             Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
             addErrored(blockEntity);
@@ -188,13 +205,15 @@ public final class NeruinaTickHandler {
         addErrored(entity);
         if (!entity.getWorld().isClient()) {
             Vec3d pos = entity.getPos();
-            Text message = VersionedText.translatable(
-                    "neruina.ticking.entity",
-                    entity.getName()
-                          .getString(),
-                    Math.floor(pos.x),
-                    Math.floor(pos.y),
-                    Math.floor(pos.z)
+            Text message = VersionedText.format(
+                    VersionedText.translatable(
+                            "neruina.ticking.entity",
+                            entity.getName()
+                                  .getString(),
+                            Math.floor(pos.x),
+                            Math.floor(pos.y),
+                            Math.floor(pos.z)
+                    )
             );
             broadcastToPlayers(
                     entity.getServer(),
@@ -214,7 +233,7 @@ public final class NeruinaTickHandler {
         ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
         String name = player.getDisplayName() == null ? player.getName().getString() : player.getDisplayName()
                                                                                              .getString();
-        Text message = VersionedText.translatable("neruina.ticking.player", name);
+        Text message = VersionedText.format(VersionedText.translatable("neruina.ticking.player", name));
         broadcastToPlayers(
                 server,
                 VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e))
@@ -226,11 +245,11 @@ public final class NeruinaTickHandler {
         Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
         clientPlayer.getEntityWorld().disconnect();
         MinecraftClient client = MinecraftClient.getInstance();
-        /*? if >=1.19 {*/
+        /*? if >=1.19 {*//*
         client.disconnect(new MessageScreen(VersionedText.translatable("menu.savingLevel")));
-        /*? } else {*//*
+        *//*? } else {*/
         client.disconnect(new SaveLevelScreen(VersionedText.translatable("menu.savingLevel")));
-        *//*? }*/
+        /*? }*/
         client.setScreen(new TitleScreen());
         client.getToastManager().add(SystemToast.create(
                 client,
@@ -244,11 +263,12 @@ public final class NeruinaTickHandler {
         switch (Config.getInstance().logLevel) {
             case DISABLED -> {
             }
-            /*? if >=1.19 {*/
+            /*? if >=1.19 {*//*
             case EVERYONE -> server.getPlayerManager().broadcast(message, false);
-            /*? } else {*//*
-            case EVERYONE -> server.getPlayerManager().getPlayerList().forEach(player -> player.sendMessage(message, false));
-            *//*? }*/
+            *//*? } else {*/
+            case EVERYONE ->
+                    server.getPlayerManager().getPlayerList().forEach(player -> player.sendMessage(message, false));
+            /*? }*/
             case OPERATORS -> server.getPlayerManager()
                                     .getPlayerList()
                                     .stream()
@@ -258,16 +278,17 @@ public final class NeruinaTickHandler {
     }
 
     private Text generateActions(Throwable e) {
-        StackTraceElement[] trace = e.getStackTrace();
-        StringBuilder traceString = new StringBuilder();
-        for (StackTraceElement stackTraceElement : trace) {
-            traceString.append(stackTraceElement.toString()).append("\n");
-        }
+        StringWriter traceString = new StringWriter();
+        PrintWriter writer = new PrintWriter(traceString);
+        e.printStackTrace(writer);
+        String trace = traceString.toString();
+        writer.flush();
+        writer.close();
         return VersionedText.concat(
                 Texts.bracketed(
                         VersionedText.withStyle(
                                 VersionedText.translatable("neruina.open_log"),
-                                style -> style.withColor(Formatting.AQUA)
+                                style -> style.withColor(Formatting.GREEN)
                                               .withClickEvent(new ClickEvent(
                                                       ClickEvent.Action.OPEN_FILE,
                                                       Platform.getLogPath().toString()
@@ -281,10 +302,10 @@ public final class NeruinaTickHandler {
                 Texts.bracketed(
                         VersionedText.withStyle(
                                 VersionedText.translatable("neruina.copy_crash"),
-                                style -> style.withColor(Formatting.RED)
+                                style -> style.withColor(Formatting.GOLD)
                                               .withClickEvent(new ClickEvent(
                                                       ClickEvent.Action.COPY_TO_CLIPBOARD,
-                                                      traceString.toString()
+                                                      trace
                                               ))
                                               .withHoverEvent(new HoverEvent(
                                                       HoverEvent.Action.SHOW_TEXT,

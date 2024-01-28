@@ -66,6 +66,8 @@ stonecutter.expression(expression -> {
 			return isForge
 		case "neoforge":
 			return isNeoForge
+		case "dev":
+			return !project.gradle.startParameter.taskNames.contains("chiseledBuild")
 		default:
 			return null
 	}

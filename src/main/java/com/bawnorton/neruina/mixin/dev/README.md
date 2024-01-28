@@ -1,0 +1,1 @@
+Contained mixins will not have any content in production JAR and will not apply.

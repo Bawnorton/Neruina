@@ -1,6 +1,7 @@
 package com.bawnorton.neruina.mixin;
 
 import com.bawnorton.neruina.annotation.ConditionalMixin;
+import com.bawnorton.neruina.annotation.DevOnlyMixin;
 import com.bawnorton.neruina.platform.Platform;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import org.objectweb.asm.Type;
@@ -51,12 +52,22 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
                     List<String> modids = Annotations.getValue(node, "modids");
                     boolean applyIfPresent = Annotations.getValue(node, "applyIfPresent", Boolean.TRUE);
                     if (anyModsLoaded(modids)) {
-                        LOGGER.debug(className + " is" + (applyIfPresent ? " " : " not ") + "being applied because " + modids + " are loaded");
+                        LOGGER.debug("%s is%sbeing applied because %s are loaded".formatted(
+                                className,
+                                applyIfPresent ? " " : " not ",
+                                modids
+                        ));
                         shouldApply = applyIfPresent;
                     } else {
-                        LOGGER.debug(className + " is" + (!applyIfPresent ? " " : " not ") + "being applied because " + modids + " are not loaded");
+                        LOGGER.debug("%s is%sbeing applied because %s are not loaded".formatted(
+                                className,
+                                !applyIfPresent ? " " : " not ",
+                                modids
+                        ));
                         shouldApply = !applyIfPresent;
                     }
+                } else if (node.desc.equals(Type.getDescriptor(DevOnlyMixin.class))) {
+                    return Platform.isDev();
                 }
             }
             return shouldApply;

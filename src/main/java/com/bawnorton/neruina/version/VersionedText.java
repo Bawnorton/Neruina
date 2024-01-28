@@ -3,22 +3,32 @@ package com.bawnorton.neruina.version;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+/*? if <1.19 {*/
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
+/*? } */
 
 import java.util.function.UnaryOperator;
 
 public interface VersionedText {
-    /*? if >=1.19 {*/
-    Text LINE_BREAK = Text.literal("\n");
-    /*? } else { *//*
-    Text LINE_BREAK = new LiteralText("\n");
-    *//*? } */
+    Text LINE_BREAK = literal("\n");
+    Text NERUINA_HEADER = withStyle(literal("[Neruina]: "), style -> style.withColor(Formatting.AQUA));
+
+    static Text literal(String text) {
+        /*? if >=1.19 {*//*
+        return Text.literal(text);
+        *//*? } else { */
+        return new LiteralText(text);
+        /*? } */
+    }
 
     static Text translatable(String key, Object... args) {
-        /*? if >=1.19 {*/
+        /*? if >=1.19 {*//*
         return Text.translatable(key, args);
-        /*? } else { *//*
+        *//*? } else { */
         return new TranslatableText(key, args);
-        *//*? } */
+        /*? } */
     }
 
     static Text withStyle(Text text, UnaryOperator<Style> style) {
@@ -29,11 +39,11 @@ public interface VersionedText {
     }
 
     static Text concat(Text... texts) {
-        /*? if >=1.19 {*/
+        /*? if >=1.19 {*//*
         MutableText text = Text.empty();
-        /*? } else { *//*
+        *//*? } else { */
         MutableText text = new LiteralText("");
-        *//*? } */
+        /*? } */
         for (Text t : texts) {
             text.append(t);
         }
@@ -41,11 +51,11 @@ public interface VersionedText {
     }
 
     static Text concatDelimited(Text delimiter, Text... texts) {
-        /*? if >=1.19 {*/
+        /*? if >=1.19 {*//*
         MutableText text = Text.empty();
-        /*? } else { *//*
+        *//*? } else { */
         MutableText text = new LiteralText("");
-        *//*? } */
+        /*? } */
         for (int i = 0; i < texts.length; i++) {
             text.append(texts[i]);
             if (i != texts.length - 1) {
@@ -53,5 +63,9 @@ public interface VersionedText {
             }
         }
         return text;
+    }
+
+    static Text format(Text text) {
+        return concat(NERUINA_HEADER, withStyle(text, style -> style.withColor(Formatting.RED)));
     }
 }

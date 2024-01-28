@@ -12,6 +12,10 @@
     "catchers.WorldMixin",
     "compat.itshallnottick.WorldMixin",
     "compat.noseenotick.WorldMixin",
+    "dev.TestBlockEntityCrashMixin",
+    "dev.TestBlockStateCrashMixin",
+    "dev.TestEntityCrashMixin",
+    "dev.TestItemStackCrashMixin",
     "errorable.ErrorableBlockStateMixin",
     "errorable.ErrorableMixin",
     "invoker.WorldChunkInvoker"

@@ -1,7 +1,7 @@
 {
   "neruina.ticking.entity": "Caught Ticking Entity [%s] at position [x=%s, y=%s, z=%s]. It has been killed, see your logs for more info.",
   "neruina.ticking.block_entity": "Caught Ticking Block Entity [%s] at position [x=%s, y=%s, z=%s]. See your logs for more info.",
-  "neruina.ticking.block_state": "Caught Ticking BlockState from random tick [%s] at position [x=%s, y=%s, z=%s]. See yourlogs for more info.",
+  "neruina.ticking.block_state": "Caught Ticking Block from random tick [%s] at position [x=%s, y=%s, z=%s]. See your logs for more info.",
   "neruina.ticking.player": "Caught Ticking Player, %s has been kicked. See your logs for more info.",
   "neruina.ticking.item_stack": "Caught Ticking Item Stack [%s] in slot [%s]. See your logs for more info.",
   "neruina.kick.message": "You have been kicked due to a ticking exception on your player. Server logs will have more info.",

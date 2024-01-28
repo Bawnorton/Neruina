@@ -7,5 +7,9 @@
   "neruina.ticking.item_stack": "Обнаружена ошибка такта стака предметов [%s] в слоте [%s]. Требуется удалить его.",
   "neruina.ticking.player": "Обнаружена ошибка такта игрока. %s был выгнан.",
   "neruina.toast.desc": "Neruina caught a ticking execption on your client, see your logs for more info.",
-  "neruina.toast.title": "Ticking Exception"
+  "neruina.toast.title": "Ticking Exception",
+  "neruina.open_log": "Open Log",
+  "neruina.open_log.tooltip": "Opens your latest.log file",
+  "neruina.copy_crash": "Copy Crash",
+  "neruina.copy_crash.tooltip": "Copies the caught ticking exception to your clipboard"
 }
