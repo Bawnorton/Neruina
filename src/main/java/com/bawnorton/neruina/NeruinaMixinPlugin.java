@@ -1,9 +1,10 @@
-package com.bawnorton.neruina.mixin;
+package com.bawnorton.neruina;
 
 import com.bawnorton.neruina.annotation.ConditionalMixin;
 import com.bawnorton.neruina.annotation.DevOnlyMixin;
+import com.bawnorton.neruina.annotation.ModLoaderMixin;
+import com.bawnorton.neruina.platform.ModLoader;
 import com.bawnorton.neruina.platform.Platform;
-import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -13,7 +14,6 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.service.MixinService;
 import org.spongepowered.asm.util.Annotations;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +30,6 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
-        MixinExtrasBootstrap.init();
     }
 
     @Override
@@ -66,8 +65,20 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
                         ));
                         shouldApply = !applyIfPresent;
                     }
+                } else if (node.desc.equals(Type.getDescriptor(ModLoaderMixin.class))) {
+                    List<ModLoader> modLoaders = Annotations.getValue(node, "value", true, ModLoader.class);
+                    shouldApply = modLoaders.contains(Platform.getModLoader());
+                    LOGGER.debug("%s is%sbeing applied because %s is the current mod loader".formatted(
+                            className,
+                            shouldApply ? " " : " not ",
+                            Platform.getModLoader()
+                    ));
                 } else if (node.desc.equals(Type.getDescriptor(DevOnlyMixin.class))) {
-                    return Platform.isDev();
+                    shouldApply = Platform.isDev();
+                    LOGGER.debug("%s is%sbeing applied because we are in a dev environment".formatted(
+                            className,
+                            shouldApply ? " " : " not "
+                    ));
                 }
             }
             return shouldApply;

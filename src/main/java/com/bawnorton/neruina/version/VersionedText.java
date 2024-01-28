@@ -3,10 +3,10 @@ package com.bawnorton.neruina.version;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 /*? if <1.19 {*/
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Formatting;
 /*? } */
 
 import java.util.function.UnaryOperator;

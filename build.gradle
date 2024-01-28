@@ -49,7 +49,7 @@ dependencies {
 		modImplementation "net.fabricmc:fabric-loader:${project.deps_fabric_loader}"
 	} else if (isForge) {
 		forge "net.minecraftforge:forge:$minecraft_version-${project.deps_fml}"
-		annotationProcessor implementation("io.github.llamalad7:mixinextras-common:${project.deps_mixin_extras}")
+		annotationProcessor compileOnly("io.github.llamalad7:mixinextras-common:${project.deps_mixin_extras}")
 		include implementation("io.github.llamalad7:mixinextras-forge:${project.deps_mixin_extras}")
 		modCompileOnly "curse.maven:it-shall-not-tick-619355:${project.deps_it_shall_not_tick}"
 		modCompileOnly "curse.maven:no-see-no-tick-833405:${project.deps_no_see_no_tick}"
@@ -99,20 +99,33 @@ if (stonecutter.current.active) {
 }
 
 tasks.processResources {
-	inputs.property("version", mod_version)
-	inputs.property("minecraft_version", minecraft_dependency)
-	inputs.property("loader_version", loader_version)
-
 	def map = [
 		"version": mod_version,
 		"minecraft_version": minecraft_dependency,
-		"loader_version": loader_version
+		"loader_version": loader_version,
+		"dep_type": "",
+		"mixins": ""
 	]
+	if(isForge) {
+		map.dep_type = "mandatory = true"
+	} else if (isNeoForge) {
+		map.dep_type = "type = \"required\""
+		map.mixins = "[[mixins]]\nconfig = \"neruina.mixins.json\""
+	}
 
+	inputs.properties(map)
 	filesMatching("fabric.mod.json") {expand(map) }
 	filesMatching("META-INF/mods.toml") {expand(map) }
 }
 
 java {
 	withSourcesJar()
+}
+
+if(isForge && project_name.contains("1.20")) {
+	sourceSets.each {
+		def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+		it.output.resourcesDir = dir
+		it.java.destinationDirectory = dir
+	}
 }

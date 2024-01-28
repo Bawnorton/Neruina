@@ -13,9 +13,11 @@ This is a mod that prevents ticking entity and ticking block entity / tile entit
 '''
 logoFile = "icon.png"
 
+${mixins}
+
 [[dependencies.neruina]]
 modId = "minecraft"
-mandatory = true
+${dep_type}
 versionRange = "${minecraft_version}"
 ordering = "NONE"
 side = "BOTH"

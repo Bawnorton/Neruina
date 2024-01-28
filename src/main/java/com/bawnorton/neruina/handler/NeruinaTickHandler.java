@@ -7,6 +7,7 @@ import com.bawnorton.neruina.extend.Errorable;
 import com.bawnorton.neruina.extend.ErrorableBlockState;
 import com.bawnorton.neruina.mixin.invoker.WorldChunkInvoker;
 import com.bawnorton.neruina.platform.Platform;
+import com.bawnorton.neruina.thread.ConditionalRunnable;
 import com.bawnorton.neruina.version.VersionedText;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.block.BlockState;
@@ -36,7 +37,7 @@ import java.util.function.Consumer;
 
 /*? if >=1.19 {*//*
 import net.minecraft.client.gui.screen.MessageScreen;
-/*? } else {*/
+*//*? } else {*/
 import net.minecraft.client.gui.screen.SaveLevelScreen;
 /*? }*/
 
@@ -46,29 +47,16 @@ public final class NeruinaTickHandler {
             if (isErrored(instance)) return;
             original.call(instance, world, entity, slot, selected);
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingItemStacks) {
-                throw TickingException.notHandled("handle_ticking_item_stacks", e);
-            }
-            Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
-            addErrored(instance);
-            if (!world.isClient() && entity instanceof PlayerEntity player) {
-                player.sendMessage(
-                        VersionedText.concatDelimited(
-                                VersionedText.LINE_BREAK,
-                                VersionedText.format(
-                                        VersionedText.translatable(
-                                                "neruina.ticking.item_stack",
-                                                instance.getItem()
-                                                        .getName()
-                                                        .getString(),
-                                                slot
-                                        )
-                                ),
-                                generateActions(e)
-                        ),
-                        false
-                );
-            }
+            handleTickingItemStack(e, instance, !world.isClient(), (PlayerEntity) entity, slot);
+        }
+    }
+
+    public void safelyTickItemStack(ItemStack instance, World world, PlayerEntity player, int slot, int selected, Operation<Void> original) {
+        try {
+            if (isErrored(instance)) return;
+            original.call(instance, world, player, slot, selected);
+        } catch (Throwable e) {
+            handleTickingItemStack(e, instance, !world.isClient(), player, slot);
         }
     }
 
@@ -85,7 +73,7 @@ public final class NeruinaTickHandler {
             if (!Config.getInstance().handleTickingEntities) {
                 throw TickingException.notHandled("handle_ticking_entities", e);
             }
-            handleEntityTicking(entity, e);
+            handleTickingEntity(entity, e);
         }
     }
 
@@ -102,7 +90,7 @@ public final class NeruinaTickHandler {
             if (!Config.getInstance().handleTickingEntities) {
                 throw TickingException.notHandled("handle_ticking_entities", e);
             }
-            handleEntityTicking(entity, e);
+            handleTickingEntity(entity, e);
         }
     }
 
@@ -181,6 +169,32 @@ public final class NeruinaTickHandler {
         }
     }
 
+    private void handleTickingItemStack(Throwable e, ItemStack instance, boolean world, PlayerEntity player, int slot) {
+        if (!Config.getInstance().handleTickingItemStacks) {
+            throw TickingException.notHandled("handle_ticking_item_stacks", e);
+        }
+        Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
+        addErrored(instance);
+        if (world) {
+            player.sendMessage(
+                    VersionedText.concatDelimited(
+                            VersionedText.LINE_BREAK,
+                            VersionedText.format(
+                                    VersionedText.translatable(
+                                            "neruina.ticking.item_stack",
+                                            instance.getItem()
+                                                    .getName()
+                                                    .getString(),
+                                            slot
+                                    )
+                            ),
+                            generateActions(e)
+                    ),
+                    false
+            );
+        }
+    }
+
     private void handleErroredEntity(Entity entity) {
         try {
             if (entity instanceof PlayerEntity) return;
@@ -195,7 +209,7 @@ public final class NeruinaTickHandler {
         }
     }
 
-    private void handleEntityTicking(Entity entity, Throwable e) {
+    private void handleTickingEntity(Entity entity, Throwable e) {
         if (entity instanceof PlayerEntity player) {
             handleTickingPlayer(player, e);
             return;
@@ -260,21 +274,24 @@ public final class NeruinaTickHandler {
     }
 
     private void broadcastToPlayers(MinecraftServer server, Text message) {
-        switch (Config.getInstance().logLevel) {
-            case DISABLED -> {
+        ConditionalRunnable.create(() -> {
+            switch (Config.getInstance().logLevel) {
+                case DISABLED -> {
+                }
+                /*? if >=1.19 {*//*
+                case EVERYONE -> server.getPlayerManager().broadcast(message, false);
+                *//*? } else {*/
+                case EVERYONE -> server.getPlayerManager()
+                                       .getPlayerList()
+                                       .forEach(player -> player.sendMessage(message, false));
+                /*? }*/
+                case OPERATORS -> server.getPlayerManager()
+                                        .getPlayerList()
+                                        .stream()
+                                        .filter(player -> server.getPermissionLevel(player.getGameProfile()) >= server.getOpPermissionLevel())
+                                        .forEach(player -> player.sendMessage(message, false));
             }
-            /*? if >=1.19 {*//*
-            case EVERYONE -> server.getPlayerManager().broadcast(message, false);
-            *//*? } else {*/
-            case EVERYONE ->
-                    server.getPlayerManager().getPlayerList().forEach(player -> player.sendMessage(message, false));
-            /*? }*/
-            case OPERATORS -> server.getPlayerManager()
-                                    .getPlayerList()
-                                    .stream()
-                                    .filter(player -> server.getPermissionLevel(player.getGameProfile()) >= server.getOpPermissionLevel())
-                                    .forEach(player -> player.sendMessage(message, false));
-        }
+        }, () -> server.getPlayerManager().getCurrentPlayerCount() > 0);
     }
 
     private Text generateActions(Throwable e) {
