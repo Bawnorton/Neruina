@@ -3,8 +3,8 @@
 - Added NeoForge support
 - Added new actions to the ticking entity broadcast
   - What Is This?: Opens the Neruina wiki page 
-  - Open Log: Opens your latest.log file
   - Copy Crash: Copies the cause of the ticking exception to your clipboard
+  - Open Log: Opens your latest.log file (Only present if Neruina is installed on the client)
 - Improved performance and memory usage by delegating the errored state to the ticking entity
 - Migrated to Stonecutter to ease multi-loader multi-version development
 
