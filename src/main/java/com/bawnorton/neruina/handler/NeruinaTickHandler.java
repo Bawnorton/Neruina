@@ -6,7 +6,6 @@ import com.bawnorton.neruina.exception.TickingException;
 import com.bawnorton.neruina.extend.Errorable;
 import com.bawnorton.neruina.extend.ErrorableBlockState;
 import com.bawnorton.neruina.mixin.invoker.WorldChunkInvoker;
-import com.bawnorton.neruina.platform.Platform;
 import com.bawnorton.neruina.thread.ConditionalRunnable;
 import com.bawnorton.neruina.version.VersionedText;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -35,11 +34,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.function.Consumer;
 
-/*? if >=1.19 {*//*
+/*? if >=1.19 {*/
 import net.minecraft.client.gui.screen.MessageScreen;
-*//*? } else {*/
+/*? } else {*//*
 import net.minecraft.client.gui.screen.SaveLevelScreen;
-/*? }*/
+*//*? }*/
 
 public final class NeruinaTickHandler {
     public void safelyTickItemStack(ItemStack instance, World world, Entity entity, int slot, boolean selected, Operation<Void> original) {
@@ -114,8 +113,9 @@ public final class NeruinaTickHandler {
                 throw TickingException.notHandled("handle_ticking_block_states", e);
             }
             Text message = VersionedText.format(
-                    VersionedText.translatable(
+                    VersionedText.translatableWithFallback(
                             "neruina.ticking.block_state",
+                            "Caught Ticking Block from random tick [%s] at position [x=%s, y=%s, z=%s]. See your logs for more info.",
                             instance.getBlock()
                                     .getName()
                                     .getString(),
@@ -148,8 +148,9 @@ public final class NeruinaTickHandler {
                 throw TickingException.notHandled("handle_ticking_block_entities", e);
             }
             Text message = VersionedText.format(
-                    VersionedText.translatable(
+                    VersionedText.translatableWithFallback(
                             "neruina.ticking.block_entity",
+                            "Caught Ticking Block Entity [%s] at position [x=%s, y=%s, z=%s]. See your logs for more info.",
                             state.getBlock()
                                  .getName()
                                  .getString(),
@@ -180,8 +181,9 @@ public final class NeruinaTickHandler {
                     VersionedText.concatDelimited(
                             VersionedText.LINE_BREAK,
                             VersionedText.format(
-                                    VersionedText.translatable(
+                                    VersionedText.translatableWithFallback(
                                             "neruina.ticking.item_stack",
+                                            "Caught Ticking Item Stack [%s] in slot [%s]. See your logs for more info.",
                                             instance.getItem()
                                                     .getName()
                                                     .getString(),
@@ -220,8 +222,9 @@ public final class NeruinaTickHandler {
         if (!entity.getWorld().isClient()) {
             Vec3d pos = entity.getPos();
             Text message = VersionedText.format(
-                    VersionedText.translatable(
+                    VersionedText.translatableWithFallback(
                             "neruina.ticking.entity",
+                            "Caught Ticking Entity [%s] at position [x=%s, y=%s, z=%s]. It has been killed, see your logs for more info.",
                             entity.getName()
                                   .getString(),
                             Math.floor(pos.x),
@@ -247,29 +250,47 @@ public final class NeruinaTickHandler {
         ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
         String name = player.getDisplayName() == null ? player.getName().getString() : player.getDisplayName()
                                                                                              .getString();
-        Text message = VersionedText.format(VersionedText.translatable("neruina.ticking.player", name));
+        Text message = VersionedText.format(VersionedText.translatableWithFallback(
+                "neruina.ticking.player",
+                "Caught Ticking Player, %s has been kicked. See your logs for more info.",
+                name
+        ));
         broadcastToPlayers(
                 server,
                 VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e))
         );
-        serverPlayer.networkHandler.disconnect(VersionedText.translatable("neruina.kick.message"));
+        serverPlayer.networkHandler.disconnect(
+                VersionedText.concat(
+                        VersionedText.translatableWithFallback(
+                                "neruina.kick.message",
+                                "You have been kicked due to a ticking exception on your player. Server logs will have more info."
+                        ),
+                        VersionedText.translatableWithFallback(
+                                "neruina.kick.reason",
+                                "\n\nWhy was I kicked?\n\nWhen a ticking exception occurs on a normal entity Neruina will kill it to prevent the server from crashing, but if that entity happens to be a player, it will kick them instead. If you weren't kicked the server would have crashed."
+                        )
+                )
+        );
     }
 
     private void handleTickingClient(PlayerEntity clientPlayer, Throwable e) {
         Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
         clientPlayer.getEntityWorld().disconnect();
         MinecraftClient client = MinecraftClient.getInstance();
-        /*? if >=1.19 {*//*
+        /*? if >=1.19 {*/
         client.disconnect(new MessageScreen(VersionedText.translatable("menu.savingLevel")));
-        *//*? } else {*/
+        /*? } else {*//*
         client.disconnect(new SaveLevelScreen(VersionedText.translatable("menu.savingLevel")));
-        /*? }*/
+        *//*? }*/
         client.setScreen(new TitleScreen());
         client.getToastManager().add(SystemToast.create(
                 client,
                 SystemToast.Type.WORLD_ACCESS_FAILURE,
-                VersionedText.translatable("neruina.toast.title"),
-                VersionedText.translatable("neruina.toast.desc")
+                VersionedText.translatableWithFallback("neruina.toast.title", "Ticking Exception"),
+                VersionedText.translatableWithFallback(
+                        "neruina.toast.desc",
+                        "Neruina caught a ticking execption on your client, see your logs for more info."
+                )
         ));
     }
 
@@ -278,13 +299,13 @@ public final class NeruinaTickHandler {
             switch (Config.getInstance().logLevel) {
                 case DISABLED -> {
                 }
-                /*? if >=1.19 {*//*
+                /*? if >=1.19 {*/
                 case EVERYONE -> server.getPlayerManager().broadcast(message, false);
-                *//*? } else {*/
+                /*? } else {*//*
                 case EVERYONE -> server.getPlayerManager()
                                        .getPlayerList()
                                        .forEach(player -> player.sendMessage(message, false));
-                /*? }*/
+                *//*? }*/
                 case OPERATORS -> server.getPlayerManager()
                                         .getPlayerList()
                                         .stream()
@@ -301,24 +322,28 @@ public final class NeruinaTickHandler {
         String trace = traceString.toString();
         writer.flush();
         writer.close();
-        return VersionedText.concat(
+        return VersionedText.concatDelimited(
+                VersionedText.SPACE,
                 Texts.bracketed(
                         VersionedText.withStyle(
-                                VersionedText.translatable("neruina.open_log"),
+                                VersionedText.translatableWithFallback("neruina.info", "What Is This?"),
                                 style -> style.withColor(Formatting.GREEN)
                                               .withClickEvent(new ClickEvent(
-                                                      ClickEvent.Action.OPEN_FILE,
-                                                      Platform.getLogPath().toString()
+                                                      ClickEvent.Action.OPEN_URL,
+                                                      "https://github.com/Bawnorton/Neruina/wiki/What-Is-This%3F"
                                               ))
                                               .withHoverEvent(new HoverEvent(
                                                       HoverEvent.Action.SHOW_TEXT,
-                                                      VersionedText.translatable("neruina.open_log.tooltip")
+                                                      VersionedText.translatableWithFallback(
+                                                              "neruina.info.tooltip",
+                                                              "Click here to learn more about ticking exceptions and what Neruina does"
+                                                      )
                                               ))
                         )
                 ),
                 Texts.bracketed(
                         VersionedText.withStyle(
-                                VersionedText.translatable("neruina.copy_crash"),
+                                VersionedText.translatableWithFallback("neruina.copy_crash", "Copy Crash"),
                                 style -> style.withColor(Formatting.GOLD)
                                               .withClickEvent(new ClickEvent(
                                                       ClickEvent.Action.COPY_TO_CLIPBOARD,
@@ -326,7 +351,10 @@ public final class NeruinaTickHandler {
                                               ))
                                               .withHoverEvent(new HoverEvent(
                                                       HoverEvent.Action.SHOW_TEXT,
-                                                      VersionedText.translatable("neruina.copy_crash.tooltip")
+                                                      VersionedText.translatableWithFallback(
+                                                              "neruina.copy_crash.tooltip",
+                                                              "Copies the caught ticking exception to your clipboard"
+                                                      )
                                               ))
                         )
                 )

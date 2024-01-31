@@ -4,31 +4,40 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-/*? if <1.19 {*/
+/*? if <1.19 {*//*
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
-/*? } */
+*//*? } */
 
 import java.util.function.UnaryOperator;
 
 public interface VersionedText {
     Text LINE_BREAK = literal("\n");
+    Text SPACE = literal(" ");
     Text NERUINA_HEADER = withStyle(literal("[Neruina]: "), style -> style.withColor(Formatting.AQUA));
 
     static Text literal(String text) {
-        /*? if >=1.19 {*//*
+        /*? if >=1.19 {*/
         return Text.literal(text);
-        *//*? } else { */
+        /*? } else { *//*
         return new LiteralText(text);
-        /*? } */
+        *//*? } */
     }
 
     static Text translatable(String key, Object... args) {
-        /*? if >=1.19 {*//*
+        /*? if >=1.19 {*/
         return Text.translatable(key, args);
-        *//*? } else { */
+        /*? } else { *//*
         return new TranslatableText(key, args);
-        /*? } */
+        *//*? } */
+    }
+
+    static Text translatableWithFallback(String key, String fallback, Object... args) {
+        /*? if >=1.19 {*/
+        return Text.translatableWithFallback(key, fallback, args);
+        /*? } else { *//*
+        return new TranslatableText(key, fallback, args);
+        *//*? } */
     }
 
     static Text withStyle(Text text, UnaryOperator<Style> style) {
@@ -39,11 +48,11 @@ public interface VersionedText {
     }
 
     static Text concat(Text... texts) {
-        /*? if >=1.19 {*//*
+        /*? if >=1.19 {*/
         MutableText text = Text.empty();
-        *//*? } else { */
+        /*? } else { *//*
         MutableText text = new LiteralText("");
-        /*? } */
+        *//*? } */
         for (Text t : texts) {
             text.append(t);
         }
@@ -51,11 +60,11 @@ public interface VersionedText {
     }
 
     static Text concatDelimited(Text delimiter, Text... texts) {
-        /*? if >=1.19 {*//*
+        /*? if >=1.19 {*/
         MutableText text = Text.empty();
-        *//*? } else { */
+        /*? } else { *//*
         MutableText text = new LiteralText("");
-        /*? } */
+        *//*? } */
         for (int i = 0; i < texts.length; i++) {
             text.append(texts[i]);
             if (i != texts.length - 1) {

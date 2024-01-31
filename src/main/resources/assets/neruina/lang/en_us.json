@@ -8,6 +8,8 @@
   "neruina.kick.reason": "\n\nWhy was I kicked?\n\nWhen a ticking exception occurs on a normal entity Neruina will kill it to prevent the server from crashing, but if that entity happens to be a player, it will kick them instead. If you weren't kicked the server would have crashed.",
   "neruina.toast.title": "Ticking Exception",
   "neruina.toast.desc": "Neruina caught a ticking execption on your client, see your logs for more info.",
+  "neruina.info": "What Is This?",
+  "neruina.info.tooltip": "Click here to learn more about ticking exceptions and what Neruina does",
   "neruina.open_log": "Open Log",
   "neruina.open_log.tooltip": "Opens your latest.log file",
   "neruina.copy_crash": "Copy Crash",
