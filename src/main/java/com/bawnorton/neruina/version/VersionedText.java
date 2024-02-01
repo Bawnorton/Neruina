@@ -36,7 +36,7 @@ public interface VersionedText {
         /*? if >=1.19 {*/
         return Text.translatableWithFallback(key, fallback, args);
         /*? } else { *//*
-        return new TranslatableText(key, fallback, args);
+        return new TranslatableText(key, args);
         *//*? } */
     }
 

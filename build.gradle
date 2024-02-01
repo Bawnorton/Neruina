@@ -53,6 +53,7 @@ dependencies {
 		include implementation("io.github.llamalad7:mixinextras-forge:${project.deps_mixin_extras}")
 		modCompileOnly "curse.maven:it-shall-not-tick-619355:${project.deps_it_shall_not_tick}"
 		modCompileOnly "curse.maven:no-see-no-tick-833405:${project.deps_no_see_no_tick}"
+		modImplementation "curse.maven:doespotatotick-825355:${project.deps_does_potato_tick}"
 	} else if (isNeoForge) {
 		neoForge "net.neoforged:neoforge:${project.deps_neoforge}"
 	}

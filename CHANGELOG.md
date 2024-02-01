@@ -4,7 +4,7 @@
 - Added new actions to the ticking entity broadcast
   - What Is This?: Opens the Neruina wiki page 
   - Copy Crash: Copies the cause of the ticking exception to your clipboard
-  - Open Log: Opens your latest.log file (Only present if Neruina is installed on the client)
+  - Open Log: Opens your latest.log file (Only present in singleplayer)
 - Improved performance and memory usage by delegating the errored state to the ticking entity
 - Migrated to Stonecutter to ease multi-loader multi-version development
 
@@ -17,3 +17,4 @@
 
 ### Fixes
 - Fixed a crash with newer versions of Forge
+- Fixed a crash with does potato tick 1.18.2

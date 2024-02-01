@@ -12,6 +12,8 @@
     "catchers.WorldChunkMixin$DirectBlockEntityTickInvokerMixin",
     "catchers.WorldMixin",
     "catchers.forge.PlayerInventoryMixin",
+    "compat.doespotatotick.DPTUtilsMixin",
+    "compat.doespotatotick.WorldMixin",
     "compat.itshallnottick.WorldMixin",
     "compat.noseenotick.WorldMixin",
     "dev.TestBlockEntityCrashMixin",
