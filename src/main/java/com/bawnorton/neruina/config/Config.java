@@ -5,6 +5,10 @@ public final class Config {
 
     public LogLevel logLevel;
 
+    public Boolean autoKillTickingEntities;
+
+    public Integer tickingExceptionThreshold;
+
     public Boolean handleTickingEntities;
 
     public Boolean handleTickingBlockEntities;

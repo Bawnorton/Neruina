@@ -2,7 +2,7 @@ package com.bawnorton.neruina.platform;
 
 import com.bawnorton.neruina.Neruina;
 
-/*? if fabric {*/
+/*? if fabric {*//*
 import net.fabricmc.api.ModInitializer;
 
 public class NeruinaWrapper implements ModInitializer {
@@ -11,7 +11,7 @@ public class NeruinaWrapper implements ModInitializer {
         Neruina.init();
     }
 }
-/*? } elif forge {*//*
+*//*? } elif forge {*/
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(Neruina.MOD_ID)
@@ -20,7 +20,7 @@ public class NeruinaWrapper {
         Neruina.init();
     }
 }
-*//*? } elif neoforge {*//*
+/*? } elif neoforge {*//*
 import net.neoforged.fml.common.Mod;
 
 @Mod(Neruina.MOD_ID)

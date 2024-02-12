@@ -20,6 +20,10 @@ public class ConditionalRunnable {
     }
 
     public void start() {
+        if (conditionChecker.checkCondition()) {
+            runnable.run();
+            return;
+        }
         scheduler.scheduleAtFixedRate(this::executeIfConditionSucceeds, 0, 10, TimeUnit.MILLISECONDS);
     }
 

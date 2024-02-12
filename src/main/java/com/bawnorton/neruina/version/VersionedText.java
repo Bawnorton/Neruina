@@ -2,7 +2,6 @@ package com.bawnorton.neruina.version;
 
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
-
 import java.util.function.UnaryOperator;
 
 public interface VersionedText {
@@ -66,6 +65,18 @@ public interface VersionedText {
             }
         }
         return text;
+    }
+
+    static Text pad(Text text) {
+        /*? if >=1.19 {*/
+        MutableText padded = Text.empty();
+        /*? } else { *//*
+        MutableText padded = new LiteralText("");
+        *//*? } */
+        padded.append(LINE_BREAK);
+        padded.append(text);
+        padded.append(LINE_BREAK);
+        return padded;
     }
 
     static Text format(Text text) {

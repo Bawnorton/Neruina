@@ -1,17 +1,33 @@
 {
-  "neruina.ticking.entity": "Caught Ticking Entity [%s] at position [x=%s, y=%s, z=%s]. It has been killed, see your logs for more info.",
+  "neruina.ticking.entity": "Caught Ticking Entity [%s] at position [x=%s, y=%s, z=%s]. It has been %s, see your logs for more info.",
+  "neruina.ticking.entity.suspend_failed": "Could not suspend entity [%s], killing it instead.",
   "neruina.ticking.block_entity": "Caught Ticking Block Entity [%s] at position [x=%s, y=%s, z=%s]. See your logs for more info.",
   "neruina.ticking.block_state": "Caught Ticking Block from random tick [%s] at position [x=%s, y=%s, z=%s]. See your logs for more info.",
   "neruina.ticking.player": "Caught Ticking Player, %s has been kicked. See your logs for more info.",
   "neruina.ticking.item_stack": "Caught Ticking Item Stack [%s] in slot [%s]. See your logs for more info.",
+
   "neruina.kick.message": "You have been kicked due to a ticking exception on your player. Server logs will have more info.",
   "neruina.kick.reason": "\n\nWhy was I kicked?\n\nWhen a ticking exception occurs on a normal entity Neruina will kill it to prevent the server from crashing, but if that entity happens to be a player, it will kick them instead. If you weren't kicked the server would have crashed.",
+
   "neruina.toast.title": "Ticking Exception",
   "neruina.toast.desc": "Neruina caught a ticking execption on your client, see your logs for more info.",
+
   "neruina.info": "What Is This?",
   "neruina.info.tooltip": "Click here to learn more about ticking exceptions and what Neruina does",
   "neruina.open_log": "Open Log",
   "neruina.open_log.tooltip": "Opens your latest.log file",
   "neruina.copy_crash": "Copy Crash",
-  "neruina.copy_crash.tooltip": "Copies the caught ticking exception to your clipboard"
+  "neruina.copy_crash.tooltip": "Copies the caught ticking exception to your clipboard",
+  "neruina.teleport": "Teleport",
+  "neruina.teleport.tooltip": "Teleports you to the position of the ticking entity",
+  "neruina.kill_entity": "Kill Entity",
+  "neruina.kill_entity.tooltip": "Kills the entity that caused the ticking exception",
+  "neruina.try_resume": "Try Resume",
+  "neruina.try_resume.tooltip": "Allows the entity to resume ticking. If it crashes again it will be resuspended.",
+
+  "commands.neruina.kill": "Killed Entity [%s] on request.",
+  "commands.neruina.kill.not_errored": "Target Entity [%s] is not errored, use /kill instead.",
+
+  "commands.neruina.resume": "Resumed ticking for Entity [%s] on request.",
+    "commands.neruina.resume.not_errored": "Target Entity [%s] is not errored."
 }

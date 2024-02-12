@@ -5,6 +5,10 @@
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
   "mixins": [
+    "CommandManagerMixin",
+    "CrashReportSectionMixin",
+    "accessor.MutableTextAccessor",
+    "accessor.WorldChunkAccessor",
     "catchers.PlayerInventoryMixin",
     "catchers.ServerPlayNetworkHandlerMixin",
     "catchers.ServerWorldMixin",
@@ -21,8 +25,7 @@
     "dev.TestEntityCrashMixin",
     "dev.TestItemStackCrashMixin",
     "errorable.ErrorableBlockStateMixin",
-    "errorable.ErrorableMixin",
-    "invoker.WorldChunkInvoker"
+    "errorable.ErrorableMixin"
   ],
   "injectors": {
     "defaultRequire": 1

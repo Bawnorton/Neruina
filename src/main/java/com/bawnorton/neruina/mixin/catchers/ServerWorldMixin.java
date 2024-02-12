@@ -29,4 +29,9 @@ public abstract class ServerWorldMixin {
     private void catchTickingBlockState$notTheCauseOfTickLag(BlockState instance, ServerWorld world, BlockPos pos, @Coerce Object random, Operation<Void> original) {
         Neruina.TICK_HANDLER.safelyTickBlockState(instance, world, pos, random, original);
     }
+
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void tickNeruinaHandler(CallbackInfo ci) {
+        Neruina.TICK_HANDLER.tick();
+    }
 }
