@@ -237,7 +237,7 @@ public final class NeruinaTickHandler {
             if (entity.getWorld().isClient()) return;
 
             entity.baseTick();
-            if(Config.getInstance().autoKillTickingEntities) {
+            if(Config.getInstance().autoKillTickingEntities || !entity.isAlive()) {
                 killEntity(entity, null);
             }
         } catch (Throwable e) {
@@ -255,6 +255,7 @@ public final class NeruinaTickHandler {
 
     public void killEntity(Entity entity, @Nullable Text withMessage) {
         entity.kill();
+        entity.remove(Entity.RemovalReason.KILLED); // Necessary for any living entity
         removeErrored(entity);
         if(withMessage != null) broadcastToPlayers(entity.getServer(), VersionedText.format(withMessage));
     }
