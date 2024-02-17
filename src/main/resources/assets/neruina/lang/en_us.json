@@ -19,15 +19,24 @@
   "neruina.copy_crash": "Copy Crash",
   "neruina.copy_crash.tooltip": "Copies the caught ticking exception to your clipboard",
   "neruina.teleport": "Teleport",
-  "neruina.teleport.tooltip": "Teleports you to the position of the ticking entity",
+  "neruina.teleport.tooltip": "Teleports you to the position of the ticking %s",
   "neruina.kill_entity": "Kill Entity",
   "neruina.kill_entity.tooltip": "Kills the entity that caused the ticking exception",
   "neruina.try_resume": "Try Resume",
-  "neruina.try_resume.tooltip": "Allows the entity to resume ticking. If it crashes again it will be resuspended.",
+  "neruina.try_resume.tooltip": "Allows the %s to resume ticking. If it crashes again it will be resuspended.",
 
   "commands.neruina.kill": "Killed Entity [%s] on request.",
+  "commands.neruina.kill.multiple": "Killed %s errored entities on request. %s were not errored.",
+  "commands.neruina.kill.multiple.singular_singular": "Killed 1 errored entity on request. 1 was not errored.",
+  "commands.neruina.kill.multiple.singular_plural": "Killed 1 errored entity on request. %s were not errored.",
+  "commands.neruina.kill.multiple.plural_singular": "Killed %s errored entities on request. 1 was not errored.",
   "commands.neruina.kill.not_errored": "Target Entity [%s] is not errored, use /kill instead.",
 
-  "commands.neruina.resume": "Resumed ticking for Entity [%s] on request.",
-    "commands.neruina.resume.not_errored": "Target Entity [%s] is not errored."
+  "commands.neruina.resume.entity": "Resumed ticking for Entity [%s] on request.",
+  "commands.neruina.resume.entity.not_errored": "Target Entity [%s] is not errored.",
+  "commands.neruina.resume.block_entity": "Resumed ticking for Block Entity [%s] at [%s] on request.",
+  "commands.neruina.resume.block_entity.not_found": "No Block Entity found at [%s].",
+  "commands.neruina.resume.block_entity.not_errored": "Target Block Entity [%s] at [%s] is not errored.",
+  "commands.neruina.resume.block_state": "Resumed ticking for Block [%s] at [%s] on request.",
+  "commands.neruina.resume.block_state.not_errored": "Target Block [%s] at [%s] is not errored."
 }

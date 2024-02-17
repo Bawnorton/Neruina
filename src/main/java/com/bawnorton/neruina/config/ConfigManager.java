@@ -26,7 +26,7 @@ public final class ConfigManager {
 
         if (config.logLevel == null) config.logLevel = Config.LogLevel.OPERATORS;
         if (config.autoKillTickingEntities == null) config.autoKillTickingEntities = false;
-        if (config.tickingExceptionThreshold == null) config.tickingExceptionThreshold = 20;
+        if (config.tickingExceptionThreshold == null) config.tickingExceptionThreshold = 10;
         if (config.handleTickingEntities == null) config.handleTickingEntities = true;
         if (config.handleTickingBlockEntities == null) config.handleTickingBlockEntities = true;
         if (config.handleTickingBlockStates == null) config.handleTickingBlockStates = true;

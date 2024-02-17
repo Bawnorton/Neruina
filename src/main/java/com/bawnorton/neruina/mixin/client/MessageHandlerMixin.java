@@ -74,13 +74,13 @@ public abstract class MessageHandlerMixin {
                     )
             );
             List<Text> siblings = deepestParentSiblingPair.getFirst().getSiblings();
-            /*? if >=1.20 {*//*
+            /*? if >=1.20 {*/
             siblings = new ArrayList<>(siblings);
             siblings.set(siblings.size() - 1, deepestSibling);
             ((MutableTextAccessor) deepestParentSiblingPair.getFirst()).setSiblings(siblings);
-            *//*?} else {*/
+            /*?} else {*//*
             siblings.set(siblings.size() - 1, deepestSibling);
-            /*?}*/
+            *//*?}*/
             return text;
         }
         return text;

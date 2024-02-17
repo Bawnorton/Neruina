@@ -2,7 +2,7 @@ package com.bawnorton.neruina.platform;
 
 import java.nio.file.Path;
 
-/*? if fabric {*//*
+/*? if fabric {*/
 import net.fabricmc.loader.api.FabricLoader;
 
 public final class Platform {
@@ -26,7 +26,7 @@ public final class Platform {
         return ModLoader.FABRIC;
     }
 }
-*//*? } elif forge {*/
+/*? } elif forge {*//*
 import java.util.List;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -60,7 +60,7 @@ public final class Platform {
         return ModLoader.FORGE;
     }
 }
-/*? } elif neoforge {*//*
+*//*? } elif neoforge {*//*
 import java.util.List;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;

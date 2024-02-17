@@ -33,12 +33,14 @@ import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
+import org.jetbrains.annotations.Nullable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import org.jetbrains.annotations.Nullable;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /*? if >=1.19 {*/
 import net.minecraft.client.gui.screen.MessageScreen;
@@ -52,12 +54,13 @@ public final class NeruinaTickHandler {
 
     public void tick() {
         stopwatch++;
-        if(stopwatch >= 200) {
+        if(stopwatch >= 600) {
             if(!recentErrors.isEmpty()) recentErrors.remove(0);
             stopwatch = 0;
         }
     }
 
+    @SuppressWarnings("unused")
     public void safelyTickItemStack(ItemStack instance, World world, Entity entity, int slot, boolean selected, Operation<Void> original) {
         try {
             if (isErrored(instance)) return;
@@ -67,6 +70,7 @@ public final class NeruinaTickHandler {
         }
     }
 
+    @SuppressWarnings("unused")
     public void safelyTickItemStack(ItemStack instance, World world, PlayerEntity player, int slot, int selected, Operation<Void> original) {
         try {
             if (isErrored(instance)) return;
@@ -144,7 +148,14 @@ public final class NeruinaTickHandler {
             trackError(new Errored(instance, pos, e));
             broadcastToPlayers(
                     world.getServer(),
-                    VersionedText.pad(VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e)))
+                    VersionedText.pad(
+                            VersionedText.concatDelimited(
+                                    VersionedText.LINE_BREAK,
+                                    message,
+                                    generateHandlingActions("/neruina resume block_state %s".formatted(posToNums(pos)), "block state", pos),
+                                    generateResourceActions(e)
+                            )
+                    )
             );
         }
     }
@@ -179,7 +190,14 @@ public final class NeruinaTickHandler {
                 trackError(new Errored(blockEntity, pos, e));
                 broadcastToPlayers(
                         world.getServer(),
-                        VersionedText.pad(VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e)))
+                        VersionedText.pad(
+                                VersionedText.concatDelimited(
+                                        VersionedText.LINE_BREAK,
+                                        message,
+                                        generateHandlingActions("/neruina resume block_entity %s".formatted(posToNums(pos)), "block entity", pos),
+                                        generateResourceActions(e)
+                                )
+                        )
                 );
             }
         }
@@ -205,7 +223,7 @@ public final class NeruinaTickHandler {
                                                 slot
                                         )
                                 ),
-                                generateActions(e)
+                                generateResourceActions(e)
                         )
                     ),
                     false
@@ -237,7 +255,6 @@ public final class NeruinaTickHandler {
 
     public void killEntity(Entity entity, @Nullable Text withMessage) {
         entity.kill();
-        entity.remove(Entity.RemovalReason.KILLED);
         removeErrored(entity);
         if(withMessage != null) broadcastToPlayers(entity.getServer(), VersionedText.format(withMessage));
     }
@@ -264,7 +281,7 @@ public final class NeruinaTickHandler {
                             Config.getInstance().autoKillTickingEntities ? "killed" : "suspended"
                     )
             );
-            Text actions = generateActions(e);
+            Text actions = generateResourceActions(e);
             if(!Config.getInstance().autoKillTickingEntities) {
                 actions = VersionedText.concatDelimited(VersionedText.LINE_BREAK, generateEntityActions(entity), actions);
             }
@@ -292,7 +309,7 @@ public final class NeruinaTickHandler {
         ));
         broadcastToPlayers(
                 server,
-                VersionedText.pad(VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateActions(e)))
+                VersionedText.pad(VersionedText.concatDelimited(VersionedText.LINE_BREAK, message, generateResourceActions(e)))
         );
         serverPlayer.networkHandler.disconnect(
                 VersionedText.concat(
@@ -350,7 +367,7 @@ public final class NeruinaTickHandler {
         }, () -> server.getPlayerManager().getCurrentPlayerCount() > 0);
     }
 
-    private Text generateActions(Throwable e) {
+    private Text generateResourceActions(Throwable e) {
         StringWriter traceString = new StringWriter();
         PrintWriter writer = new PrintWriter(traceString);
         e.printStackTrace(writer);
@@ -399,36 +416,44 @@ public final class NeruinaTickHandler {
     private Text generateEntityActions(Entity entity) {
         return VersionedText.concatDelimited(
                 VersionedText.SPACE,
-                Texts.bracketed(
-                        VersionedText.withStyle(
-                                VersionedText.translatableWithFallback("neruina.teleport", "Teleport"),
-                                style -> style.withColor(Formatting.DARK_AQUA)
-                                        .withClickEvent(new ClickEvent(
-                                                ClickEvent.Action.RUN_COMMAND,
-                                                "/tp @s " + entity.getBlockPos().getX() + " " + entity.getBlockPos().getY() + " " + entity.getBlockPos().getZ()
-                                        ))
-                                        .withHoverEvent(new HoverEvent(
-                                                HoverEvent.Action.SHOW_TEXT,
-                                                VersionedText.translatableWithFallback(
-                                                        "neruina.teleport.tooltip",
-                                                        "Teleports you to the position of the ticking entity"
-                                                )
-                                        ))
-                        )
-                ),
+                generateHandlingActions("/neruina resume entity %s".formatted(entity.getUuid()), "entity", entity.getBlockPos()),
                 Texts.bracketed(
                         VersionedText.withStyle(
                                 VersionedText.translatableWithFallback("neruina.kill_entity", "Kill Entity"),
                                 style -> style.withColor(Formatting.DARK_RED)
                                         .withClickEvent(new ClickEvent(
                                                 ClickEvent.Action.RUN_COMMAND,
-                                                "/neruina kill " + entity.getUuid()
+                                                "/neruina kill %s".formatted(entity.getUuid())
                                         ))
                                         .withHoverEvent(new HoverEvent(
                                                 HoverEvent.Action.SHOW_TEXT,
                                                 VersionedText.translatableWithFallback(
                                                         "neruina.kill_entity.tooltip",
                                                         "Kills the entity that caused the ticking exception"
+                                                )
+                                        ))
+                        )
+                )
+        );
+    }
+
+    private Text generateHandlingActions(String resumeCommand, String typeName, BlockPos pos) {
+        return VersionedText.concatDelimited(
+                VersionedText.SPACE,
+                Texts.bracketed(
+                        VersionedText.withStyle(
+                                VersionedText.translatableWithFallback("neruina.teleport", "Teleport"),
+                                style -> style.withColor(Formatting.DARK_AQUA)
+                                        .withClickEvent(new ClickEvent(
+                                                ClickEvent.Action.RUN_COMMAND,
+                                                "/tp @s %s".formatted(posToNums(pos))
+                                        ))
+                                        .withHoverEvent(new HoverEvent(
+                                                HoverEvent.Action.SHOW_TEXT,
+                                                VersionedText.translatableWithFallback(
+                                                        "neruina.teleport.tooltip",
+                                                        "Teleports you to the position of the ticking %s",
+                                                        typeName
                                                 )
                                         ))
                         )
@@ -439,13 +464,14 @@ public final class NeruinaTickHandler {
                                 style -> style.withColor(Formatting.YELLOW)
                                         .withClickEvent(new ClickEvent(
                                                 ClickEvent.Action.RUN_COMMAND,
-                                                "/neruina resume " + entity.getUuid()
+                                                resumeCommand
                                         ))
                                         .withHoverEvent(new HoverEvent(
                                                 HoverEvent.Action.SHOW_TEXT,
                                                 VersionedText.translatableWithFallback(
                                                         "neruina.try_resume.tooltip",
-                                                        "Allows the entity to resume ticking. If it crashes again it will be resuspended."
+                                                        "Allows the %s to resume ticking. If it crashes again it will be resuspended.",
+                                                        typeName
                                                 )
                                         ))
                         )
@@ -458,7 +484,7 @@ public final class NeruinaTickHandler {
         if(Config.getInstance().tickingExceptionThreshold != -1 && recentErrors.size() >= Config.getInstance().tickingExceptionThreshold) {
             CrashReport report = CrashReport.create(new RuntimeException("Too Many Ticking Exceptions"), "Neruina has caught too many ticking exceptions in a short period of time, something is very wrong, see below for more info");
             CrashReportSection header = report.addElement("Information");
-            header.add("Threshold", Config.getInstance().tickingExceptionThreshold + ", set \"ticking_exception_threshold\" to -1 to disable.");
+            header.add("Threshold", "%d, set \"ticking_exception_threshold\" to -1 to disable.".formatted(Config.getInstance().tickingExceptionThreshold));
             header.add("Caught", recentErrors.size());
             header.add("Wiki", "https://github.com/Bawnorton/Neruina/wiki/Too-Many-Ticking-Exceptions");
             for(int i = 0; i < recentErrors.size(); i++) {
@@ -468,6 +494,10 @@ public final class NeruinaTickHandler {
             }
             throw new CrashException(report);
         }
+    }
+
+    private String posToNums(BlockPos pos) {
+        return "%s %s %s".formatted(pos.getX(), pos.getY(), pos.getZ());
     }
 
     public boolean isErrored(Object obj) {

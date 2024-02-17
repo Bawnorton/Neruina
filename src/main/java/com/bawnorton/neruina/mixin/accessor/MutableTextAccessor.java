@@ -9,9 +9,9 @@ import java.util.List;
 
 @Mixin(MutableText.class)
 public interface MutableTextAccessor {
-    /*? if >=1.20 {*//*
+    /*? if >=1.20 {*/
     @Accessor
     @Mutable
     void setSiblings(List<Text> siblings);
-    *//*? } */
+    /*? } */
 }

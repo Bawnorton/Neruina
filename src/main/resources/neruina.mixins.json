@@ -7,6 +7,7 @@
   "mixins": [
     "CommandManagerMixin",
     "CrashReportSectionMixin",
+    "EntityMixin",
     "accessor.MutableTextAccessor",
     "accessor.WorldChunkAccessor",
     "catchers.PlayerInventoryMixin",
