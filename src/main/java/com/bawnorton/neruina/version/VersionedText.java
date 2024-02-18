@@ -25,14 +25,6 @@ public interface VersionedText {
         *//*? } */
     }
 
-    static Text translatableWithFallback(String key, String fallback, Object... args) {
-        /*? if >=1.19 {*/
-        return Text.translatableWithFallback(key, fallback, args);
-        /*? } else { *//*
-        return new TranslatableText(key, args);
-        *//*? } */
-    }
-
     static Text withStyle(Text text, UnaryOperator<Style> style) {
         if (text instanceof MutableText mutableText) {
             mutableText.styled(style);
@@ -60,6 +52,9 @@ public interface VersionedText {
         *//*? } */
         for (int i = 0; i < texts.length; i++) {
             text.append(texts[i]);
+            if(texts[i].getString().isEmpty()) {
+                continue;
+            }
             if (i != texts.length - 1) {
                 text.append(delimiter);
             }

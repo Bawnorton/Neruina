@@ -5,7 +5,7 @@
   - What Is This?: Opens the Neruina wiki page 
   - Copy Crash: Copies the cause of the ticking exception to your clipboard
   - Open Log: Opens your latest.log file (Only present in singleplayer)
-- Improved performance and memory usage by delegating the errored state to the ticking entity
+- Improved performance and memory usage by delegating the tickingEntry state to the ticking entity
 - Migrated to Stonecutter to ease multi-loader multi-version development
 
 ### Config

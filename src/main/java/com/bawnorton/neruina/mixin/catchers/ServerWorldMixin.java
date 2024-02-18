@@ -25,8 +25,7 @@ public abstract class ServerWorldMixin {
     @WrapOperation(method = "tickChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;randomTick(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/random/Random;)V"))
     /*? } else {*//*
     @WrapOperation(method = "tickChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;randomTick(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Ljava/util/Random;)V"))
-    *//*? }*/
-    private void catchTickingBlockState$notTheCauseOfTickLag(BlockState instance, ServerWorld world, BlockPos pos, @Coerce Object random, Operation<Void> original) {
+    *//*? }*/ private void catchTickingBlockState$notTheCauseOfTickLag(BlockState instance, ServerWorld world, BlockPos pos, @Coerce Object random, Operation<Void> original) {
         Neruina.TICK_HANDLER.safelyTickBlockState(instance, world, pos, random, original);
     }
 

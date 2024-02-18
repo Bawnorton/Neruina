@@ -7,11 +7,7 @@ import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-@Mixin({
-        ItemStack.class,
-        BlockEntity.class,
-        Entity.class
-})
+@Mixin({ItemStack.class, BlockEntity.class, Entity.class})
 public abstract class ErrorableMixin implements Errorable {
     @Unique
     private boolean neruina$errored = false;

@@ -7,7 +7,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(CrashReportSection.class)
 public abstract class CrashReportSectionMixin implements CrashReportSectionExtender {
-    @Shadow private StackTraceElement[] stackTrace;
+    @Shadow
+    private StackTraceElement[] stackTrace;
 
     @Override
     public void neruin$setStacktrace(Throwable throwable) {

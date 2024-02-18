@@ -31,8 +31,6 @@ public final class Config {
     }
 
     public enum LogLevel {
-        EVERYONE,
-        OPERATORS,
-        DISABLED
+        EVERYONE, OPERATORS, DISABLED
     }
 }
