@@ -2,7 +2,7 @@ package com.bawnorton.neruina.mixin;
 
 import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.extend.Errorable;
-import com.bawnorton.neruina.handler.NeruinaTickHandler;
+import com.bawnorton.neruina.util.TickingEntry;
 import com.bawnorton.neruina.version.VersionedText;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.Entity;
@@ -33,17 +33,17 @@ public abstract class EntityMixin {
 
         if (((Errorable) this).neruina$isErrored()) {
             if (source.getAttacker() instanceof ServerPlayerEntity player) {
-                NeruinaTickHandler.TickingEntry entry = Neruina.TICK_HANDLER.getTickingEntry(getUuid());
+                TickingEntry entry = Neruina.TICK_HANDLER.getTickingEntry(getUuid());
                 Neruina.MESSAGE_HANDLER.sendToPlayer(
                         player,
                         VersionedText.translatable("neruina.suspended.entity", getName().getString()),
                         Neruina.MESSAGE_HANDLER.generateEntityActions((Entity) (Object) this),
-                        Neruina.MESSAGE_HANDLER.generateResourceActions(entry.e())
+                        Neruina.MESSAGE_HANDLER.generateResourceActions(entry)
                 );
             }
             /*? if >=1.20 { */
             return source != getWorld().getDamageSources().genericKill();
-            /*? } else if >=1.19 { *//*/*
+            /*? } elif >=1.19 { *//*
             return source != getWorld().getDamageSources().outOfWorld();
             *//*? } else { *//*
             return source != net.minecraft.entity.damage.DamageSource.OUT_OF_WORLD;

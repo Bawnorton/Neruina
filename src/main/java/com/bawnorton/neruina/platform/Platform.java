@@ -4,6 +4,11 @@ import java.nio.file.Path;
 
 /*? if fabric {*/
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import org.spongepowered.asm.mixin.FabricUtil;
+import org.spongepowered.asm.mixin.Mixins;
+import org.spongepowered.asm.mixin.transformer.ClassInfo;
+import org.spongepowered.asm.mixin.transformer.Config;
 
 public final class Platform {
     public static Path getConfigDir() {
@@ -14,16 +19,23 @@ public final class Platform {
         return FabricLoader.getInstance().isModLoaded(modid);
     }
 
-    public static Path getLogPath() {
-        return FabricLoader.getInstance().getGameDir().resolve("logs/latest.log").toAbsolutePath();
-    }
-
     public static boolean isDev() {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
     public static ModLoader getModLoader() {
         return ModLoader.FABRIC;
+    }
+
+    public static String modidFromJar(String jarName) {
+        for (ModContainer modContainer : FabricLoader.getInstance().getAllMods()) {
+            for (Path path : modContainer.getOrigin().getPaths()) {
+                if (path.endsWith(jarName)) {
+                    return modContainer.getMetadata().getId();
+                }
+            }
+        }
+        return null;
     }
 }
 /*? } elif forge {*//*
@@ -48,16 +60,21 @@ public final class Platform {
         return false;
     }
 
-    public static Path getLogPath() {
-        return FMLPaths.GAMEDIR.get().resolve("logs/latest.log").toAbsolutePath();
-    }
-
     public static boolean isDev() {
         return !FMLLoader.isProduction();
     }
 
     public static ModLoader getModLoader() {
         return ModLoader.FORGE;
+    }
+
+    public static String modidFromJar(String jarName) {
+        for (ModInfo mod : LoadingModList.get().getMods()) {
+            if (mod.getOwningFile().getFile().getFilePath().endsWith(jarName)) {
+                return mod.getModId();
+            }
+        }
+        return null;
     }
 }
 *//*? } elif neoforge {*//*
@@ -82,16 +99,21 @@ public final class Platform {
         return false;
     }
 
-    public static Path getLogPath() {
-        return FMLPaths.GAMEDIR.get().resolve("logs/latest.log").toAbsolutePath();
-    }
-
     public static boolean isDev() {
         return !FMLLoader.isProduction();
     }
 
     public static ModLoader getModLoader() {
         return ModLoader.NEOFORGE;
+    }
+
+    public static String modidFromJar(String jarName) {
+        for (ModInfo mod : LoadingModList.get().getMods()) {
+            if (mod.getOwningFile().getFile().getFilePath().endsWith(jarName)) {
+                return mod.getModId();
+            }
+        }
+        return null;
     }
 }
 *//*? }*/

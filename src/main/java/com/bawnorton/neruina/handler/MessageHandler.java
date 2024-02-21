@@ -2,6 +2,7 @@ package com.bawnorton.neruina.handler;
 
 import com.bawnorton.neruina.config.Config;
 import com.bawnorton.neruina.thread.ConditionalRunnable;
+import com.bawnorton.neruina.util.TickingEntry;
 import com.bawnorton.neruina.version.VersionedText;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.entity.Entity;
@@ -60,10 +61,10 @@ public final class MessageHandler {
         );
     }
 
-    public Text generateResourceActions(Throwable e) {
+    public Text generateResourceActions(TickingEntry entry) {
         StringWriter traceString = new StringWriter();
         PrintWriter writer = new PrintWriter(traceString);
-        e.printStackTrace(writer);
+        entry.e().printStackTrace(writer);
         String trace = traceString.toString();
         writer.flush();
         writer.close();
@@ -82,6 +83,15 @@ public final class MessageHandler {
                                 .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, trace))
                                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                         VersionedText.translatable("neruina.copy_crash.tooltip")
+                                ))
+                )),
+                Texts.bracketed(VersionedText.withStyle(VersionedText.translatable("neruina.report"),
+                        style -> style.withColor(Formatting.LIGHT_PURPLE)
+                                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                        "/neruina report %s".formatted(entry.uuid())
+                                ))
+                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                        VersionedText.translatable("neruina.report.tooltip")
                                 ))
                 ))
         );

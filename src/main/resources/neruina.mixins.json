@@ -8,6 +8,7 @@
     "CommandManagerMixin",
     "CrashReportSectionMixin",
     "EntityMixin",
+    "MinecraftServerMixin",
     "accessor.MutableTextAccessor",
     "accessor.WorldChunkAccessor",
     "catchers.PlayerInventoryMixin",
@@ -30,8 +31,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "client": [
-    "client.MessageHandlerMixin"
-  ]
+  }
 }

@@ -1,6 +1,7 @@
 package com.bawnorton.neruina;
 
 import com.bawnorton.neruina.config.ConfigManager;
+import com.bawnorton.neruina.report.AutoReportHandler;
 import com.bawnorton.neruina.handler.MessageHandler;
 import com.bawnorton.neruina.handler.NeruinaTickHandler;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ public class Neruina {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final NeruinaTickHandler TICK_HANDLER = new NeruinaTickHandler();
     public static final MessageHandler MESSAGE_HANDLER = new MessageHandler();
+    public static final AutoReportHandler AUTO_REPORT_HANDLER = new AutoReportHandler();
 
     public static void init() {
         ConfigManager.loadConfig();

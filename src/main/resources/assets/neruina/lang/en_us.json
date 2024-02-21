@@ -26,6 +26,8 @@
   "neruina.try_resume.entity.tooltip": "Allows the Entity to resume ticking. If it crashes again it will be resuspended.",
   "neruina.try_resume.block_entity.tooltip": "Allows the Block Entity to resume ticking. If it crashes again it will be resuspended.",
   "neruina.try_resume.block_state.tooltip": "Allows the Block to resume ticking. If it crashes again it will be resuspended.",
+  "neruina.report": "Report Issue",
+  "neruina.report.tooltip": "Generates a GitHub issue with information about the ticking exception and submits it to the Neruina issue tracker and any mods that opted-in to receive reports.",
   "neruina.suspended.entity": "This Entity [%s] has been suspended and cannot be interacted with.",
   "commands.neruina.kill": "Killed Entity [%s] on request.",
   "commands.neruina.kill.multiple": "Killed %s errored entities on request. %s were not errored.",
@@ -39,5 +41,9 @@
   "commands.neruina.resume.block_entity.not_found": "No Block Entity found at [%s].",
   "commands.neruina.resume.block_entity.not_errored": "Target Block Entity [%s] at [%s] is not errored.",
   "commands.neruina.resume.block_state": "Resumed ticking for Block [%s] at [%s] on request.",
-  "commands.neruina.resume.block_state.not_errored": "Target Block [%s] at [%s] is not errored."
+  "commands.neruina.resume.block_state.not_errored": "Target Block [%s] at [%s] is not errored.",
+  "commands.neruina.report.success": "Successfully reported issue.",
+  "commands.neruina.report.success.tooltip": "Click here to view the issue on GitHub.",
+  "commands.neruina.report.failure": "Failed to report issue, see logs for more information.",
+  "commands.neruina.report.already_exists": "Issue already reported."
 }
