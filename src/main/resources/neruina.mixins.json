@@ -9,7 +9,6 @@
     "CrashReportSectionMixin",
     "EntityMixin",
     "MinecraftServerMixin",
-    "accessor.MutableTextAccessor",
     "accessor.WorldChunkAccessor",
     "catchers.PlayerInventoryMixin",
     "catchers.ServerPlayNetworkHandlerMixin",
