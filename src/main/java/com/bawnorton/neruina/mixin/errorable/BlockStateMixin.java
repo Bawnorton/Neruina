@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(BlockState.class)
-public abstract class ErrorableBlockStateMixin implements ErrorableBlockState {
+public abstract class BlockStateMixin implements ErrorableBlockState {
     @Unique
     private final Object2BooleanMap<BlockPos> neruina$errored = new Object2BooleanOpenHashMap<>();
 

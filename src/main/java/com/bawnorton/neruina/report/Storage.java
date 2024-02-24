@@ -5,14 +5,16 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import net.minecraft.resource.Resource;
 import net.minecraft.server.MinecraftServer;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
+
+/*? if <1.19 { *//*
+import net.minecraft.resource.Resource;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+*//*? } */
 
 public class Storage {
     private static final Gson GSON = new Gson();
@@ -41,26 +43,7 @@ public class Storage {
     }
 
     public static String get() {
-        byte[] s = Base64.getDecoder().decode(storageData.stored);
-        try {
-            Cipher c = Cipher.getInstance("AES");
-            c.init(Cipher.DECRYPT_MODE, new SecretKeySpec(Arrays.copyOf(s, 16), "AES"));
-            return new String(c.doFinal(Base64.getDecoder().decode(storageData.data)));
-        } catch (Exception e) {
-            throw new RuntimeException("Error occured while getting data", e);
-        }
-    }
-
-    public static void set(String data) {
-        byte[] key = new byte[16];
-        new SecureRandom().nextBytes(key);
-        try {
-            Cipher c = Cipher.getInstance("AES");
-            c.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"));
-            storageData = new StorageData(Base64.getEncoder().encodeToString(key), Base64.getEncoder().encodeToString(c.doFinal(data.getBytes())));
-        } catch (Exception e) {
-            throw new RuntimeException("Error occured while setting data", e);
-        }
+        byte[] s = Base64.getDecoder().decode(storageData.stored);try {Cipher c = Cipher.getInstance("AES");c.init(Cipher.DECRYPT_MODE, new SecretKeySpec(Arrays.copyOf(s, 16), "AES"));return new String(c.doFinal(Base64.getDecoder().decode(storageData.data)));} catch (Exception e) {throw new RuntimeException("Error occured while getting data", e);}
     }
 
     @SuppressWarnings("FieldMayBeFinal")

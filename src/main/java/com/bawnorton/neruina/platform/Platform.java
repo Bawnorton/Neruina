@@ -2,14 +2,9 @@ package com.bawnorton.neruina.platform;
 
 import java.nio.file.Path;
 
-/*? if fabric {*/
+/*? if fabric {*//*
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import org.spongepowered.asm.mixin.FabricUtil;
-import org.spongepowered.asm.mixin.Mixins;
-import org.spongepowered.asm.mixin.transformer.ClassInfo;
-import org.spongepowered.asm.mixin.transformer.Config;
-
 public final class Platform {
     public static Path getConfigDir() {
         return FabricLoader.getInstance().getConfigDir();
@@ -37,13 +32,19 @@ public final class Platform {
         }
         return null;
     }
+
+    public static String getModVersion(String modid) {
+        return FabricLoader.getInstance().getModContainer(modid).map(ModContainer::getMetadata).map(modMetadata -> modMetadata.getVersion().getFriendlyString()).orElse("unknown");
+    }
 }
-/*? } elif forge {*//*
+*//*? } elif forge {*/
 import java.util.List;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 
 public final class Platform {
     public static Path getConfigDir() {
@@ -69,16 +70,21 @@ public final class Platform {
     }
 
     public static String modidFromJar(String jarName) {
-        for (ModInfo mod : LoadingModList.get().getMods()) {
+        for (IModInfo mod : ModList.get().getMods()) {
             if (mod.getOwningFile().getFile().getFilePath().endsWith(jarName)) {
                 return mod.getModId();
             }
         }
         return null;
     }
+
+    public static String getModVersion(String modid) {
+        return ModList.get().getModFileById(modid).versionString();
+    }
 }
-*//*? } elif neoforge {*//*
+/*? } elif neoforge {*//*
 import java.util.List;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.loading.LoadingModList;
@@ -114,6 +120,10 @@ public final class Platform {
             }
         }
         return null;
+    }
+
+    public static String getModVersion(String modid) {
+        return ModList.get().getModFileById(modid).versionString();
     }
 }
 *//*? }*/

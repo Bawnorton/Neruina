@@ -7,7 +7,6 @@
   "mixins": [
     "CommandManagerMixin",
     "CrashReportSectionMixin",
-    "EntityMixin",
     "MinecraftServerMixin",
     "accessor.WorldChunkAccessor",
     "catchers.PlayerInventoryMixin",
@@ -25,8 +24,10 @@
     "dev.TestBlockStateCrashMixin",
     "dev.TestEntityCrashMixin",
     "dev.TestItemStackCrashMixin",
-    "errorable.ErrorableBlockStateMixin",
-    "errorable.ErrorableMixin"
+    "errorable.BlockEntityMixin",
+    "errorable.BlockStateMixin",
+    "errorable.EntityMixin",
+    "errorable.ItemStackMixin"
   ],
   "injectors": {
     "defaultRequire": 1

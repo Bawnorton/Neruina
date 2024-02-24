@@ -95,24 +95,22 @@ public final class AutoReportHandler {
                 issues.put(modid, null);
                 RepositoryReference repository = repositories.computeIfAbsent(modid, key -> {
                     for (AutoReportConfig config : configs) {
-                        if (config.modid().equals(modid)) {
-                            try {
-                                GHRepository ghRepository = github.getRepository(config.repo());
-                                return new RepositoryReference(modid, ghRepository, config);
-                            } catch (IOException e) {
-                                Neruina.LOGGER.error(
-                                        "Failed to get repository for mod: \"{}\", report this to them.",
-                                        modid,
-                                        e
-                                );
-                            }
+                        if (!config.modid().equals(modid)) continue;
+
+                        try {
+                            GHRepository ghRepository = github.getRepository(config.repo());
+                            return new RepositoryReference(modid, ghRepository, config);
+                        } catch (IOException e) {
+                            Neruina.LOGGER.error(
+                                    "Failed to get repository for mod: \"{}\", report this to them.",
+                                    modid,
+                                    e
+                            );
                         }
                     }
                     return null;
                 });
-                if (repository == null) {
-                    return;
-                }
+                if (repository == null) return;
 
                 GHIssue issue = createIssue(repository, entry);
                 if (issue != null) {
@@ -136,9 +134,7 @@ public final class AutoReportHandler {
     }
 
     private GHIssue createMasterIssue(GitHub github, Map<String, GHIssue> issueMap, TickingEntry tickingEntry) {
-        if (masterConfig == null) {
-            return null;
-        }
+        if (masterConfig == null) return null;
 
         RepositoryReference masterRepo = repositories.computeIfAbsent(Neruina.MOD_ID, key -> {
             try {
@@ -148,9 +144,7 @@ public final class AutoReportHandler {
                 return null;
             }
         });
-        if (masterRepo == null) {
-            return null;
-        }
+        if (masterRepo == null) return null;
 
         String body = "%s".formatted(masterConfig.createIssueFormatter().getBody(tickingEntry));
         if (!issueMap.isEmpty()) {
@@ -203,7 +197,7 @@ public final class AutoReportHandler {
     }
 
     private Set<String> findPotentialSources(TickingEntry entry) {
-        Throwable exception = entry.e();
+        Throwable exception = entry.error();
         StackTraceElement[] stackTrace = exception.getStackTrace();
         Set<String> modids = new HashSet<>();
         for (StackTraceElement element : stackTrace) {
@@ -222,9 +216,7 @@ public final class AutoReportHandler {
             }
 
             CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
-            if (codeSource == null) {
-                continue;
-            }
+            if (codeSource == null) continue;
 
             String location = codeSource.getLocation().getPath();
             location = location.substring(location.lastIndexOf('/') + 1);
@@ -239,20 +231,15 @@ public final class AutoReportHandler {
     private @Nullable String checkForMixin(Class<?> clazz, String methodName) {
         MixinMerged annotation;
         Method method = Reflection.findMethod(clazz, methodName);
-        if (method == null) {
-            return null;
-        }
-        if (!method.isAnnotationPresent(MixinMerged.class)) {
-            return null;
-        }
+        if (method == null) return null;
+
+        if (!method.isAnnotationPresent(MixinMerged.class)) return null;
 
         annotation = method.getAnnotation(MixinMerged.class);
         String mixinClassName = annotation.mixin();
         ClassLoader classLoader = clazz.getClassLoader();
         URL resource = classLoader.getResource(mixinClassName.replace('.', '/') + ".class");
-        if (resource == null) {
-            return null;
-        }
+        if (resource == null) return null;
 
         String location = resource.getPath();
         location = location.substring(location.lastIndexOf('/') + 1);

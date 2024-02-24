@@ -2,24 +2,25 @@ package com.bawnorton.neruina.mixin.catchers;
 
 import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.annotation.ConditionalMixin;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.function.Consumer;
 
 @Mixin(value = World.class, priority = 1500)
 @ConditionalMixin(modids = {"noseenotick", "itshallnottick", "does_potato_tick"}, applyIfPresent = false)
 public abstract class WorldMixin {
-    @Inject(method = "shouldUpdatePostDeath", at = @At("HEAD"), cancellable = true)
-    private void shouldUpdatePostDeath(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        if (Neruina.TICK_HANDLER.isErrored(entity)) {
-            cir.setReturnValue(false);
+    @ModifyReturnValue(method = "shouldUpdatePostDeath", at = @At("RETURN"))
+    private boolean shouldUpdatePostDeath(boolean original, Entity entity) {
+        if (original) {
+            return !Neruina.TICK_HANDLER.isErrored(entity);
         }
+
+        return false;
     }
 
     @WrapOperation(method = "tickEntity", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", remap = false))

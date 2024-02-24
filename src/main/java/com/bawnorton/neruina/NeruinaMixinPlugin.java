@@ -45,9 +45,7 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
             List<AnnotationNode> annotationNodes = MixinService.getService()
                     .getBytecodeProvider()
                     .getClassNode(className).visibleAnnotations;
-            if (annotationNodes == null) {
-                return true;
-            }
+            if (annotationNodes == null) return true;
 
             boolean shouldApply = true;
             for (AnnotationNode node : annotationNodes) {
@@ -55,14 +53,14 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
                     List<String> modids = Annotations.getValue(node, "modids");
                     boolean applyIfPresent = Annotations.getValue(node, "applyIfPresent", Boolean.TRUE);
                     if (anyModsLoaded(modids)) {
-                        LOGGER.debug("%s is%sbeing applied because %s are loaded".formatted(className,
-                                applyIfPresent ? " " : " not ",
+                        LOGGER.debug("%s is %sbeing applied because %s are loaded".formatted(className,
+                                applyIfPresent ? "" : "not ",
                                 modids
                         ));
                         shouldApply = applyIfPresent;
                     } else {
-                        LOGGER.debug("%s is%sbeing applied because %s are not loaded".formatted(className,
-                                !applyIfPresent ? " " : " not ",
+                        LOGGER.debug("%s is %sbeing applied because %s are not loaded".formatted(className,
+                                !applyIfPresent ? "" : "not ",
                                 modids
                         ));
                         shouldApply = !applyIfPresent;
@@ -70,14 +68,14 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
                 } else if (node.desc.equals(Type.getDescriptor(ModLoaderMixin.class))) {
                     List<ModLoader> modLoaders = Annotations.getValue(node, "value", true, ModLoader.class);
                     shouldApply = modLoaders.contains(Platform.getModLoader());
-                    LOGGER.debug("%s is%sbeing applied because %s is the current mod loader".formatted(className,
-                            shouldApply ? " " : " not ",
+                    LOGGER.debug("%s is %sbeing applied because %s is the current mod loader".formatted(className,
+                            shouldApply ? "" : "not ",
                             Platform.getModLoader()
                     ));
                 } else if (node.desc.equals(Type.getDescriptor(DevOnlyMixin.class))) {
                     shouldApply = Platform.isDev();
-                    LOGGER.debug("%s is%sbeing applied because we are in a dev environment".formatted(className,
-                            shouldApply ? " " : " not "
+                    LOGGER.debug("%s is %sbeing applied because we are in a dev environment".formatted(className,
+                            shouldApply ? "" : "not "
                     ));
                 }
             }
@@ -89,7 +87,6 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
-
     }
 
     @Override
@@ -99,12 +96,9 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-
     }
 
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-
     }
-
 }

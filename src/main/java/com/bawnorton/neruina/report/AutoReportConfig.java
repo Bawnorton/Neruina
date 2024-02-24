@@ -90,12 +90,6 @@ public class AutoReportConfig {
 
     @Override
     public String toString() {
-        return "AutoReportConfig[" +
-                "modid=" + modid + ", " +
-                "repo=" + repo + ", " +
-                "title=" + title + ", " +
-                "body=" + body + ", " +
-                "labels=" + labels + ", " +
-                "assignees=" + assignees + ']';
+        return "AutoReportConfig[modid=%s, repo=%s, title=%s, body=%s, labels=%s, assignees=%s]".formatted(modid, repo, title, body, labels, assignees);
     }
 }

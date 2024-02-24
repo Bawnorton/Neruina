@@ -2,6 +2,7 @@ package com.bawnorton.neruina.version;
 
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 public interface VersionedText {

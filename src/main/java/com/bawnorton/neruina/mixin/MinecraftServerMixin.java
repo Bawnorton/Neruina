@@ -1,6 +1,7 @@
 package com.bawnorton.neruina.mixin;
 
 import com.bawnorton.neruina.Neruina;
+import com.bawnorton.neruina.handler.PersitanceHandler;
 import com.bawnorton.neruina.report.Storage;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,6 +18,12 @@ public abstract class MinecraftServerMixin {
     *//*? }*/
     private void onServerStart(CallbackInfo ci) {
         Neruina.AUTO_REPORT_HANDLER.init((MinecraftServer) (Object) this);
+        Neruina.PERSISTANCE_HANDLER.apply((MinecraftServer) (Object) this);
         Storage.init((MinecraftServer) (Object) this);
+    }
+
+    @Inject(method = "shutdown", at = @At("HEAD"))
+    private void onServerStop(CallbackInfo ci) {
+        Neruina.PERSISTANCE_HANDLER.apply((MinecraftServer) (Object) this).markDirty();
     }
 }

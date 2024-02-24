@@ -46,6 +46,14 @@ public final class MessageHandler {
         );
     }
 
+    public void broadcastToPlayers(MinecraftServer server, String key, Object... args) {
+        broadcastToPlayers(server, formatText(key, args));
+    }
+
+    public void broadcastToPlayers(CommandContext<ServerCommandSource> context, String key, Object... args) {
+        broadcastToPlayers(context.getSource().getServer(), key, args);
+    }
+
     public Text generateEntityActions(Entity entity) {
         return VersionedText.concatDelimited(VersionedText.SPACE,
                 generateHandlingActions("entity", entity.getBlockPos(), entity.getUuid()),
@@ -64,20 +72,12 @@ public final class MessageHandler {
     public Text generateResourceActions(TickingEntry entry) {
         StringWriter traceString = new StringWriter();
         PrintWriter writer = new PrintWriter(traceString);
-        entry.e().printStackTrace(writer);
+        entry.error().printStackTrace(writer);
         String trace = traceString.toString();
         writer.flush();
         writer.close();
         return VersionedText.concatDelimited(VersionedText.SPACE,
-                Texts.bracketed(VersionedText.withStyle(VersionedText.translatable("neruina.info"),
-                        style -> style.withColor(Formatting.GREEN)
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
-                                        "https://github.com/Bawnorton/Neruina/wiki/What-Is-This%3F"
-                                ))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                        VersionedText.translatable("neruina.info.tooltip")
-                                ))
-                )),
+                generateInfoAction(),
                 Texts.bracketed(VersionedText.withStyle(VersionedText.translatable("neruina.copy_crash"),
                         style -> style.withColor(Formatting.GOLD)
                                 .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, trace))
@@ -97,25 +97,40 @@ public final class MessageHandler {
         );
     }
 
+    public Text generateTeleportAction(String typeName, BlockPos pos) {
+        return Texts.bracketed(VersionedText.withStyle(VersionedText.translatable("neruina.teleport"),
+                style -> style.withColor(Formatting.DARK_AQUA)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                "/tp @s %s".formatted(posAsNums(pos))
+                        ))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, VersionedText.translatable("neruina.teleport.%s.tooltip".formatted(typeName)))
+                )
+        ));
+    }
+
+    public Text generateInfoAction() {
+        return Texts.bracketed(VersionedText.withStyle(VersionedText.translatable("neruina.info"),
+                style -> style.withColor(Formatting.GREEN)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
+                                "https://github.com/Bawnorton/Neruina/wiki/What-Is-This%3F"
+                        ))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                VersionedText.translatable("neruina.info.tooltip")
+                        ))
+        ));
+    }
+
     public Text generateHandlingActions(String typeName, BlockPos pos) {
         return generateHandlingActions(typeName, pos, null);
     }
 
     public Text generateHandlingActions(String typeName, BlockPos pos, @Nullable UUID uuid) {
         return VersionedText.concatDelimited(VersionedText.SPACE,
-                Texts.bracketed(VersionedText.withStyle(VersionedText.translatable("neruina.teleport"),
-                        style -> style.withColor(Formatting.DARK_AQUA)
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                        "/tp @s %s".formatted(posToNums(pos))
-                                ))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                        VersionedText.translatable("neruina.teleport.%s.tooltip".formatted(typeName))
-                                ))
-                )),
+                generateTeleportAction(typeName, pos),
                 Texts.bracketed(VersionedText.withStyle(VersionedText.translatable("neruina.try_resume"),
                         style -> style.withColor(Formatting.YELLOW)
                                 .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                        "/neruina resume %s %s".formatted(typeName, uuid == null ? posToNums(pos) : uuid.toString())
+                                        "/neruina resume %s %s".formatted(typeName, uuid == null ? posAsNums(pos) : uuid.toString())
                                 ))
                                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                         VersionedText.translatable("neruina.try_resume.%s.tooltip".formatted(typeName))
@@ -131,16 +146,6 @@ public final class MessageHandler {
         )), false);
     }
 
-    public void sendFeedback(CommandContext<ServerCommandSource> context, String key, Object... args) {
-        sendFormattedMessage((text) -> {
-            /*? if >=1.20 { */
-            context.getSource().sendFeedback(() -> text, true);
-            /*? } else {*//*
-            context.getSource().sendFeedback(text, true);
-            *//*? }*/
-        }, key, args);
-    }
-
     public void sendFormattedMessage(Consumer<Text> sender, String key, Object... args) {
         sender.accept(formatText(key, args));
     }
@@ -149,11 +154,7 @@ public final class MessageHandler {
         return VersionedText.format(VersionedText.translatable(key, args));
     }
 
-    public String posToNums(BlockPos pos) {
+    public String posAsNums(BlockPos pos) {
         return "%s %s %s".formatted(pos.getX(), pos.getY(), pos.getZ());
-    }
-
-    public String formatPos(BlockPos pos) {
-        return "x=%s y=%s z=%s".formatted(pos.getX(), pos.getY(), pos.getZ());
     }
 }

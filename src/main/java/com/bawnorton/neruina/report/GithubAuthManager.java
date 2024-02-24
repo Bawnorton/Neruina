@@ -84,7 +84,7 @@ public final class GithubAuthManager {
             try {
                 Neruina.LOGGER.info("Authenticating with GitHub...");
                 github = GitHub.connectUsingOAuth(oauthCode);
-                Neruina.LOGGER.info("Successfully authenticated with GitHub");
+                Neruina.LOGGER.info("Successfully Logged into GitHub as {}", github.getMyself().getLogin());
                 return github;
             } catch (IOException e) {
                 Neruina.LOGGER.error("Failed to login to GitHub");

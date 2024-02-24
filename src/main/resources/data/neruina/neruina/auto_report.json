@@ -1,7 +1,5 @@
 {
   "modid": "neruina",
   "repo": "Bawnorton/NeruinaAutoReports",
-  "body": "<report>",
-  "title": "Auto Report - <date> <time>",
   "labels": ["auto-report"]
 }
