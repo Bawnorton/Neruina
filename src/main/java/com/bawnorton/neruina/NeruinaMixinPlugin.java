@@ -3,8 +3,10 @@ package com.bawnorton.neruina;
 import com.bawnorton.neruina.annotation.ConditionalMixin;
 import com.bawnorton.neruina.annotation.DevOnlyMixin;
 import com.bawnorton.neruina.annotation.ModLoaderMixin;
+import com.bawnorton.neruina.annotation.Version;
 import com.bawnorton.neruina.platform.ModLoader;
 import com.bawnorton.neruina.platform.Platform;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -68,10 +70,29 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
                 } else if (node.desc.equals(Type.getDescriptor(ModLoaderMixin.class))) {
                     List<ModLoader> modLoaders = Annotations.getValue(node, "value", true, ModLoader.class);
                     shouldApply = modLoaders.contains(Platform.getModLoader());
-                    LOGGER.debug("%s is %sbeing applied because %s is the current mod loader".formatted(className,
-                            shouldApply ? "" : "not ",
-                            Platform.getModLoader()
-                    ));
+                    AnnotationNode versionNode = Annotations.getValue(node, "version", Version.class);
+                    if (versionNode != null) {
+                        String currentVersion = Platform.getVersion();
+                        ComparableVersion comparableVersion = new ComparableVersion(currentVersion);
+                        String min = Annotations.getValue(versionNode, "min", "");
+                        String max = Annotations.getValue(versionNode, "max", "");
+                        if (!min.isBlank()) {
+                            shouldApply &= comparableVersion.compareTo(new ComparableVersion(min)) >= 0;
+                        }
+                        if (!max.isBlank()) {
+                            shouldApply &= comparableVersion.compareTo(new ComparableVersion(max)) <= 0;
+                        }
+                        LOGGER.debug("%s is %sbeing applied because we are using %s %s".formatted(className,
+                                shouldApply ? "" : "not ",
+                                Platform.getModLoader(),
+                                currentVersion
+                        ));
+                    } else {
+                        LOGGER.debug("%s is %sbeing applied because we are using %s".formatted(className,
+                                shouldApply ? "" : "not ",
+                                Platform.getModLoader()
+                        ));
+                    }
                 } else if (node.desc.equals(Type.getDescriptor(DevOnlyMixin.class))) {
                     shouldApply = Platform.isDev();
                     LOGGER.debug("%s is %sbeing applied because we are in a dev environment".formatted(className,

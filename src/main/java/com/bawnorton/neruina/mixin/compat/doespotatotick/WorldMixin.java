@@ -18,7 +18,7 @@ public abstract class WorldMixin {
     @ModifyReturnValue(method = "shouldUpdatePostDeath", at = @At("RETURN"))
     private boolean shouldUpdatePostDeath(boolean original, Entity entity) {
         if (original) {
-            return !Neruina.TICK_HANDLER.isErrored(entity);
+            return !Neruina.getInstance().getTickHandler().isErrored(entity);
         }
 
         return false;
@@ -31,6 +31,6 @@ public abstract class WorldMixin {
     @WrapOperation(method = "tickEntity", at = @At(value = "INVOKE", target = "Lcom/teampotato/does_potato_tick/util/DPTUtils;handleGuardEntityTick(Ljava/util/function/Consumer;Lnet/minecraft/entity/Entity;)V"))
     *//*?}*/
     private void catchTickingEntities(Consumer<Object> consumer, @Coerce Object entity, Operation<Void> original) {
-        Neruina.TICK_HANDLER.safelyTickEntities(consumer, (Entity) entity, original);
+        Neruina.getInstance().getTickHandler().safelyTickEntities(consumer, (Entity) entity, original);
     }
 }

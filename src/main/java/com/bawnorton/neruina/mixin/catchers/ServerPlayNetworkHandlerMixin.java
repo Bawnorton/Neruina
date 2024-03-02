@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class ServerPlayNetworkHandlerMixin {
     @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;playerTick()V"))
     private void catchTickingPlayer$notTheCauseOfTickLag(ServerPlayerEntity instance, Operation<Void> original) {
-        Neruina.TICK_HANDLER.safelyTickPlayer(instance, original);
+        Neruina.getInstance().getTickHandler().safelyTickPlayer(instance, original);
     }
 }

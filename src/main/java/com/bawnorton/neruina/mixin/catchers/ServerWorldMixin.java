@@ -1,6 +1,7 @@
 package com.bawnorton.neruina.mixin.catchers;
 
 import com.bawnorton.neruina.Neruina;
+import com.bawnorton.neruina.handler.TickHandler;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.block.BlockState;
@@ -16,8 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ServerWorldMixin {
     @Inject(method = "onBlockChanged", at = @At("HEAD"))
     private void removeErrored(BlockPos pos, BlockState oldBlock, BlockState newBlock, CallbackInfo ci) {
-        if (Neruina.TICK_HANDLER.isErrored(oldBlock, pos)) {
-            Neruina.TICK_HANDLER.removeErrored(oldBlock, pos);
+        TickHandler tickHandler = Neruina.getInstance().getTickHandler();
+        if (tickHandler.isErrored(oldBlock, pos)) {
+            tickHandler.removeErrored(oldBlock, pos);
         }
     }
 
@@ -27,11 +29,11 @@ public abstract class ServerWorldMixin {
     @WrapOperation(method = "tickChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;randomTick(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Ljava/util/Random;)V"))
     *//*? }*/
     private void catchTickingBlockState$notTheCauseOfTickLag(BlockState instance, ServerWorld world, BlockPos pos, @Coerce Object random, Operation<Void> original) {
-        Neruina.TICK_HANDLER.safelyTickBlockState(instance, world, pos, random, original);
+        Neruina.getInstance().getTickHandler().safelyTickBlockState(instance, world, pos, random, original);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void tickNeruinaHandler(CallbackInfo ci) {
-        Neruina.TICK_HANDLER.tick();
+        Neruina.getInstance().getTickHandler().tick();
     }
 }

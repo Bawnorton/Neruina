@@ -21,8 +21,9 @@ import java.util.List;
 
 public final class PersitanceHandler extends PersistentState {
     private static ServerWorld world;
+    private static final TickHandler tickHandler = Neruina.getInstance().getTickHandler();
 
-    /*? if >=1.20 {*/
+    /*? if >=1.20.2 {*/
     private static final Type<PersitanceHandler> type = new Type<>(
             PersitanceHandler::new,
             PersitanceHandler::fromNbt,
@@ -34,7 +35,7 @@ public final class PersitanceHandler extends PersistentState {
         world = server.getWorld(World.OVERWORLD);
         assert world != null;
         PersistentStateManager manager = world.getPersistentStateManager();
-        /*? if >=1.20 {*/
+        /*? if >=1.20.2 {*/
         PersitanceHandler handler = manager.getOrCreate(type, Neruina.MOD_ID);
         /*? } else {*//*
         PersitanceHandler handler = manager.getOrCreate(PersitanceHandler::fromNbtInternal, PersitanceHandler::new, Neruina.MOD_ID);
@@ -43,7 +44,7 @@ public final class PersitanceHandler extends PersistentState {
         return handler;
     }
 
-    /*? if >=1.20 {*/
+    /*? if >=1.20.2 {*/
     private static PersitanceHandler fromNbt(NbtCompound nbt, net.minecraft.registry.RegistryWrapper.WrapperLookup registryLookup) {
         return fromNbtInternal(nbt);
     }
@@ -57,10 +58,10 @@ public final class PersitanceHandler extends PersistentState {
         PersitanceHandler handler = new PersitanceHandler();
         NbtList tickingEntries = nbt.getList("tickingEntries", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < tickingEntries.size(); i++) {
-            Neruina.TICK_HANDLER.addTickingEntry(TickingEntry.fromNbt(world, tickingEntries.getCompound(i)));
+            tickHandler.addTickingEntry(TickingEntry.fromNbt(world, tickingEntries.getCompound(i)));
         }
         List<Text> tickingEntryMessages = new ArrayList<>();
-        int count = Neruina.TICK_HANDLER.getTickingEntries().size();
+        int count = tickHandler.getTickingEntries().size();
         if(count == 0) return handler;
 
         if(count == 1) {
@@ -69,20 +70,21 @@ public final class PersitanceHandler extends PersistentState {
             tickingEntryMessages.add(VersionedText.format(VersionedText.translatable("neruina.ticking_entries.count", count)));
         }
         MinecraftServer server = world.getServer();
+        MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
         ConditionalRunnable.create(() -> server.execute(() -> {
-            Neruina.TICK_HANDLER.getTickingEntries().forEach(entry -> tickingEntryMessages.add(VersionedText.withStyle(
-                    VersionedText.translatable("neruina.ticking_entries.entry", entry.getCauseName(), Neruina.MESSAGE_HANDLER.posAsNums(entry.pos())),
+            tickHandler.getTickingEntries().forEach(entry -> tickingEntryMessages.add(VersionedText.withStyle(
+                    VersionedText.translatable("neruina.ticking_entries.entry", entry.getCauseName(), messageHandler.posAsNums(entry.pos())),
                     style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/neruina info " + entry.uuid()))
                             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, VersionedText.translatable("neruina.ticking_entries.entry.tooltip")))
                             .withColor(Formatting.RED)
             )));
-            tickingEntryMessages.add(Neruina.MESSAGE_HANDLER.generateInfoAction());
-            Neruina.MESSAGE_HANDLER.broadcastToPlayers(server, VersionedText.concatDelimited(VersionedText.LINE_BREAK, tickingEntryMessages.toArray(new Text[0])));
+            tickingEntryMessages.add(messageHandler.generateInfoAction());
+            messageHandler.broadcastToPlayers(server, VersionedText.concatDelimited(VersionedText.LINE_BREAK, tickingEntryMessages.toArray(new Text[0])));
         }), () -> world.getChunkManager().getLoadedChunkCount() >= 9);
         return handler;
     }
 
-    /*? if >=1.20 {*/
+    /*? if >=1.20.2 {*/
     public NbtCompound writeNbt(NbtCompound nbt, net.minecraft.registry.RegistryWrapper.WrapperLookup registryLookup) {
         return writeNbtInternal(nbt);
     }
@@ -94,7 +96,7 @@ public final class PersitanceHandler extends PersistentState {
 
     private NbtCompound writeNbtInternal(NbtCompound nbt) {
         NbtList tickingEntries = new NbtList();
-        Neruina.TICK_HANDLER.getTickingEntries().forEach(entry -> tickingEntries.add(entry.writeNbt()));
+        tickHandler.getTickingEntries().forEach(entry -> tickingEntries.add(entry.writeNbt()));
         nbt.put("tickingEntries", tickingEntries);
         return nbt;
     }

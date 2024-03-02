@@ -2,7 +2,7 @@ package com.bawnorton.neruina.platform;
 
 import java.nio.file.Path;
 
-/*? if fabric {*//*
+/*? if fabric {*/
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 public final class Platform {
@@ -36,8 +36,12 @@ public final class Platform {
     public static String getModVersion(String modid) {
         return FabricLoader.getInstance().getModContainer(modid).map(ModContainer::getMetadata).map(modMetadata -> modMetadata.getVersion().getFriendlyString()).orElse("unknown");
     }
+
+    public static String getVersion() {
+        return getModVersion("fabricloader");
+    }
 }
-*//*? } elif forge {*/
+/*? } elif forge {*//*
 import java.util.List;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -81,8 +85,12 @@ public final class Platform {
     public static String getModVersion(String modid) {
         return ModList.get().getModFileById(modid).versionString();
     }
+
+    public static String getVersion() {
+        return FMLLoader.versionInfo().forgeVersion();
+    }
 }
-/*? } elif neoforge {*//*
+*//*? } elif neoforge {*//*
 import java.util.List;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
@@ -124,6 +132,10 @@ public final class Platform {
 
     public static String getModVersion(String modid) {
         return ModList.get().getModFileById(modid).versionString();
+    }
+
+    public static String getVersion() {
+        return FMLLoader.versionInfo().neoForgeVersion();
     }
 }
 *//*? }*/

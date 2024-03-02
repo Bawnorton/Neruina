@@ -1,3 +1,4 @@
+//file:noinspection All
 plugins {
 	id 'dev.architectury.loom' version "1.5-SNAPSHOT"
 	id 'me.modmuss50.mod-publish-plugin' version "0.4.5"
@@ -45,10 +46,11 @@ repositories {
 dependencies {
 	minecraft "com.mojang:minecraft:$minecraft_version"
 	mappings "net.fabricmc:yarn:$minecraft_version+build.${project.deps_yarn_build}:v2"
-	implementation(include("org.kohsuke:github-api:${project.deps_github_api}"))
+	include implementation("org.kohsuke:github-api:${project.deps_github_api}")
 	if(isFabric) {
 		modImplementation "net.fabricmc:fabric-loader:${project.deps_fabric_loader}"
 		modImplementation "net.fabricmc.fabric-api:fabric-api:${project.deps_fabric_api}"
+		implementation include("org.apache.maven:maven-artifact:3.8.1")
 	} else if (isForge) {
 		forge "net.minecraftforge:forge:$minecraft_version-${project.deps_fml}"
 		annotationProcessor compileOnly("io.github.llamalad7:mixinextras-common:${project.deps_mixin_extras}")

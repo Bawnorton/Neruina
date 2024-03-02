@@ -2,6 +2,7 @@ package com.bawnorton.neruina.mixin.errorable;
 
 import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.extend.Errorable;
+import com.bawnorton.neruina.handler.MessageHandler;
 import com.bawnorton.neruina.util.TickingEntry;
 import com.bawnorton.neruina.version.VersionedText;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -84,12 +85,13 @@ public abstract class EntityMixin implements Errorable {
 
         if (neruina$errored && neruina$tickingEntryId != null) {
             if (source.getAttacker() instanceof ServerPlayerEntity player) {
-                TickingEntry entry = Neruina.TICK_HANDLER.getTickingEntry(neruina$tickingEntryId);
-                Neruina.MESSAGE_HANDLER.sendToPlayer(
+                TickingEntry entry = Neruina.getInstance().getTickHandler().getTickingEntry(neruina$tickingEntryId);
+                MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
+                messageHandler.sendToPlayer(
                         player,
                         VersionedText.translatable("neruina.suspended.entity", getName().getString()),
-                        Neruina.MESSAGE_HANDLER.generateEntityActions((Entity) (Object) this),
-                        Neruina.MESSAGE_HANDLER.generateResourceActions(entry)
+                        messageHandler.generateEntityActions((Entity) (Object) this),
+                        messageHandler.generateResourceActions(entry)
                 );
             }
             /*? if >=1.20 { */

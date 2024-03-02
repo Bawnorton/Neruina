@@ -10,4 +10,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ModLoaderMixin {
     ModLoader[] value() default {};
+
+    Version version() default @Version;
 }
