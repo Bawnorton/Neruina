@@ -16,7 +16,9 @@
 - Persitance:
   - Ticking entity tracking will now persist across server restarts 
   - When the world is first started Neruina will broadcast all tracked ticking entities that need addressing
-- Improved performance and memory usage by delegating the tickingEntry state to the ticking entity
+- Ticking Threshold:
+  - 
+- Improved performance and memory usage by delegating the ticking state to the ticking entity
 - Migrated to Stonecutter to ease multi-loader multi-version development
 
 ### Auto Reports
