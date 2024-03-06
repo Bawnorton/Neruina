@@ -17,7 +17,10 @@
   - Ticking entity tracking will now persist across server restarts 
   - When the world is first started Neruina will broadcast all tracked ticking entities that need addressing
 - Ticking Threshold:
-  - 
+  - When a certain number of ticking excpetions occur within a certain time frame, Neruina will deliberately crash in 
+    order to prevent the server from becoming unusable.
+  - A comprehensive report will be generated with every ticking exception that occurred with instructions on what to do next.
+  - The default threshold is 20 exceptions within 5 minutes, this can be changed in the config.
 - Improved performance and memory usage by delegating the ticking state to the ticking entity
 - Migrated to Stonecutter to ease multi-loader multi-version development
 
@@ -45,6 +48,14 @@
   - `operators` (default) - Only operators will receive the broadcast
   - `everyone` - Everyone will receive the broadcast
   - `disabled` - No one will receive the broadcast
+- New `ticking_exception_threshold`
+  - The number of ticking exceptions that can occur within the specified time frame before Neruina will deliberately 
+    crash
+  - Default is `20`
+  - `-1` will disable the threshold
+- New `auto_kill_ticking_entities`
+  - If true, ticking entities will be immediately killed and removed rather than suspended
+  - Default is `false`
 
 ### Fixes
 - Fixed a crash with newer versions of Forge
