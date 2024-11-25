@@ -2,6 +2,7 @@ package com.bawnorton.neruina.mixin;
 
 import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.config.Config;
+import com.bawnorton.neruina.handler.MessageHandler;
 import com.bawnorton.neruina.handler.TickHandler;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.server.MinecraftServer;
@@ -24,8 +25,13 @@ public abstract class PlayerManagerMixin {
         TickHandler tickHandler = Neruina.getInstance().getTickHandler();
         int count = tickHandler.getTickingEntries().size();
         if (count > 0) {
-            Text message = Neruina.getInstance().getMessageHandler().generateSuspendedInfo();
-            switch (Config.getInstance().logLevel) {
+            MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
+            Text message = messageHandler.generateSuspendedInfo();
+            //? if >1.20.7 {
+            switch (MessageHandler.logLevel) {
+            //?} else {
+            /*switch (Config.getInstance().logLevel) {
+            *///?}
                 case OPERATORS -> {
                     if(player.hasPermissionLevel(server.getOpPermissionLevel())) {
                         player.sendMessage(message, false);

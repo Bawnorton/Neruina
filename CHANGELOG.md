@@ -1,3 +1,7 @@
+# 2.2.4
+
+- Fix 1.21+ versions accidentally using pre-1.21 config
+
 # 2.2.3
 
 - Update configurable dep for 1.21.1
