@@ -1,3 +1,11 @@
+# 2.2.6
+
+- Fix cache invalidation for configurable 
+
+# 2.2.5
+
+- Remove configurable until it can be reworked 
+
 # 2.2.4
 
 - Fix 1.21+ versions accidentally using pre-1.21 config

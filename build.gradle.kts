@@ -32,10 +32,6 @@ dependencies {
     include(implementation("com.fasterxml.jackson.core:jackson-core:${property("jackson")}")!!)
     include(implementation("com.fasterxml.jackson.core:jackson-databind:${property("jackson")}")!!)
     include(implementation("com.fasterxml.jackson.core:jackson-annotations:${property("jackson")}")!!)
-
-    if (minecraftVersion.greaterThan("1.20.7")) {
-        annotationProcessor(modImplementation("com.bawnorton.configurable:configurable-$loader-yarn:${property("configurable")}") { isTransitive = false })
-    }
 }
 
 loom {

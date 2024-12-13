@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-//? if >1.20.7
-import com.bawnorton.configurable.Configurable;
-
 //? if >1.19.2 {
 import net.minecraft.registry.RegistryKey;
 //?} else {
@@ -33,18 +30,9 @@ import net.minecraft.registry.RegistryKey;
 *///?}
 
 public final class MessageHandler {
-    //? if >1.20.7 {
-    @Configurable("log_level")
-    public static Config.LogLevel logLevel = Config.LogLevel.OPERATORS;
-    //?}
-
     public void broadcastToPlayers(MinecraftServer server, Text message) {
         ConditionalRunnable.create(() -> {
-            //? if >1.20.7 {
-            switch (logLevel) {
-            //?} else {
-            /*switch (Config.getInstance().logLevel) {
-            *///?}
+            switch (Config.getInstance().logLevel) {
                 case DISABLED -> {
                 }
                 case EVERYONE -> server.getPlayerManager()
