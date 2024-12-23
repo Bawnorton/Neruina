@@ -80,10 +80,10 @@ public abstract class EntityMixin implements Errorable {
     }
 
     //? if >1.21.2 {
-    @ModifyReturnValue(method = "isAlwaysInvulnerableTo", at = @At("RETURN"))
-    //?} else {
-    /*@ModifyReturnValue(method = "isInvulnerableTo", at = @At("RETURN"))
-    *///?}
+    /*@ModifyReturnValue(method = "isAlwaysInvulnerableTo", at = @At("RETURN"))
+    *///?} else {
+    @ModifyReturnValue(method = "isInvulnerableTo", at = @At("RETURN"))
+    //?}
     private boolean ignoreDamageWhenErrored(boolean original, DamageSource source) {
         if (original) return true;
 

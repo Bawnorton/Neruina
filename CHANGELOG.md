@@ -1,3 +1,8 @@
+# 2.2.7
+
+- Fix crash when handling errors with null messages
+- No longer represent config class as a record to avoid gson issues when <2.9 gson is present
+
 # 2.2.6
 
 - Fix cache invalidation for configurable 

@@ -232,12 +232,12 @@ public final class TickHandler {
 
     public void killEntity(Entity entity, @Nullable Text withMessage) {
         //? if >1.21.2 {
-        if(entity.getWorld() instanceof ServerWorld serverWorld) {
+        /*if(entity.getWorld() instanceof ServerWorld serverWorld) {
             entity.kill(serverWorld);
         }
-        //?} else {
-        /*entity.kill();
-        *///?}
+        *///?} else {
+        entity.kill();
+        //?}
         entity.remove(Entity.RemovalReason.KILLED); // Necessary for any living entity
         removeErrored(entity);
         if (withMessage != null) {

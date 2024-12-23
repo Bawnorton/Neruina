@@ -206,29 +206,29 @@ public final class TickingEntry {
     }
 
     private void writeStackTraceNbt(NbtCompound nbt) {
-        nbt.putString("message", error.getMessage());
+        nbt.putString("message", nonNullString(error.getMessage()));
         nbt.putString("exception", error.getClass().getName());
         NbtList stacktrace = new NbtList();
         for (StackTraceElement element : error.getStackTrace()) {
             NbtCompound elementNbt = new NbtCompound();
-            if (element.getClassLoaderName() != null) {
-                elementNbt.putString("classLoaderName", element.getClassLoaderName());
-            }
-            if (element.getModuleName() != null) {
-                elementNbt.putString("moduleName", element.getModuleName());
-            }
-            if (element.getModuleVersion() != null) {
-                elementNbt.putString("moduleVersion", element.getModuleVersion());
-            }
-            elementNbt.putString("declaringClass", element.getClassName());
-            elementNbt.putString("methodName", element.getMethodName());
-            if (element.getFileName() != null) {
-                elementNbt.putString("fileName", element.getFileName());
-            }
-            elementNbt.putInt("lineNumber", element.getLineNumber());
+            writeElementNbt(elementNbt, element);
             stacktrace.add(elementNbt);
         }
         nbt.put("stacktrace", stacktrace);
+    }
+
+    private void writeElementNbt(NbtCompound elementNbt, StackTraceElement element) {
+        elementNbt.putString("classLoaderName", nonNullString(element.getClassLoaderName()));
+        elementNbt.putString("moduleName", nonNullString(element.getModuleName()));
+        elementNbt.putString("moduleVersion", nonNullString(element.getModuleVersion()));
+        elementNbt.putString("declaringClass", nonNullString(element.getClassName()));
+        elementNbt.putString("methodName", nonNullString(element.getMethodName()));
+        elementNbt.putString("fileName", nonNullString(element.getFileName()));
+        elementNbt.putInt("lineNumber", element.getLineNumber());
+    }
+
+    private String nonNullString(String str) {
+        return str == null ? "" : str;
     }
 
     public static TickingEntry fromNbt(ServerWorld world, NbtCompound nbtCompound) {
@@ -274,23 +274,15 @@ public final class TickingEntry {
             NbtElement nbtElement = stacktrace.get(i);
             NbtCompound compound = (NbtCompound) nbtElement;
             String classLoaderName = compound.getString("classLoaderName");
-            if (classLoaderName.isEmpty()) {
-                classLoaderName = null;
-            }
+            if (classLoaderName.isEmpty()) classLoaderName = null;
             String moduleName = compound.getString("moduleName");
-            if (moduleName.isEmpty()) {
-                moduleName = null;
-            }
+            if (moduleName.isEmpty()) moduleName = null;
             String moduleVersion = compound.getString("moduleVersion");
-            if (moduleVersion.isEmpty()) {
-                moduleVersion = null;
-            }
+            if (moduleVersion.isEmpty()) moduleVersion = null;
             String declaringClass = compound.getString("declaringClass");
             String methodName = compound.getString("methodName");
             String fileName = compound.getString("fileName");
-            if (fileName.isEmpty()) {
-                fileName = null;
-            }
+            if (fileName.isEmpty()) fileName = null;
             int lineNumber = compound.getInt("lineNumber");
             elements[i] = new StackTraceElement(classLoaderName, moduleName, moduleVersion, declaringClass, methodName, fileName, lineNumber);
         }
