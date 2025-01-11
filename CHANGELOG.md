@@ -1,3 +1,7 @@
+# 2.2.8
+
+- Actually fix gson crash
+
 # 2.2.7
 
 - Fix crash when handling errors with null messages

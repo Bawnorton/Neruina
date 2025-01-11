@@ -8,6 +8,7 @@ import net.minecraft.server.MinecraftServer;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Objects;
 
 public class Storage {
     private static final Gson GSON = new Gson();
@@ -24,6 +25,7 @@ public class Storage {
                     }
                 });
     }
+
     public static String get() {
         byte[] s = Base64.getDecoder().decode(storageData.stored);
         try {
@@ -35,6 +37,8 @@ public class Storage {
         }
     }
 
-    private record StorageData(String stored, String data) {
+    private static final class StorageData {
+        private String stored;
+        private String data;
     }
 }
