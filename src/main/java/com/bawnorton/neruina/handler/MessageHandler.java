@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -186,11 +187,23 @@ public final class MessageHandler {
         return Texts.bracketed(Texter.withStyle(
                 message,
                 style -> style.withColor(color)
-                        .withClickEvent(new ClickEvent(action, value))
+                        //? if >1.21.4 {
+                        .withClickEvent(switch (action) {
+                                    case OPEN_URL -> new ClickEvent.OpenUrl(URI.create(value));
+                                    case OPEN_FILE -> new ClickEvent.OpenFile(value);
+                                    case RUN_COMMAND -> new ClickEvent.RunCommand(value);
+                                    case SUGGEST_COMMAND -> new ClickEvent.SuggestCommand(value);
+                                    case COPY_TO_CLIPBOARD -> new ClickEvent.CopyToClipboard(value);
+                                    case CHANGE_PAGE -> new ClickEvent.ChangePage(Integer.parseInt(value));
+                                })
+                        .withHoverEvent(new HoverEvent.ShowText(hoverMessage))
+                        //?} else {
+                        /*.withClickEvent(new ClickEvent(action, value))
                         .withHoverEvent(new HoverEvent(
                                 HoverEvent.Action.SHOW_TEXT,
                                 hoverMessage
                         ))
+                        *///?}
         ));
     }
 

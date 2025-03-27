@@ -15,7 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin {
-    @Inject(method = "onBlockChanged", at = @At("HEAD"))
+    //? if >1.21.4 {
+    @Inject(method = "onBlockStateChanged", at = @At("HEAD"))
+    //?} else {
+    /*@Inject(method = "onBlockChanged", at = @At("HEAD"))
+    *///?}
     private void removeErrored(BlockPos pos, BlockState oldBlock, BlockState newBlock, CallbackInfo ci) {
         TickHandler tickHandler = Neruina.getInstance().getTickHandler();
         if (tickHandler.isErrored(oldBlock, pos)) {

@@ -16,6 +16,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -57,6 +58,18 @@ public final class TickHandler {
     public void init() {
         tickingEntries.clear();
         recentErrors.clear();
+    }
+
+    @SuppressWarnings("unused")
+    public void safelyTickItemStack(ItemStack instance, World world, Entity entity, EquipmentSlot slot, int slotIndex, Operation<Void> original) {
+        try {
+            if (isErrored(instance)) {
+                return;
+            }
+            original.call(instance, world, entity, slot);
+        } catch (Throwable e) {
+            handleTickingItemStack(e, instance, !world.isClient(), (PlayerEntity) entity, slotIndex);
+        }
     }
 
     @SuppressWarnings("unused")
@@ -232,12 +245,12 @@ public final class TickHandler {
 
     public void killEntity(Entity entity, @Nullable Text withMessage) {
         //? if >1.21.2 {
-        /*if(entity.getWorld() instanceof ServerWorld serverWorld) {
+        if(entity.getWorld() instanceof ServerWorld serverWorld) {
             entity.kill(serverWorld);
         }
-        *///?} else {
-        entity.kill();
-        //?}
+        //?} else {
+        /*entity.kill();
+        *///?}
         entity.remove(Entity.RemovalReason.KILLED); // Necessary for any living entity
         removeErrored(entity);
         if (withMessage != null) {

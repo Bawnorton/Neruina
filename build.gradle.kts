@@ -2,8 +2,8 @@
 
 plugins {
     `maven-publish`
-    kotlin("jvm") version "1.9.22"
-    id("dev.architectury.loom") version "1.7-SNAPSHOT"
+    kotlin("jvm") version "2.1.20"
+    id("dev.architectury.loom") version "1.10-SNAPSHOT"
     id("architectury-plugin") version "3.4-SNAPSHOT"
     id("me.modmuss50.mod-publish-plugin") version "0.5.+"
 }
@@ -106,6 +106,8 @@ if (loader.isNeoForge) {
             mappings("net.fabricmc:yarn:$minecraftVersion+build.${property("yarn_build")}:v2")
             if (minecraftVersion.lessThan("1.21")) {
                 mappings("dev.architectury:yarn-mappings-patch-neoforge:1.20.5+build.3")
+            } else if (minecraftVersion.lessThan("1.21.4")) {
+                mappings("dev.architectury:yarn-mappings-patch-neoforge:1.21+build.4")
             } else {
                 mappings("dev.architectury:yarn-mappings-patch-neoforge:1.21+build.4")
             }

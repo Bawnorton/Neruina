@@ -71,6 +71,7 @@ public final class NeruinaCommandHandler {
                                 .executes(NeruinaCommandHandler::executeReport)
                         )
                         .then(CommandManager.literal("test")
+                                .requires(source -> source.hasPermissionLevel(2))
                                 .executes(NeruinaCommandHandler::executeTestReport)
                         )
                 )
@@ -95,6 +96,7 @@ public final class NeruinaCommandHandler {
                         .executes(NeruinaCommandHandler::executeClear)
                 )
                 .then(CommandManager.literal("show_suspended")
+                        .requires(source -> source.hasPermissionLevel(2))
                         .executes(NeruinaCommandHandler::executeShowSuspended)
                 )
         );
@@ -322,11 +324,16 @@ public final class NeruinaCommandHandler {
                 context,
                 Texter.withStyle(
                         messageHandler.formatText("commands.neruina.id", uuid.toString()),
-                        style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
+                        //? if >1.21.4 {
+                        style -> style.withClickEvent(new ClickEvent.CopyToClipboard(uuid.toString()))
+                                .withHoverEvent(new HoverEvent.ShowText(Texter.translatable("commands.neruina.id.tooltip")))
+                        //?} else {
+                        /*style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
                                 .withHoverEvent(new HoverEvent(
                                         HoverEvent.Action.SHOW_TEXT,
                                         Texter.translatable("commands.neruina.id.tooltip")
                                 ))
+                        *///?}
                 )
         ), () -> context.getSource().sendError(
                 messageHandler.formatText(
@@ -347,11 +354,17 @@ public final class NeruinaCommandHandler {
                     context,
                     Texter.withStyle(
                             messageHandler.formatText("commands.neruina.id", uuid.toString()),
-                            style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
+                            //? if >1.21.4 {
+                            style -> style.withClickEvent(new ClickEvent.CopyToClipboard(uuid.toString()))
+                                    .withHoverEvent(new HoverEvent.ShowText(Texter.translatable("commands.neruina.id.tooltip"))
+                            )
+                            //?} else {
+                            /*style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
                                     .withHoverEvent(new HoverEvent(
                                             HoverEvent.Action.SHOW_TEXT,
                                             Texter.translatable("commands.neruina.id.tooltip")
                                     ))
+                            *///?}
                     )
             ), () -> context.getSource().sendError(
                     messageHandler.formatText(
@@ -365,11 +378,17 @@ public final class NeruinaCommandHandler {
                     context,
                     Texter.withStyle(
                             messageHandler.formatText("commands.neruina.id", uuid.toString()),
-                            style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
+                            //? if >1.21.4 {
+                            style -> style.withClickEvent(new ClickEvent.CopyToClipboard(uuid.toString()))
+                                    .withHoverEvent(new HoverEvent.ShowText(Texter.translatable("commands.neruina.id.tooltip"))
+                            )
+                            //?} else {
+                            /*style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
                                     .withHoverEvent(new HoverEvent(
                                             HoverEvent.Action.SHOW_TEXT,
                                             Texter.translatable("commands.neruina.id.tooltip")
                                     ))
+                            *///?}
                     )
             ), () -> context.getSource().sendError(
                     messageHandler.formatText(

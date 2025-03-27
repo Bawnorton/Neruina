@@ -64,26 +64,35 @@ public abstract class EntityMixin implements Errorable {
             original.putBoolean("neruina$errored", true);
         }
         if (neruina$tickingEntryId != null) {
-            original.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
+            //? if >1.21.4 {
+            original.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
+            //?} else {
+            /*original.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
+            *///?}
         }
         return original;
     }
 
     @Inject(method = "readNbt", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/Entity;onGround:Z", opcode = Opcodes.PUTFIELD))
     private void readErroredFromNbt(NbtCompound nbt, CallbackInfo ci) {
-        if (nbt.contains("neruina$errored")) {
+        //? if >1.21.4 {
+        neruina$errored = nbt.getBoolean("neruina$errored", false);
+        neruina$tickingEntryId = nbt.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+        //?} else {
+        /*if (nbt.contains("neruina$errored")) {
             neruina$errored = nbt.getBoolean("neruina$errored");
         }
         if (nbt.contains("neruina$tickingEntryId")) {
             neruina$tickingEntryId = nbt.getUuid("neruina$tickingEntryId");
         }
+        *///?}
     }
 
     //? if >1.21.2 {
-    /*@ModifyReturnValue(method = "isAlwaysInvulnerableTo", at = @At("RETURN"))
-    *///?} else {
-    @ModifyReturnValue(method = "isInvulnerableTo", at = @At("RETURN"))
-    //?}
+    @ModifyReturnValue(method = "isAlwaysInvulnerableTo", at = @At("RETURN"))
+    //?} else {
+    /*@ModifyReturnValue(method = "isInvulnerableTo", at = @At("RETURN"))
+    *///?}
     private boolean ignoreDamageWhenErrored(boolean original, DamageSource source) {
         if (original) return true;
 

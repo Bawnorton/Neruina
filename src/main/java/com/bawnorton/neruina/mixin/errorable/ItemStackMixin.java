@@ -19,21 +19,21 @@ import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 //? if >1.21.2 {
-/*import net.minecraft.component.MergedComponentMap;
-*///?} else {
-import net.minecraft.component.ComponentMapImpl;
-//?}
+import net.minecraft.component.MergedComponentMap;
+//?} else {
+/*import net.minecraft.component.ComponentMapImpl;
+*///?}
 //?}
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements Errorable {
     //? if >1.21.1 {
-    /*@Shadow @Final
-    MergedComponentMap components;
-    *///?} elif >=1.20.2 {
     @Shadow @Final
+    MergedComponentMap components;
+    //?} elif >=1.20.2 {
+    /*@Shadow @Final
     ComponentMapImpl components;
-    //?} else {
+    *///?} else {
     /*@Shadow public abstract NbtCompound getOrCreateNbt();
 
     @Shadow @Nullable
@@ -82,7 +82,11 @@ public abstract class ItemStackMixin implements Errorable {
         NbtCompound nbt = new NbtCompound();
         nbt.putBoolean("neruina$errored", neruina$errored);
         if(neruina$tickingEntryId != null) {
-            nbt.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
+            //? if >1.21.4 {
+            nbt.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
+            //?} else {
+            /*nbt.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
+            *///?}
         }
         ComponentChanges.Builder builder = ComponentChanges.builder()
                 .add(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
@@ -90,20 +94,26 @@ public abstract class ItemStackMixin implements Errorable {
     }
 
     //? if >1.21.2 {
-    /*@Inject(method = "<init>(Lnet/minecraft/item/ItemConvertible;ILnet/minecraft/component/MergedComponentMap;)V", at = @At("TAIL"))
+    @Inject(method = "<init>(Lnet/minecraft/item/ItemConvertible;ILnet/minecraft/component/MergedComponentMap;)V", at = @At("TAIL"))
     private void readErroredFromComponents(ItemConvertible item, int count, MergedComponentMap components, CallbackInfo ci) {
-    *///?} else {
-    @Inject(method = "<init>(Lnet/minecraft/item/ItemConvertible;ILnet/minecraft/component/ComponentMapImpl;)V", at = @At("TAIL"))
+    //?} else {
+    /*@Inject(method = "<init>(Lnet/minecraft/item/ItemConvertible;ILnet/minecraft/component/ComponentMapImpl;)V", at = @At("TAIL"))
     private void readErroredFromComponents(ItemConvertible item, int count, ComponentMapImpl components, CallbackInfo ci) {
-    //?}
+    *///?}
         NbtComponent nbtComponent = components.get(DataComponentTypes.CUSTOM_DATA);
         if (nbtComponent == null) return;
 
         NbtCompound tag = nbtComponent.copyNbt();
-        neruina$errored = tag.getBoolean("neruina$errored");
+
+        //? if >1.21.4 {
+        neruina$errored = tag.getBoolean("neruina$errored", false);
+        neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+        //?} else {
+        /*neruina$errored = tag.getBoolean("neruina$errored");
         if(tag.contains("neruina$tickingEntryId")) {
             neruina$tickingEntryId = tag.getUuid("neruina$tickingEntryId");
         }
+        *///?}
     }
     //?} else {
     /*@Unique

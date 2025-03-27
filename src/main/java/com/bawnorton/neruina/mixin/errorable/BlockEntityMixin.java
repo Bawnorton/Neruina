@@ -53,7 +53,11 @@ public abstract class BlockEntityMixin implements Errorable {
             nbt.putBoolean("neruina$errored", true);
         }
         if (neruina$tickingEntryId != null) {
-            nbt.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
+            //? if >1.21.4 {
+            nbt.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
+            //?} else {
+            /*nbt.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
+            *///?}
         }
     }
 
@@ -63,11 +67,16 @@ public abstract class BlockEntityMixin implements Errorable {
     //?} else {
     /*private void readErroredFromNbt(NbtCompound nbt, CallbackInfo ci) {
     *///?}
-        if (nbt.contains("neruina$errored")) {
+        //? if >1.21.4 {
+        neruina$errored = nbt.getBoolean("neruina$errored", false);
+        neruina$tickingEntryId = nbt.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+        //?} else {
+        /*if (nbt.contains("neruina$errored")) {
             neruina$errored = nbt.getBoolean("neruina$errored");
         }
         if (nbt.contains("neruina$tickingEntryId")) {
             neruina$tickingEntryId = nbt.getUuid("neruina$tickingEntryId");
         }
+        *///?}
     }
 }

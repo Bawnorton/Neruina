@@ -2,7 +2,10 @@ package com.bawnorton.neruina.util;
 
 import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.extend.CrashReportSectionExtender;
+import com.bawnorton.neruina.handler.PersitanceHandler;
 import com.bawnorton.neruina.platform.Platform;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
@@ -24,20 +27,59 @@ import java.security.CodeSource;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-//? if >1.19.2 {
+//? if >1.21.4 {
+import net.minecraft.util.Uuids;
 import net.minecraft.registry.RegistryKey;
+//?} elif >1.19.2 {
+/*import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-//?} else {
+*///?} else {
 /*import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.Registry;
 *///?}
 
 public final class TickingEntry {
+    //? if >1.21.4 {
+    public static final Codec<TickingEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.STRING.fieldOf("causeType").forGetter(TickingEntry::getCauseType),
+            Codec.STRING.fieldOf("causeName").forGetter(TickingEntry::getCauseName),
+            Uuids.CODEC.fieldOf("uuid").forGetter(TickingEntry::uuid),
+            World.CODEC.fieldOf("dimension").forGetter(TickingEntry::dimension),
+            BlockPos.CODEC.fieldOf("pos").forGetter(TickingEntry::pos),
+            ThrowableData.CODEC.fieldOf("error").forGetter(tickingEntry -> ThrowableData.fromThrowable(tickingEntry.error())),
+            Uuids.CODEC.optionalFieldOf("entityUuid").forGetter(tickingEntry -> {
+                Object cause = tickingEntry.getCause();
+                if (cause instanceof Entity entity) {
+                    return Optional.of(entity.getUuid());
+                }
+                return Optional.empty();
+            })
+    ).apply(instance, (causeType, causeName, uuid, dimension, pos, error, entityUuid) -> {
+        Supplier<Object> cause = () -> null;
+        if (causeType.equals(Type.ENTITY.type)) {
+            if (entityUuid.isPresent()) {
+                UUID entityUuidValue = entityUuid.get();
+                cause = () -> PersitanceHandler.getWorld().getEntity(entityUuidValue);
+            }
+        } else if (causeType.equals(Type.BLOCK_ENTITY.type)) {
+            cause = () -> PersitanceHandler.getWorld().getBlockEntity(pos);
+        } else if (causeType.equals(Type.BLOCK_STATE.type)) {
+            cause = () -> PersitanceHandler.getWorld().getBlockState(pos);
+        }
+        TickingEntry entry = new TickingEntry(cause, true, dimension, pos, uuid, error.toThrowable());
+        entry.cachedCauseType = causeType;
+        entry.cachedCauseName = causeName;
+        return entry;
+    }));
+    //?}
+
     private final Supplier<@Nullable Object> causeSupplier;
     private final boolean persitent;
     private final RegistryKey<World> dimension;
@@ -190,17 +232,18 @@ public final class TickingEntry {
         return null;
     }
 
-    public NbtCompound writeNbt() {
+    //? if <1.21.4 {
+    /*public NbtCompound writeNbt() {
         NbtCompound nbt = new NbtCompound();
         Object cause = getCause();
         nbt.putString("causeType", getCauseType());
         nbt.putString("causeName", getCauseName());
-        nbt.putUuid("uuid", uuid);
+        nbt.putString("uuid", uuid.toString());
         nbt.putString("dimension", dimension.getValue().toString());
         nbt.putLong("pos", pos.asLong());
         writeStackTraceNbt(nbt);
         if (cause instanceof Entity entity) {
-            nbt.putUuid("entityUuid", entity.getUuid());
+            nbt.putString("entityUuid", entity.getUuid().toString());
         }
         return nbt;
     }
@@ -241,8 +284,8 @@ public final class TickingEntry {
             //? if >1.19.2 {
             dimension = RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(dimensionStr));
             //?} else {
-            /*dimension = RegistryKey.of(Registry.WORLD_KEY, Identifier.tryParse(dimensionStr));
-            *///?}
+            /^dimension = RegistryKey.of(Registry.WORLD_KEY, Identifier.tryParse(dimensionStr));
+            ^///?}
         } else {
             dimension = World.OVERWORLD;
         }
@@ -289,6 +332,7 @@ public final class TickingEntry {
 
         return createThrowable(message, exceptionClass, elements);
     }
+    *///?}
 
     private static Throwable createThrowable(String message, String exceptionClass, StackTraceElement[] elements) {
         try {
@@ -366,4 +410,70 @@ public final class TickingEntry {
         );
         static final Type<Object> UNKNOWN = new Type<>("Unknown", object -> "Unknown");
     }
+
+    //? if >1.21.4 {
+    private record ThrowableData(String message, String exceptionClass, StackTraceElement[] elements) {
+        public static final Codec<ThrowableData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.STRING.fieldOf("message").forGetter(ThrowableData::message),
+                Codec.STRING.fieldOf("exceptionClass").forGetter(ThrowableData::exceptionClass),
+                StackTraceElementData.CODEC.listOf().fieldOf("elements").forGetter(ThrowableData::elementDatas)
+        ).apply(instance, ThrowableData::new));
+
+        private ThrowableData(String message, String exceptionClass, List<StackTraceElementData> elements) {
+            this(message, exceptionClass, elements.stream().map(StackTraceElementData::toStackTraceElement).toArray(StackTraceElement[]::new));
+        }
+
+        public static ThrowableData fromThrowable(Throwable throwable) {
+            return new ThrowableData(
+                    throwable.getMessage(),
+                    throwable.getClass().getName(),
+                    throwable.getStackTrace()
+            );
+        }
+
+        public Throwable toThrowable() {
+            return createThrowable(message, exceptionClass, elements);
+        }
+
+        public List<StackTraceElementData> elementDatas() {
+            return Stream.of(elements).map(StackTraceElementData::fromStackTraceElement).toList();
+        }
+
+        private record StackTraceElementData(String classLoaderName, String moduleName, String moduleVersion, String declaringClass, String methodName, String fileName, int lineNumber) {
+            public static final Codec<StackTraceElementData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                    Codec.STRING.fieldOf("classLoaderName").forGetter(StackTraceElementData::classLoaderName),
+                    Codec.STRING.fieldOf("moduleName").forGetter(StackTraceElementData::moduleName),
+                    Codec.STRING.fieldOf("moduleVersion").forGetter(StackTraceElementData::moduleVersion),
+                    Codec.STRING.fieldOf("declaringClass").forGetter(StackTraceElementData::declaringClass),
+                    Codec.STRING.fieldOf("methodName").forGetter(StackTraceElementData::methodName),
+                    Codec.STRING.fieldOf("fileName").forGetter(StackTraceElementData::fileName),
+                    Codec.INT.fieldOf("lineNumber").forGetter(StackTraceElementData::lineNumber)
+            ).apply(instance, StackTraceElementData::new));
+
+            public static StackTraceElementData fromStackTraceElement(StackTraceElement element) {
+                return new StackTraceElementData(
+                        element.getClassLoaderName(),
+                        element.getModuleName(),
+                        element.getModuleVersion(),
+                        element.getClassName(),
+                        element.getMethodName(),
+                        element.getFileName(),
+                        element.getLineNumber()
+                );
+            }
+
+            public StackTraceElement toStackTraceElement() {
+                return new StackTraceElement(
+                        classLoaderName,
+                        moduleName,
+                        moduleVersion,
+                        declaringClass,
+                        methodName,
+                        fileName,
+                        lineNumber
+                );
+            }
+        }
+    }
+    //?}
 }
