@@ -56,8 +56,13 @@ public final class TickingEntry {
             ThrowableData.CODEC.fieldOf("error").forGetter(tickingEntry -> ThrowableData.fromThrowable(tickingEntry.error())),
             Uuids.CODEC.optionalFieldOf("entityUuid").forGetter(tickingEntry -> {
                 try {
-                    if (tickingEntry.getCauseType().equals(Type.ENTITY.type) && tickingEntry.getCause() instanceof Entity entity) {
-                        return Optional.of(entity.getUuid());
+                    if (tickingEntry.getCauseType().equals(Type.ENTITY.type)) {
+                        if (tickingEntry.cachedEntityUuid != null) {
+                            return Optional.of(tickingEntry.cachedEntityUuid);
+                        } else if (tickingEntry.getCause() instanceof Entity entity) {
+                            tickingEntry.cachedEntityUuid = entity.getUuid();
+                            return Optional.of(tickingEntry.cachedEntityUuid);
+                        }
                     }
                 } catch (RuntimeException e) {
                     Neruina.LOGGER.warn("Failed to find entity UUID when serializing TickingEntry", e);
@@ -91,6 +96,7 @@ public final class TickingEntry {
     private final UUID uuid;
     private String cachedCauseType;
     private String cachedCauseName;
+    private UUID cachedEntityUuid;
 
     private final List<String> blacklistedModids = List.of(
             Neruina.MOD_ID, "minecraft", "forge", "neoforge"
@@ -245,8 +251,13 @@ public final class TickingEntry {
         nbt.putLong("pos", pos.asLong());
         writeStackTraceNbt(nbt);
         try {
-            if (getCauseType().equals(Type.ENTITY.type) && getCause() instanceof Entity entity) {
-                nbt.putString("entityUuid", entity.getUuid().toString());
+            if (getCauseType().equals(Type.ENTITY.type)) {
+                if (cachedEntityUuid != null) {
+                    nbt.putUuid("entityUuid", cachedEntityUuid);
+                } else if (getCause() instanceof Entity entity) {
+                    cachedEntityUuid = entity.getUuid();
+                    nbt.putUuid("entityUuid", cachedEntityUuid);
+                }
             }
         } catch (RuntimeException e) {
             Neruina.LOGGER.warn("Failed to find entity UUID when serializing TickingEntry", e);
@@ -298,10 +309,12 @@ public final class TickingEntry {
         BlockPos pos = BlockPos.fromLong(nbtCompound.getLong("pos"));
         Throwable error = readStackTraceNbt(nbtCompound);
         Supplier<Object> cause = () -> null;
+        UUID entityUuid = null;
         if (causeType.equals(Type.ENTITY.type)) {
             if (nbtCompound.contains("entityUuid")) {
-                UUID entityUuid = nbtCompound.getUuid("entityUuid");
-                cause = () -> world.getEntity(entityUuid);
+                entityUuid = nbtCompound.getUuid("entityUuid");
+                UUID finalEntityUuid = entityUuid;
+                cause = () -> world.getEntity(finalEntityUuid);
             }
         } else if (causeType.equals(Type.BLOCK_ENTITY.type)) {
             cause = () -> world.getBlockEntity(pos);
@@ -311,6 +324,7 @@ public final class TickingEntry {
         TickingEntry entry = new TickingEntry(cause, true, dimension, pos, uuid, error);
         entry.cachedCauseType = causeType;
         entry.cachedCauseName = causeName;
+        entry.cachedEntityUuid = entityUuid;
         return entry;
     }
 
