@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+@SuppressWarnings("DataFlowIssue")
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
     //? if >=1.19.3 {
@@ -15,7 +16,7 @@ public abstract class MinecraftServerMixin {
     private void onServerStart(CallbackInfo ci) {
         Neruina.getInstance().getAutoReportHandler().init((MinecraftServer) (Object) this);
         Neruina.getInstance().getTickHandler().init();
-        Neruina.getInstance().getPersitanceHandler((MinecraftServer) (Object) this);
+        Neruina.getInstance().updateServerState((MinecraftServer) (Object) this);
         Storage.init((MinecraftServer) (Object) this);
     }
     //?} else {
@@ -23,13 +24,13 @@ public abstract class MinecraftServerMixin {
     private void onServerStart(CallbackInfo ci) {
         Neruina.getInstance().getAutoReportHandler().init((MinecraftServer) (Object) this);
         Neruina.getInstance().getTickHandler().init();
-        Neruina.getInstance().getPersitanceHandler((MinecraftServer) (Object) this);
+        Neruina.getInstance().updateServerState((MinecraftServer) (Object) this);
         Storage.init((MinecraftServer) (Object) this);
     }
     *///?}
 
     @Inject(method = "shutdown", at = @At("HEAD"))
     private void onServerStop(CallbackInfo ci) {
-        Neruina.getInstance().getPersitanceHandler((MinecraftServer) (Object) this).markDirty();
+        Neruina.getInstance().updateServerState((MinecraftServer) (Object) this);
     }
 }

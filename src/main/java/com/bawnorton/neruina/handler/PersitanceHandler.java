@@ -13,16 +13,16 @@ import net.minecraft.world.World;
 import java.util.List;
 
 //? if >1.21.4 {
-import com.mojang.serialization.Codec;
+/*import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.PersistentStateType;
-//?}
+*///?}
 
 public final class PersitanceHandler extends PersistentState {
     private static ServerWorld world;
 
     //? if >1.21.4 {
-    private static final Codec<PersitanceHandler> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    /*private static final Codec<PersitanceHandler> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             TickingEntry.CODEC.listOf().fieldOf("tickingEntries").forGetter(PersitanceHandler::getTickingEntries)
     ).apply(instance, (tickingEntries -> {
         PersitanceHandler handler = new PersitanceHandler();
@@ -37,32 +37,33 @@ public final class PersitanceHandler extends PersistentState {
             CODEC,
             null
     );
-
-    //?} elif >=1.20.2 {
-    /*private static final Type<PersitanceHandler> type = new Type<>(
+    *///?} elif >=1.20.2 {
+    private static final Type<PersitanceHandler> type = new Type<>(
             PersitanceHandler::new,
             PersitanceHandler::fromNbt,
             null
     );
-    *///?}
+    //?}
 
-    public static PersitanceHandler getServerState(MinecraftServer server) {
+    public static void updateServerState(MinecraftServer server) {
         world = server.getWorld(World.OVERWORLD);
-        assert world != null;
+        if(world == null) {
+            Neruina.LOGGER.error("World is null, unable to save persistent state.");
+            return;
+        }
         PersistentStateManager manager = world.getPersistentStateManager();
         //? if >1.21.4 {
-        PersitanceHandler handler = manager.getOrCreate(type);
-        //?} elif >=1.20.2 {
-        /*PersitanceHandler handler = manager.getOrCreate(type, Neruina.MOD_ID);
-        *///?} else {
+        /*PersitanceHandler handler = manager.getOrCreate(type);
+        *///?} elif >=1.20.2 {
+        PersitanceHandler handler = manager.getOrCreate(type, Neruina.MOD_ID);
+        //?} else {
         /*PersitanceHandler handler = manager.getOrCreate(PersitanceHandler::fromNbtInternal, PersitanceHandler::new, Neruina.MOD_ID);
         *///?}
         handler.markDirty();
-        return handler;
     }
 
     //? if <1.21.4 {
-    /*//? if >=1.20.2 {
+    //? if >=1.20.2 {
     private static PersitanceHandler fromNbt(NbtCompound nbt, net.minecraft.registry.RegistryWrapper.WrapperLookup registryLookup) {
         return fromNbtInternal(nbt);
     }
@@ -103,9 +104,9 @@ public final class PersitanceHandler extends PersistentState {
         nbt.put("tickingEntries", tickingEntries);
         return nbt;
     }
-    *///?} else {
+    //?} else {
 
-    private List<TickingEntry> getTickingEntries() {
+    /*private List<TickingEntry> getTickingEntries() {
         return Neruina.getInstance()
                       .getTickHandler()
                       .getTickingEntries()
@@ -117,5 +118,5 @@ public final class PersitanceHandler extends PersistentState {
     public static ServerWorld getWorld() {
         return world;
     }
-    //?}
+    *///?}
 }

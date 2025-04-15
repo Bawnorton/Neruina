@@ -35,19 +35,19 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 //? if >1.21.4 {
-import net.minecraft.util.Uuids;
+/*import net.minecraft.util.Uuids;
 import net.minecraft.registry.RegistryKey;
-//?} elif >1.19.2 {
-/*import net.minecraft.registry.RegistryKey;
+*///?} elif >1.19.2 {
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-*///?} else {
+//?} else {
 /*import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.Registry;
 *///?}
 
 public final class TickingEntry {
     //? if >1.21.4 {
-    public static final Codec<TickingEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    /*public static final Codec<TickingEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("causeType").forGetter(TickingEntry::getCauseType),
             Codec.STRING.fieldOf("causeName").forGetter(TickingEntry::getCauseName),
             Uuids.CODEC.fieldOf("uuid").forGetter(TickingEntry::uuid),
@@ -55,9 +55,12 @@ public final class TickingEntry {
             BlockPos.CODEC.fieldOf("pos").forGetter(TickingEntry::pos),
             ThrowableData.CODEC.fieldOf("error").forGetter(tickingEntry -> ThrowableData.fromThrowable(tickingEntry.error())),
             Uuids.CODEC.optionalFieldOf("entityUuid").forGetter(tickingEntry -> {
-                Object cause = tickingEntry.getCause();
-                if (cause instanceof Entity entity) {
-                    return Optional.of(entity.getUuid());
+                try {
+                    if (tickingEntry.getCauseType().equals(Type.ENTITY.type) && tickingEntry.getCause() instanceof Entity entity) {
+                        return Optional.of(entity.getUuid());
+                    }
+                } catch (RuntimeException e) {
+                    Neruina.LOGGER.warn("Failed to find entity UUID when serializing TickingEntry", e);
                 }
                 return Optional.empty();
             })
@@ -78,7 +81,7 @@ public final class TickingEntry {
         entry.cachedCauseName = causeName;
         return entry;
     }));
-    //?}
+    *///?}
 
     private final Supplier<@Nullable Object> causeSupplier;
     private final boolean persitent;
@@ -233,17 +236,20 @@ public final class TickingEntry {
     }
 
     //? if <1.21.4 {
-    /*public NbtCompound writeNbt() {
+    public NbtCompound writeNbt() {
         NbtCompound nbt = new NbtCompound();
-        Object cause = getCause();
         nbt.putString("causeType", getCauseType());
         nbt.putString("causeName", getCauseName());
         nbt.putString("uuid", uuid.toString());
         nbt.putString("dimension", dimension.getValue().toString());
         nbt.putLong("pos", pos.asLong());
         writeStackTraceNbt(nbt);
-        if (cause instanceof Entity entity) {
-            nbt.putString("entityUuid", entity.getUuid().toString());
+        try {
+            if (getCauseType().equals(Type.ENTITY.type) && getCause() instanceof Entity entity) {
+                nbt.putString("entityUuid", entity.getUuid().toString());
+            }
+        } catch (RuntimeException e) {
+            Neruina.LOGGER.warn("Failed to find entity UUID when serializing TickingEntry", e);
         }
         return nbt;
     }
@@ -284,8 +290,8 @@ public final class TickingEntry {
             //? if >1.19.2 {
             dimension = RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(dimensionStr));
             //?} else {
-            /^dimension = RegistryKey.of(Registry.WORLD_KEY, Identifier.tryParse(dimensionStr));
-            ^///?}
+            /*dimension = RegistryKey.of(Registry.WORLD_KEY, Identifier.tryParse(dimensionStr));
+            *///?}
         } else {
             dimension = World.OVERWORLD;
         }
@@ -332,7 +338,7 @@ public final class TickingEntry {
 
         return createThrowable(message, exceptionClass, elements);
     }
-    *///?}
+    //?}
 
     private static Throwable createThrowable(String message, String exceptionClass, StackTraceElement[] elements) {
         try {
@@ -412,7 +418,7 @@ public final class TickingEntry {
     }
 
     //? if >1.21.4 {
-    private record ThrowableData(String message, String exceptionClass, StackTraceElement[] elements) {
+    /*private record ThrowableData(String message, String exceptionClass, StackTraceElement[] elements) {
         public static final Codec<ThrowableData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("message").forGetter(ThrowableData::message),
                 Codec.STRING.fieldOf("exceptionClass").forGetter(ThrowableData::exceptionClass),
@@ -475,5 +481,5 @@ public final class TickingEntry {
             }
         }
     }
-    //?}
+    *///?}
 }

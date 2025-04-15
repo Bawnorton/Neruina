@@ -45,7 +45,7 @@ public class Neruina {
         return autoReportHandler;
     }
 
-    public PersitanceHandler getPersitanceHandler(MinecraftServer server) {
-        return PersitanceHandler.getServerState(server);
+    public void updateServerState(MinecraftServer server) {
+        PersitanceHandler.updateServerState(server);
     }
 }

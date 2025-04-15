@@ -83,10 +83,10 @@ public abstract class ItemStackMixin implements Errorable {
         nbt.putBoolean("neruina$errored", neruina$errored);
         if(neruina$tickingEntryId != null) {
             //? if >1.21.4 {
-            nbt.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
-            //?} else {
-            /*nbt.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
-            *///?}
+            /*nbt.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
+            *///?} else {
+            nbt.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
+            //?}
         }
         ComponentChanges.Builder builder = ComponentChanges.builder()
                 .add(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
@@ -106,14 +106,14 @@ public abstract class ItemStackMixin implements Errorable {
         NbtCompound tag = nbtComponent.copyNbt();
 
         //? if >1.21.4 {
-        neruina$errored = tag.getBoolean("neruina$errored", false);
+        /*neruina$errored = tag.getBoolean("neruina$errored", false);
         neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
-        //?} else {
-        /*neruina$errored = tag.getBoolean("neruina$errored");
+        *///?} else {
+        neruina$errored = tag.getBoolean("neruina$errored");
         if(tag.contains("neruina$tickingEntryId")) {
             neruina$tickingEntryId = tag.getUuid("neruina$tickingEntryId");
         }
-        *///?}
+        //?}
     }
     //?} else {
     /*@Unique
