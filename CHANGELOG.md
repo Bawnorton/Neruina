@@ -1,3 +1,12 @@
+# 2.2.11
+
+- Cache entity UUID to prevent world interaction when re-serialising ticking entries
+
+# 2.2.10
+
+- Fix crash when shuting down before world is created (#133)
+- Prevent cause getter from crashing during serialisation (#134)
+
 # 2.2.8
 
 - Actually fix gson crash
