@@ -27,14 +27,11 @@ public abstract class PlayerManagerMixin {
         if (count > 0) {
             MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
             Text message = messageHandler.generateSuspendedInfo();
-            switch (Config.getInstance().logLevel) {
-                case OPERATORS -> {
-                    if(player.hasPermissionLevel(server.getOpPermissionLevel())) {
-                        player.sendMessage(message, false);
-                    }
-                }
-                case EVERYONE -> player.sendMessage(message, false);
-                case DISABLED -> {}
+            int permissionLevel = Config.getInstance().minPermissionLevelForMessages;
+            if(permissionLevel < 0 || permissionLevel > server.getOpPermissionLevel()) return;
+
+            if(player.hasPermissionLevel(permissionLevel)) {
+                player.sendMessage(message, false);
             }
         }
     }

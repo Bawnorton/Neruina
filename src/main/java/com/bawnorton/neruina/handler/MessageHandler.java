@@ -39,7 +39,7 @@ public final class MessageHandler {
             server.getPlayerManager()
                     .getPlayerList()
                     .stream()
-                    .filter(player -> server.getPermissionLevel(player.getGameProfile()) >= permissionLevel)
+                    .filter(player -> player.hasPermissionLevel(permissionLevel))
                     .forEach(player -> player.sendMessage(message, false));
         }, () -> server.getPlayerManager().getCurrentPlayerCount() > 0);
     }
