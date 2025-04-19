@@ -16,13 +16,17 @@ public final class BlacklistHandler {
 
     public void init(MinecraftServer server) {
         Map<Identifier, Resource> blacklistFiles = server.getResourceManager().findResources(Neruina.MOD_ID, (resource) -> resource.getPath().equals("neruina/blacklist.json"));
+        if(blacklistFiles.isEmpty()) {
+            Neruina.LOGGER.info("No blacklist files found, skipping blacklist loading");
+            return;
+        }
         for (Map.Entry<Identifier, Resource> entry : blacklistFiles.entrySet()) {
             Identifier id = entry.getKey();
             Resource resource = entry.getValue();
             try (JsonReader reader = new JsonReader(resource.getReader())) {
                 Blacklist blacklist = Blacklist.fromJson(reader);
                 if (blacklist != null) {
-                    Neruina.LOGGER.info("Blacklist loaded for mod: \"{}\"", id);
+                    Neruina.LOGGER.info("Blacklist loaded for namespace: \"{}\"", id.getNamespace());
                     blacklists.put(id, blacklist);
                 } else {
                     Neruina.LOGGER.warn("Invalid blacklist found: {}, ignoring", id);

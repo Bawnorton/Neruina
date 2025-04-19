@@ -1,7 +1,7 @@
 plugins {
     id("dev.kikugie.stonecutter")
 }
-stonecutter active "1.21.3-neoforge" /* [SC] DO NOT EDIT */
+stonecutter active "1.21.5-fabric" /* [SC] DO NOT EDIT */
 
 stonecutter registerChiseled tasks.register("chiseledBuildAndCollect", stonecutter.chiseled) {
     group = "project"

@@ -65,10 +65,10 @@ public abstract class EntityMixin implements Errorable {
         }
         if (neruina$tickingEntryId != null) {
             //? if >1.21.4 {
-            /*original.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
-            *///?} else {
-            original.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
-            //?}
+            original.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
+            //?} else {
+            /*original.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
+            *///?}
         }
         return original;
     }
@@ -76,16 +76,16 @@ public abstract class EntityMixin implements Errorable {
     @Inject(method = "readNbt", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/Entity;onGround:Z", opcode = Opcodes.PUTFIELD))
     private void readErroredFromNbt(NbtCompound nbt, CallbackInfo ci) {
         //? if >1.21.4 {
-        /*neruina$errored = nbt.getBoolean("neruina$errored", false);
+        neruina$errored = nbt.getBoolean("neruina$errored", false);
         neruina$tickingEntryId = nbt.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
-        *///?} else {
-        if (nbt.contains("neruina$errored")) {
+        //?} else {
+        /*if (nbt.contains("neruina$errored")) {
             neruina$errored = nbt.getBoolean("neruina$errored");
         }
         if (nbt.contains("neruina$tickingEntryId")) {
             neruina$tickingEntryId = nbt.getUuid("neruina$tickingEntryId");
         }
-        //?}
+        *///?}
     }
 
     //? if >1.21.2 {

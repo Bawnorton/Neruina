@@ -19,7 +19,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -40,6 +39,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+
+//? if >1.19.3 {
+import net.minecraft.registry.Registries;
+//?} else {
+/*import net.minecraft.util.registry.Registry;
+*///?}
 
 public final class TickHandler {
     private final List<TickingEntry> recentErrors = new ArrayList<>();
@@ -147,7 +152,11 @@ public final class TickHandler {
             if (!Config.getInstance().handleTickingBlockStates) {
                 throw TickingException.notHandled("handle_ticking_block_states", e);
             }
+            //? if >1.19.3 {
             Identifier blockId = Registries.BLOCK.getId(instance.getBlock());
+            //?} else {
+            /*Identifier blockId = Registry.BLOCK.getId(instance.getBlock());
+            *///?}
             Identifier owningBlacklist = getBlacklistFor(ErroredType.BLOCK_STATE, blockId);
             if (owningBlacklist != null) {
                 throw TickingException.blacklisted(owningBlacklist, blockId, e);
@@ -185,7 +194,11 @@ public final class TickHandler {
             if (!Config.getInstance().handleTickingBlockEntities) {
                 throw TickingException.notHandled("handle_ticking_block_entities", e);
             }
+            //? if >1.19.3 {
             Identifier blockEntityId = Registries.BLOCK_ENTITY_TYPE.getId(blockEntity.getType());
+            //?} else {
+            /*Identifier blockEntityId = Registry.BLOCK_ENTITY_TYPE.getId(blockEntity.getType());
+            *///?}
             Identifier owningBlacklist = getBlacklistFor(ErroredType.BLOCK_ENTITY, blockEntityId);
             if (owningBlacklist != null) {
                 throw TickingException.blacklisted(owningBlacklist, blockEntityId, e);
@@ -213,7 +226,11 @@ public final class TickHandler {
         if (!Config.getInstance().handleTickingEntities) {
             throw TickingException.notHandled("handle_ticking_entities", e);
         }
+        //? if >1.19.3 {
         Identifier entityId = Registries.ENTITY_TYPE.getId(entity.getType());
+        //?} else {
+        /*Identifier entityId = Registry.ENTITY_TYPE.getId(entity.getType());
+        *///?}
         Identifier owningBlacklist = getBlacklistFor(ErroredType.ENTITY, entityId);
         if (owningBlacklist != null) {
             throw TickingException.blacklisted(owningBlacklist, entityId, e);
@@ -225,7 +242,11 @@ public final class TickHandler {
         if (!Config.getInstance().handleTickingItemStacks) {
             throw TickingException.notHandled("handle_ticking_item_stacks", e);
         }
+        //? if >1.19.3 {
         Identifier itemId = Registries.ITEM.getId(instance.getItem());
+        //?} else {
+        /*Identifier itemId = Registry.ITEM.getId(instance.getItem());
+        *///?}
         Identifier owningBlacklist = getBlacklistFor(ErroredType.ITEM_STACK, itemId);
         if (owningBlacklist != null) {
             throw TickingException.blacklisted(owningBlacklist, itemId, e);

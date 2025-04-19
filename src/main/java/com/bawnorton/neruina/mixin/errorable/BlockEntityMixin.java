@@ -54,10 +54,10 @@ public abstract class BlockEntityMixin implements Errorable {
         }
         if (neruina$tickingEntryId != null) {
             //? if >1.21.4 {
-            /*nbt.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
-            *///?} else {
-            nbt.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
-            //?}
+            nbt.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
+            //?} else {
+            /*nbt.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
+            *///?}
         }
     }
 
@@ -68,15 +68,15 @@ public abstract class BlockEntityMixin implements Errorable {
     /*private void readErroredFromNbt(NbtCompound nbt, CallbackInfo ci) {
     *///?}
         //? if >1.21.4 {
-        /*neruina$errored = nbt.getBoolean("neruina$errored", false);
+        neruina$errored = nbt.getBoolean("neruina$errored", false);
         neruina$tickingEntryId = nbt.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
-        *///?} else {
-        if (nbt.contains("neruina$errored")) {
+        //?} else {
+        /*if (nbt.contains("neruina$errored")) {
             neruina$errored = nbt.getBoolean("neruina$errored");
         }
         if (nbt.contains("neruina$tickingEntryId")) {
             neruina$tickingEntryId = nbt.getUuid("neruina$tickingEntryId");
         }
-        //?}
+        *///?}
     }
 }

@@ -184,7 +184,7 @@ public final class MessageHandler {
                 message,
                 style -> style.withColor(color)
                         //? if >1.21.4 {
-                        /*.withClickEvent(switch (action) {
+                        .withClickEvent(switch (action) {
                                     case OPEN_URL -> new ClickEvent.OpenUrl(URI.create(value));
                                     case OPEN_FILE -> new ClickEvent.OpenFile(value);
                                     case RUN_COMMAND -> new ClickEvent.RunCommand(value);
@@ -193,13 +193,13 @@ public final class MessageHandler {
                                     case CHANGE_PAGE -> new ClickEvent.ChangePage(Integer.parseInt(value));
                                 })
                         .withHoverEvent(new HoverEvent.ShowText(hoverMessage))
-                        *///?} else {
-                        .withClickEvent(new ClickEvent(action, value))
+                        //?} else {
+                        /*.withClickEvent(new ClickEvent(action, value))
                         .withHoverEvent(new HoverEvent(
                                 HoverEvent.Action.SHOW_TEXT,
                                 hoverMessage
                         ))
-                        //?}
+                        *///?}
         ));
     }
 

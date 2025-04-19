@@ -329,15 +329,15 @@ public final class NeruinaCommandHandler {
                 Texter.withStyle(
                         messageHandler.formatText("commands.neruina.id", uuid.toString()),
                         //? if >1.21.4 {
-                        /*style -> style.withClickEvent(new ClickEvent.CopyToClipboard(uuid.toString()))
+                        style -> style.withClickEvent(new ClickEvent.CopyToClipboard(uuid.toString()))
                                 .withHoverEvent(new HoverEvent.ShowText(Texter.translatable("commands.neruina.id.tooltip")))
-                        *///?} else {
-                        style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
+                        //?} else {
+                        /*style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
                                 .withHoverEvent(new HoverEvent(
                                         HoverEvent.Action.SHOW_TEXT,
                                         Texter.translatable("commands.neruina.id.tooltip")
                                 ))
-                        //?}
+                        *///?}
                 )
         ), () -> context.getSource().sendError(
                 messageHandler.formatText(
@@ -359,16 +359,16 @@ public final class NeruinaCommandHandler {
                     Texter.withStyle(
                             messageHandler.formatText("commands.neruina.id", uuid.toString()),
                             //? if >1.21.4 {
-                            /*style -> style.withClickEvent(new ClickEvent.CopyToClipboard(uuid.toString()))
+                            style -> style.withClickEvent(new ClickEvent.CopyToClipboard(uuid.toString()))
                                     .withHoverEvent(new HoverEvent.ShowText(Texter.translatable("commands.neruina.id.tooltip"))
                             )
-                            *///?} else {
-                            style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
+                            //?} else {
+                            /*style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
                                     .withHoverEvent(new HoverEvent(
                                             HoverEvent.Action.SHOW_TEXT,
                                             Texter.translatable("commands.neruina.id.tooltip")
                                     ))
-                            //?}
+                            *///?}
                     )
             ), () -> context.getSource().sendError(
                     messageHandler.formatText(
@@ -383,16 +383,16 @@ public final class NeruinaCommandHandler {
                     Texter.withStyle(
                             messageHandler.formatText("commands.neruina.id", uuid.toString()),
                             //? if >1.21.4 {
-                            /*style -> style.withClickEvent(new ClickEvent.CopyToClipboard(uuid.toString()))
+                            style -> style.withClickEvent(new ClickEvent.CopyToClipboard(uuid.toString()))
                                     .withHoverEvent(new HoverEvent.ShowText(Texter.translatable("commands.neruina.id.tooltip"))
                             )
-                            *///?} else {
-                            style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
+                            //?} else {
+                            /*style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid.toString()))
                                     .withHoverEvent(new HoverEvent(
                                             HoverEvent.Action.SHOW_TEXT,
                                             Texter.translatable("commands.neruina.id.tooltip")
                                     ))
-                            //?}
+                            *///?}
                     )
             ), () -> context.getSource().sendError(
                     messageHandler.formatText(

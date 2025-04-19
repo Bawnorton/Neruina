@@ -27,14 +27,14 @@ import net.minecraft.component.type.NbtComponent;
 public abstract class PlayerInventoryMixin {
     @Shadow @Final
     //? if >1.21.4 {
-    /*private DefaultedList<ItemStack> main;
-    *///?} else {
-    public DefaultedList<ItemStack> main;
-    //?}
+    private DefaultedList<ItemStack> main;
+    //?} else {
+    /*public DefaultedList<ItemStack> main;
+    *///?}
 
 
     //? if >1.21.4 {
-    /*@WrapOperation(
+    @WrapOperation(
             method = "updateItems",
             at = @At(
                     value = "INVOKE",
@@ -44,8 +44,8 @@ public abstract class PlayerInventoryMixin {
     private void catchTickingItemStack$notTheCauseOfTickLag(ItemStack instance, World world, Entity entity, EquipmentSlot slot, Operation<Void> original, @Local(ordinal = 0) int slotIndex) {
         Neruina.getInstance().getTickHandler().safelyTickItemStack(instance, world, entity, slot, slotIndex, original);
     }
-    *///?} else {
-    @WrapOperation(
+    //?} else {
+    /*@WrapOperation(
             method = "updateItems",
             at = @At(
                     value = "INVOKE",
@@ -55,7 +55,7 @@ public abstract class PlayerInventoryMixin {
     private void catchTickingItemStack$notTheCauseOfTickLag(ItemStack instance, World world, Entity entity, int slot, boolean selected, Operation<Void> original) {
         Neruina.getInstance().getTickHandler().safelyTickItemStack(instance, world, entity, slot, selected, original);
     }
-    //?}
+    *///?}
 
     @Inject(method = "readNbt", at = @At("TAIL"))
     private void removeErroredStatusOnInvInit(CallbackInfo ci) {
@@ -66,10 +66,10 @@ public abstract class PlayerInventoryMixin {
 
             NbtCompound nbt = component.copyNbt();
             //? if >=1.21.4 {
-            /*if (nbt.getBoolean("neruina$errored", false)) {
-            *///?} else {
-            if(nbt.getBoolean("neruina$errored")) {
-            //?}
+            if (nbt.getBoolean("neruina$errored", false)) {
+            //?} else {
+            /*if(nbt.getBoolean("neruina$errored")) {
+            *///?}
                 Neruina.getInstance().getTickHandler().removeErrored(stack);
             }
         });
