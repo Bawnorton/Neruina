@@ -1,5 +1,6 @@
 package com.bawnorton.neruina;
 
+import com.bawnorton.neruina.blacklist.BlacklistHandler;
 import com.bawnorton.neruina.config.ConfigManager;
 import com.bawnorton.neruina.handler.MessageHandler;
 import com.bawnorton.neruina.handler.PersitanceHandler;
@@ -18,11 +19,13 @@ public class Neruina {
     private final TickHandler tickHandler;
     private final MessageHandler messageHandler;
     private final AutoReportHandler autoReportHandler;
+    private final BlacklistHandler blacklistHandler;
 
     public Neruina() {
         this.tickHandler = new TickHandler();
         this.messageHandler = new MessageHandler();
         this.autoReportHandler = new AutoReportHandler();
+        this.blacklistHandler = new BlacklistHandler();
     }
 
     public static void init() {
@@ -43,6 +46,10 @@ public class Neruina {
 
     public AutoReportHandler getAutoReportHandler() {
         return autoReportHandler;
+    }
+
+    public BlacklistHandler getBlacklistHandler() {
+        return blacklistHandler;
     }
 
     public void updateServerState(MinecraftServer server) {

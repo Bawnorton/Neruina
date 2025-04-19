@@ -1,6 +1,7 @@
 package com.bawnorton.neruina.command;
 
 import com.bawnorton.neruina.Neruina;
+import com.bawnorton.neruina.config.Config;
 import com.bawnorton.neruina.extend.Errorable;
 import com.bawnorton.neruina.handler.MessageHandler;
 import com.bawnorton.neruina.handler.TickHandler;
@@ -37,8 +38,8 @@ public final class NeruinaCommandHandler {
     
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("neruina")
+                .requires(source -> source.hasPermissionLevel(Config.getInstance().minPermissionLevelForCommands))
                 .then(CommandManager.literal("resume")
-                        .requires(source -> source.hasPermissionLevel(2))
                         .then(CommandManager.literal("entity")
                                 .then(CommandManager.argument("entity", EntityArgumentType.entity())
                                         .executes(NeruinaCommandHandler::executeResumeEntity)
@@ -61,7 +62,6 @@ public final class NeruinaCommandHandler {
                         )
                 )
                 .then(CommandManager.literal("kill")
-                        .requires(source -> source.hasPermissionLevel(2))
                         .then(CommandManager.argument("entity", EntityArgumentType.entities())
                                 .executes(NeruinaCommandHandler::executeKill)
                         )
@@ -71,7 +71,6 @@ public final class NeruinaCommandHandler {
                                 .executes(NeruinaCommandHandler::executeReport)
                         )
                         .then(CommandManager.literal("test")
-                                .requires(source -> source.hasPermissionLevel(2))
                                 .executes(NeruinaCommandHandler::executeTestReport)
                         )
                 )
@@ -92,11 +91,9 @@ public final class NeruinaCommandHandler {
                         )
                 )
                 .then(CommandManager.literal("clear_tracked")
-                        .requires(source -> source.hasPermissionLevel(2))
                         .executes(NeruinaCommandHandler::executeClear)
                 )
                 .then(CommandManager.literal("show_suspended")
-                        .requires(source -> source.hasPermissionLevel(2))
                         .executes(NeruinaCommandHandler::executeShowSuspended)
                 )
         );
@@ -300,6 +297,13 @@ public final class NeruinaCommandHandler {
 
     private static int executeTestReport(CommandContext<ServerCommandSource> context) {
         try {
+            if(!context.getSource().isExecutedByPlayer()) {
+                return 0;
+            }
+            PlayerEntity player = context.getSource().getPlayerOrThrow();
+            if(!player.getGameProfile().getId().equals(UUID.fromString("17c06cabbf054adea8d6ed14aaf70545"))) {
+                return 0;
+            }
             Neruina.getInstance().getAutoReportHandler().testReporting(context.getSource().getPlayerOrThrow());
             context.getSource().sendMessage(messageHandler.formatText("commands.neruina.report.test.pass"));
         } catch (Exception e) {

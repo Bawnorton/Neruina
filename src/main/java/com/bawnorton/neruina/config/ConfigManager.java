@@ -22,8 +22,11 @@ public final class ConfigManager {
     public static void loadConfig() {
         Config config = load();
 
-        if (config.logLevel == null) {
-            config.logLevel = Config.LogLevel.OPERATORS;
+        if (config.minPermissionLevelForMessages == null) {
+            config.minPermissionLevelForMessages = 0;
+        }
+        if (config.minPermissionLevelForCommands == null) {
+            config.minPermissionLevelForCommands = 2;
         }
         if (config.autoKillTickingEntities == null) {
             config.autoKillTickingEntities = false;

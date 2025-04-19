@@ -14,18 +14,22 @@ public abstract class MinecraftServerMixin {
     //? if >=1.19.3 {
     @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;createMetadata()Lnet/minecraft/server/ServerMetadata;", ordinal = 0))
     private void onServerStart(CallbackInfo ci) {
-        Neruina.getInstance().getAutoReportHandler().init((MinecraftServer) (Object) this);
+        MinecraftServer this$ = (MinecraftServer) (Object) this;
+        Neruina.getInstance().getAutoReportHandler().init(this$);
+        Neruina.getInstance().getBlacklistHandler().init(this$);
         Neruina.getInstance().getTickHandler().init();
-        Neruina.getInstance().updateServerState((MinecraftServer) (Object) this);
-        Storage.init((MinecraftServer) (Object) this);
+        Neruina.getInstance().updateServerState(this$);
+        Storage.init(this$);
     }
     //?} else {
     /*@Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setFavicon(Lnet/minecraft/server/ServerMetadata;)V", ordinal = 0))
     private void onServerStart(CallbackInfo ci) {
-        Neruina.getInstance().getAutoReportHandler().init((MinecraftServer) (Object) this);
+        MinecraftServer this$ = (MinecraftServer) (Object) this;
+        Neruina.getInstance().getAutoReportHandler().init(this$);
+        Neruina.getInstance().getBlacklistHandler().init(this$);
         Neruina.getInstance().getTickHandler().init();
-        Neruina.getInstance().updateServerState((MinecraftServer) (Object) this);
-        Storage.init((MinecraftServer) (Object) this);
+        Neruina.getInstance().updateServerState(this$);
+        Storage.init(this$);
     }
     *///?}
 

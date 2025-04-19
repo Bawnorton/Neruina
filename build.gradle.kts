@@ -149,7 +149,7 @@ publishMods {
     val tag = "$loader-${mod.version}+$minecraftVersion"
     changelog = "[Changelog](https://github.com/Bawnorton/Neruina/blob/stonecutter/CHANGELOG.md)"
     displayName = "${mod.name} ${loader.toString().replaceFirstChar { it.uppercase() }} ${mod.version} for $minecraftVersion"
-    type = STABLE
+    type = BETA
     modLoaders.add(loader.toString())
 
     github {

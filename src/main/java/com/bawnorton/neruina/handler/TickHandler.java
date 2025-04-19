@@ -19,10 +19,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
@@ -106,10 +108,7 @@ public final class TickHandler {
         } catch (TickingException e) {
             throw e;
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingEntities) {
-                throw TickingException.notHandled("handle_ticking_entities", e);
-            }
-            handleTickingEntity(entity, e);
+            preHandleTickingEntity(entity, e);
         }
     }
 
@@ -123,10 +122,7 @@ public final class TickHandler {
         } catch (TickingException e) {
             throw e;
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingEntities) {
-                throw TickingException.notHandled("handle_ticking_entities", e);
-            }
-            handleTickingEntity(entity, e);
+            preHandleTickingEntity(entity, e);
         }
     }
 
@@ -150,6 +146,11 @@ public final class TickHandler {
         } catch (Throwable e) {
             if (!Config.getInstance().handleTickingBlockStates) {
                 throw TickingException.notHandled("handle_ticking_block_states", e);
+            }
+            Identifier blockId = Registries.BLOCK.getId(instance.getBlock());
+            Identifier owningBlacklist = getBlacklistFor(ErroredType.BLOCK_STATE, blockId);
+            if (owningBlacklist != null) {
+                throw TickingException.blacklisted(owningBlacklist, blockId, e);
             }
             MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
             Text message = messageHandler.formatText("neruina.ticking.block_state",
@@ -184,6 +185,11 @@ public final class TickHandler {
             if (!Config.getInstance().handleTickingBlockEntities) {
                 throw TickingException.notHandled("handle_ticking_block_entities", e);
             }
+            Identifier blockEntityId = Registries.BLOCK_ENTITY_TYPE.getId(blockEntity.getType());
+            Identifier owningBlacklist = getBlacklistFor(ErroredType.BLOCK_ENTITY, blockEntityId);
+            if (owningBlacklist != null) {
+                throw TickingException.blacklisted(owningBlacklist, blockEntityId, e);
+            }
             MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
             Text message = messageHandler.formatText("neruina.ticking.block_entity",
                     state.getBlock().getName().getString(),
@@ -203,9 +209,26 @@ public final class TickHandler {
         }
     }
 
+    private void preHandleTickingEntity(Entity entity, Throwable e) {
+        if (!Config.getInstance().handleTickingEntities) {
+            throw TickingException.notHandled("handle_ticking_entities", e);
+        }
+        Identifier entityId = Registries.ENTITY_TYPE.getId(entity.getType());
+        Identifier owningBlacklist = getBlacklistFor(ErroredType.ENTITY, entityId);
+        if (owningBlacklist != null) {
+            throw TickingException.blacklisted(owningBlacklist, entityId, e);
+        }
+        handleTickingEntity(entity, e);
+    }
+
     private void handleTickingItemStack(Throwable e, ItemStack instance, boolean isServer, PlayerEntity player, int slot) {
         if (!Config.getInstance().handleTickingItemStacks) {
             throw TickingException.notHandled("handle_ticking_item_stacks", e);
+        }
+        Identifier itemId = Registries.ITEM.getId(instance.getItem());
+        Identifier owningBlacklist = getBlacklistFor(ErroredType.ITEM_STACK, itemId);
+        if (owningBlacklist != null) {
+            throw TickingException.blacklisted(owningBlacklist, itemId, e);
         }
         Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
         addErrored(instance);
@@ -429,5 +452,9 @@ public final class TickHandler {
         tickingEntries.clear();
         recentErrors.clear();
         return size;
+    }
+
+    private Identifier getBlacklistFor(ErroredType type, Identifier id) {
+        return Neruina.getInstance().getBlacklistHandler().getBlacklistFor(type, id);
     }
 }

@@ -33,18 +33,14 @@ import net.minecraft.registry.RegistryKey;
 public final class MessageHandler {
     public void broadcastToPlayers(MinecraftServer server, Text message) {
         ConditionalRunnable.create(() -> {
-            switch (Config.getInstance().logLevel) {
-                case DISABLED -> {
-                }
-                case EVERYONE -> server.getPlayerManager()
-                        .getPlayerList()
-                        .forEach(player -> player.sendMessage(message, false));
-                case OPERATORS -> server.getPlayerManager()
-                        .getPlayerList()
-                        .stream()
-                        .filter(player -> server.getPermissionLevel(player.getGameProfile()) >= server.getOpPermissionLevel())
-                        .forEach(player -> player.sendMessage(message, false));
-            }
+            int permissionLevel = Config.getInstance().minPermissionLevelForMessages;
+            if(permissionLevel < 0 || permissionLevel > server.getOpPermissionLevel()) return;
+
+            server.getPlayerManager()
+                    .getPlayerList()
+                    .stream()
+                    .filter(player -> server.getPermissionLevel(player.getGameProfile()) >= permissionLevel)
+                    .forEach(player -> player.sendMessage(message, false));
         }, () -> server.getPlayerManager().getCurrentPlayerCount() > 0);
     }
 

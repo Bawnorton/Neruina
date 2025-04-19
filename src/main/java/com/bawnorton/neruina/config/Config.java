@@ -3,7 +3,9 @@ package com.bawnorton.neruina.config;
 public final class Config {
     private static Config INSTANCE;
 
-    public LogLevel logLevel;
+    public Integer minPermissionLevelForMessages;
+
+    public Integer minPermissionLevelForCommands;
 
     public Boolean autoKillTickingEntities;
 
@@ -28,9 +30,5 @@ public final class Config {
 
     public static void update(Config config) {
         INSTANCE = config;
-    }
-
-    public enum LogLevel {
-        EVERYONE, OPERATORS, DISABLED
     }
 }

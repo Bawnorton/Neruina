@@ -22,7 +22,7 @@
 
 ### Persitance:
 - Ticking entity tracking will now persist across server restarts
-- When the world is first started Neruina will broadcast all tracked ticking entities that need addressing
+- When the world is first started Neruina will broadcast namespaces tracked ticking entities that need addressing
 
 ### Ticking Threshold:
 - When a certain number of ticking excpetions occur within a certain time frame, Neruina will deliberately crash in
