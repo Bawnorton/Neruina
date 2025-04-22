@@ -259,39 +259,44 @@ public final class NeruinaCommandHandler {
             return 0;
         }
 
-        Neruina.getInstance().getAutoReportHandler()
-                .createReports(context.getSource().getPlayerOrThrow(), entry)
-                .thenAccept(result -> {
-            ReportStatus.Code reportCode = result.code();
-            switch (reportCode) {
-                case SUCCESS -> sendFeedback(
-                        context,
-                        Texter.concatDelimited(
-                                Texter.LINE_BREAK,
-                                Texter.format(
-                                        Texter.translatable("commands.neruina.report.success")
-                                ),
-                                messageHandler.generateOpenReportAction(result.message())
-                        )
-                );
-                case ALREADY_EXISTS -> context.getSource().sendError(
-                        messageHandler.formatText("commands.neruina.report.already_exists")
-                );
-                case FAILURE -> context.getSource().sendError(
-                        messageHandler.formatText("commands.neruina.report.failure")
-                );
-                case TIMEOUT -> context.getSource().sendError(
-                        messageHandler.formatText("commands.neruina.report.timeout")
-                );
-                case ABORTED -> context.getSource().sendError(
-                        messageHandler.formatText("commands.neruina.report.aborted")
-                );
-                case IN_PROGRESS -> context.getSource().sendError(
-                        messageHandler.formatText("commands.neruina.report.in_progress")
-                );
-                case TESTING -> {}
-            }
-        });
+        try {
+            Neruina.getInstance().getAutoReportHandler()
+                    .createReports(context.getSource().getPlayerOrThrow(), entry)
+                    .thenAccept(result -> {
+                ReportStatus.Code reportCode = result.code();
+                switch (reportCode) {
+                    case SUCCESS -> sendFeedback(
+                            context,
+                            Texter.concatDelimited(
+                                    Texter.LINE_BREAK,
+                                    Texter.format(
+                                            Texter.translatable("commands.neruina.report.success")
+                                    ),
+                                    messageHandler.generateOpenReportAction(result.message())
+                            )
+                    );
+                    case ALREADY_EXISTS -> context.getSource().sendError(
+                            messageHandler.formatText("commands.neruina.report.already_exists")
+                    );
+                    case FAILURE -> context.getSource().sendError(
+                            messageHandler.formatText("commands.neruina.report.failure")
+                    );
+                    case TIMEOUT -> context.getSource().sendError(
+                            messageHandler.formatText("commands.neruina.report.timeout")
+                    );
+                    case ABORTED -> context.getSource().sendError(
+                            messageHandler.formatText("commands.neruina.report.aborted")
+                    );
+                    case IN_PROGRESS -> context.getSource().sendError(
+                            messageHandler.formatText("commands.neruina.report.in_progress")
+                    );
+                    case TESTING -> {}
+                }
+            });
+        } catch (Throwable e) {
+            context.getSource().sendError(messageHandler.formatText("commands.neruina.report.failure"));
+            Neruina.LOGGER.error("Failed to create report", e);
+        }
         return 1;
     }
 

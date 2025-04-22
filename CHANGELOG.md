@@ -3,7 +3,8 @@
 - Added datadriven blackist to allow mods or modpacks to opt-out specific blocks, items, entities, etc from handling or entire namespaces
 - Migrated messaging system to use permission level instead of discrete options (default: 0)
 - Put all Neruina commands under a required permission level controlled by the config (default: 2)
-- Explicitly include transitive httpclient5 dep to ensure the correct version is used at runtime  
+- Explicitly include transitive httpclient5 dep to ensure the correct version is used at runtime
+- Allow reports to fail gracefully if an error occurs during the report process
 
 # 2.2.11
 
