@@ -29,6 +29,7 @@ dependencies {
 
     include(implementation("org.kohsuke:github-api:${property("kohsuke_github")}")!!)
     include(implementation("org.apache.httpcomponents.core5:httpcore5:${property("httpcore5")}")!!)
+    include(implementation("org.apache.httpcomponents.client5:httpclient5:${property("httpcore5")}")!!)
     include(implementation("com.fasterxml.jackson.core:jackson-core:${property("jackson")}")!!)
     include(implementation("com.fasterxml.jackson.core:jackson-databind:${property("jackson")}")!!)
     include(implementation("com.fasterxml.jackson.core:jackson-annotations:${property("jackson")}")!!)
