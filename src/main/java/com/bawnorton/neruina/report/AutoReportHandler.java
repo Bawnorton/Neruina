@@ -5,7 +5,7 @@ import com.bawnorton.neruina.exception.AbortedException;
 import com.bawnorton.neruina.exception.InProgressException;
 import com.bawnorton.neruina.util.TickingEntry;
 import com.google.gson.stream.JsonReader;
-import com.mojang.datafixers.util.Pair;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.resource.Resource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -49,7 +49,7 @@ public final class AutoReportHandler {
             }
         }
 
-        if(masterConfig == null) {
+        if (masterConfig == null) {
             Neruina.LOGGER.warn("No master auto report config found, creating default");
             masterConfig = new AutoReportConfig("*", "Bawnorton/NeruinaAutoReports", null, null);
         }
@@ -65,26 +65,26 @@ public final class AutoReportHandler {
             return CompletableFuture.completedFuture(ReportStatus.alreadyExists());
         }
 
-        Pair<GitHub, ReportStatus> result = GithubAuthManager.getOrLogin(player)
-                .thenApply(github -> new Pair<GitHub, ReportStatus>(github, null))
-                .exceptionally(throwable -> {
-            Throwable cause = throwable.getCause();
-            if (cause instanceof InProgressException) {
-                return Pair.of(null, ReportStatus.inProgress());
-            } else if(cause instanceof CancellationException) {
-                return Pair.of(null, ReportStatus.timeout());
-            } else if(cause instanceof AbortedException) {
-                return Pair.of(null, ReportStatus.aborted());
-            }
-            Neruina.LOGGER.error("Failed to create report(s)", throwable);
-            return Pair.of(null, ReportStatus.failure());
-        }).join();
+        Either<GitHub, ReportStatus> result = GithubAuthManager.getOrLogin(player)
+                                                               .thenApply(Either::<GitHub, ReportStatus>left)
+                                                               .exceptionally(throwable -> {
+                                                                   Throwable cause = throwable.getCause();
+                                                                   if (cause instanceof InProgressException) {
+                                                                       return Either.right(ReportStatus.inProgress());
+                                                                   } else if (cause instanceof CancellationException) {
+                                                                       return Either.right(ReportStatus.timeout());
+                                                                   } else if (cause instanceof AbortedException) {
+                                                                       return Either.right(ReportStatus.aborted());
+                                                                   }
+                                                                   Neruina.LOGGER.error("Failed to create report(s)", throwable);
+                                                                   return Either.right(ReportStatus.failure());
+                                                               }).join();
 
-        if (result.getSecond() != null) {
-            return CompletableFuture.completedFuture(result.getSecond());
+        if (result.right().isPresent()) {
+            return CompletableFuture.completedFuture(result.right().orElseThrow());
         }
 
-        GitHub github = result.getFirst();
+        GitHub github = result.left().orElseThrow();
 
         reportedEntries.add(entryId);
         Set<String> modids = entry.findPotentialSources();
@@ -203,7 +203,7 @@ public final class AutoReportHandler {
         AutoReportConfig config = reference.config();
         IssueFormatter formatter = config.createIssueFormatter();
         return reference.createIssueBuilder(formatter.getTitle(entry))
-                .body(formatter.getBody(entry, github));
+                        .body(formatter.getBody(entry, github));
     }
 
     public void testReporting(ServerPlayerEntity player) {
