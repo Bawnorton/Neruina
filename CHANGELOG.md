@@ -1,3 +1,7 @@
+# 2.3.1
+
+- Fix crash in 1.21.5 related to duplicate jackson modules
+
 # 2.3.0
 
 - Added datadriven blackist to allow mods or modpacks to opt-out specific blocks, items, entities, etc from handling or entire namespaces
