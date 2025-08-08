@@ -1,3 +1,11 @@
+# 3.0.0
+
+- Update to 1.21.8
+- LTS 1.21.1, drop other versions
+- Re-add configurable 
+- Migrate to mojmaps
+- Add Chinese (Simplified) translations [#130](https://github.com/Bawnorton/Neruina/pull/130)
+
 # 2.3.1
 
 - Fix crash in 1.21.5 related to duplicate jackson modules

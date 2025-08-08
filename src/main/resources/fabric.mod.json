@@ -1,31 +1,24 @@
 {
   "schemaVersion": 1,
-  "id": "neruina",
-  "version": "${version}",
-  "name": "Neruina",
-  "description": "${description}",
+  "id": "${mod_id}",
+  "name": "${mod_name}",
+  "version": "${mod_version}",
+  "description": "${mod_description}",
   "authors": [
     "Bawnorton"
   ],
   "contact": {
-    "homepage": "https://github.com/Bawnorton/Neruina",
-    "sources": "https://github.com/Bawnorton/Neruina",
-    "issues": "https://github.com/Bawnorton/Neruina/issues"
+    "homepage": "https://github.com/Bawnorton/${mod_name}",
+    "sources": "https://github.com/Bawnorton/${mod_name}",
+    "issues": "https://github.com/Bawnorton/${mod_name}/issues"
   },
   "license": "MIT",
   "icon": "assets/neruina/icon.png",
   "environment": "*",
-  "entrypoints": {
-    "main": [
-      "com.bawnorton.neruina.platform.NeruinaWrapper"
-    ]
-  },
-  "mixins": [
-    "neruina.mixins.json"
-  ],
   "depends": {
-    "minecraft": "${minecraft_dependency}",
-    "fabricloader": ">=0.15.0"
+    "minecraft": "~${minecraft_version}",
+    "fabricloader": ">=0.16.0",
+    "configurable": ">=3.0.2"
   },
   "breaks": {
     "eer": "*"

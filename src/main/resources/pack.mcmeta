@@ -1,6 +1,6 @@
 {
   "pack": {
-    "description": "Neruina",
-    "pack_format": 13
+    "description": "${mod_description}",
+    "pack_format": ${pack_format}
   }
 }

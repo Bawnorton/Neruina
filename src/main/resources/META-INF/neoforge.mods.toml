@@ -1,24 +1,26 @@
 modLoader = "javafml"
-loaderVersion = "${loader_version}"
-issueTrackerURL = "https://github.com/Bawnorton/Neruina/issues"
-license = "MIT"
+loaderVersion = "[2,)"
+issueTrackerURL = "https://github.com/Bawnorton/${mod_name}/issues"
+license = "${mod_license}"
 
 [[mods]]
-modId = "neruina"
-version = "${version}"
-displayName = "Neruina"
-authors = "Bawnorton"
-description = '''
-${description}
-'''
-logoFile = "icon.png"
+    modId = "${mod_id}"
+    version = "${mod_version}"
+    displayName = "${mod_name}"
+    description = '''${mod_description}'''
+    authors = "Bawnorton"
 
-[[mixins]]
-config = "neruina.mixins.json"
+[[dependencies.${mod_id}]]
+    modId = "neoforge"
+    type = "required"
+    ordering = "NONE"
+    side = "BOTH"
 
-[[dependencies.neruina]]
-modId = "minecraft"
-type = "required"
-versionRange = "${minecraft_dependency}"
-ordering = "NONE"
-side = "BOTH"
+[[dependencies.${mod_id}]]
+    modId = "minecraft"
+    type = "required"
+
+[[dependencies.${mod_id}]]
+    modId = "configurable"
+    type = "required"
+    versionRange = "[3.0.2,)"

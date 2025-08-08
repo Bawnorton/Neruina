@@ -1,30 +1,30 @@
+import dev.kikugie.stonecutter.data.tree.struct.ProjectNode
+
 plugins {
+    kotlin("jvm") version "2.2.0" apply false
     id("dev.kikugie.stonecutter")
-}
-stonecutter active "1.21.5-fabric" /* [SC] DO NOT EDIT */
-
-stonecutter registerChiseled tasks.register("chiseledBuildAndCollect", stonecutter.chiseled) {
-    group = "project"
-    ofTask("buildAndCollect")
+    id("fabric-loom") version "1.11-SNAPSHOT" apply false
+    id("net.neoforged.moddev") version "2.0.95" apply false
+    id("me.modmuss50.mod-publish-plugin") version "0.8.+" apply false
 }
 
-stonecutter registerChiseled tasks.register("chiseledPublishMods", stonecutter.chiseled) {
-    group = "project"
-    ofTask("publishMods")
+stonecutter active "1.21.8-fabric"
+
+stonecutter parameters {
+    constants.match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge")
 }
 
-stonecutter registerChiseled tasks.register("chiseledPublishMavenLocal", stonecutter.chiseled) {
+stonecutter tasks {
+    val ordering = Comparator
+        .comparing<ProjectNode, _> { stonecutter.parse(it.metadata.version) }
+        .thenComparingInt { if (it.metadata.project.endsWith("fabric")) 1 else 0 }
+
+    order("publishModrinth", ordering)
+    order("publishCurseforge", ordering)
+}
+
+
+for (version in stonecutter.versions.map { it.version }.distinct()) tasks.register("publish$version") {
     group = "publishing"
-    ofTask("publishMavenPublicationToMavenLocal")
-}
-
-stonecutter registerChiseled tasks.register("chiseledPublishMavenRemote", stonecutter.chiseled) {
-    group = "publishing"
-    ofTask("publishMavenPublicationToBawnortonRepository")
-}
-
-stonecutter configureEach {
-    val current = project.property("loom.platform")
-    val platforms = listOf("fabric", "forge", "neoforge").map { it to (it == current) }
-    consts(platforms)
+    dependsOn(stonecutter.tasks.named("publishMods") { metadata.version == version })
 }
