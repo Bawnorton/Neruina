@@ -31,10 +31,12 @@
 - The default threshold is 10 exceptions within 5 minutes, this can be changed in the config.
 
 ### Config
-- `log_level`
-    - `operators` (default) - Only operators will receive the broadcast
-    - `everyone` - Everyone will receive the broadcast
-    - `disabled` - No one will receive the broadcast
+- `min_permission_level_for_messages`
+    - The minimum permission level a player must have to recieve neruina broadcasts
+    - Default is `0`
+- `min_permission_level_for_commands`
+    - The minimum permission level a player must have to run neruina actions (commands)
+    - Default is `2` 
 - `ticking_exception_threshold`
     - The number of ticking exceptions that can occur within the specified time frame before Neruina will deliberately
       crash
@@ -43,3 +45,6 @@
 - `auto_kill_ticking_entities`
     - If true, ticking entities will be immediately killed and removed rather than suspended
     - Default is `false`
+- `handle_ticking_<type>`
+    - If false, ticking <type> will not be handled and neruina will allow the game to crash
+    - Default is `true`   
