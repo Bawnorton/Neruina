@@ -49,6 +49,7 @@
   "commands.neruina.kill.multiple.plural_singular": "Killed %s errored entities on request. 1 was not errored.",
   "commands.neruina.kill.not_errored": "Target Entity [%s] is not errored, use /kill instead.",
   "commands.neruina.kill.not_found": "Target Entity could not be found. It may have been unloaded or removed.",
+  "commands.neruina.reload": "Config reloaded.",
   "commands.neruina.resume.entity": "Resumed ticking for Entity [%s] on request.",
   "commands.neruina.resume.entity.not_errored": "Target Entity [%s] is not errored.",
   "commands.neruina.resume.entity.not_found": "Target Entity could not be found. It may have been unloaded or removed.",

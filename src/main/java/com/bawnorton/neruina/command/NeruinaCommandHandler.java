@@ -43,7 +43,8 @@ public final class NeruinaCommandHandler {
                 .requires(source -> source.hasPermission(Config.minPermissionLevelForCommands))
                 .then(Commands.literal("reload")
                         .executes(context -> {
-                            ConfigurableApi.saveChanges();
+                            ConfigurableApi.loadFromDisk();
+                            sendSuccess(context, messageHandler.formatText("commands.neruina.reload"));
                             return 1;
                         })
                 )
