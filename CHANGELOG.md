@@ -4,6 +4,7 @@
 - LTS 1.21.1, drop other versions
 - Re-add configurable 
 - Migrate to mojmaps
+- Only send actions to players that can perform those actions
 - Add Chinese (Simplified) translations [#130](https://github.com/Bawnorton/Neruina/pull/130)
 
 # 2.3.1

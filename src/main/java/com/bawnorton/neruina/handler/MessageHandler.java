@@ -6,16 +6,17 @@ import com.bawnorton.neruina.thread.ConditionalRunnable;
 import com.bawnorton.neruina.util.ErroredType;
 import com.bawnorton.neruina.util.TickingEntry;
 import com.bawnorton.neruina.version.Texter;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,220 +25,221 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-//? if >1.19.2 {
-import net.minecraft.registry.RegistryKey;
-//?} else {
-/*import net.minecraft.util.registry.RegistryKey;
-*///?}
-
 public final class MessageHandler {
-    public void broadcastToPlayers(MinecraftServer server, Text message) {
-        ConditionalRunnable.create(() -> {
-            int permissionLevel = Config.getInstance().minPermissionLevelForMessages;
-            if(permissionLevel < 0 || permissionLevel > server.getOpPermissionLevel()) return;
+    public void broadcastToPlayers(MinecraftServer server, Component message, ActionGetter getter) {
+        ConditionalRunnable.create(
+                () -> {
+                    int permissionLevel = Config.minPermissionLevelForMessages;
+                    if (permissionLevel < 0) return;
 
-            server.getPlayerManager()
-                    .getPlayerList()
-                    .stream()
-                    .filter(player -> player.hasPermissionLevel(permissionLevel))
-                    .forEach(player -> player.sendMessage(message, false));
-        }, () -> server.getPlayerManager().getCurrentPlayerCount() > 0);
-    }
-
-    public void broadcastToPlayers(MinecraftServer server, Text... messages) {
-        broadcastToPlayers(
-                server,
-                Texter.pad(Texter.concatDelimited(Texter.LINE_BREAK, messages))
+                    server.getPlayerList()
+                            .getPlayers()
+                            .stream()
+                            .filter(player -> player.hasPermissions(permissionLevel))
+                            .forEach(player -> {
+                                Component actions = getter.get(player);
+                                player.sendSystemMessage(
+                                        Texter.pad(
+                                                Texter.concatDelimited(
+                                                        Texter.LINE_BREAK,
+                                                        message,
+                                                        actions
+                                                )
+                                        ), false
+                                );
+                            });
+                }, () -> server.getPlayerList().getPlayerCount() > 0
         );
     }
 
-    public void sendToPlayer(PlayerEntity player, Text message, @Nullable Text... actions) {
+    public void broadcastToPlayers(MinecraftServer server, Component message) {
+        broadcastToPlayers(server, message, p -> Texter.empty());
+    }
+
+    public void sendToPlayer(Player player, Component message, @Nullable Component... actions) {
         sendToPlayer(player, message, true, actions);
     }
 
-    public void sendToPlayer(PlayerEntity player, Text message, boolean pad, @Nullable Text... actions) {
+    public void sendToPlayer(Player player, Component message, boolean pad, @Nullable Component... actions) {
         message = Texter.concatDelimited(
                 Texter.LINE_BREAK,
                 Texter.format(message),
                 actions != null ? Texter.concatDelimited(Texter.LINE_BREAK, actions) : null
         );
-        player.sendMessage(pad ? Texter.pad(message) : message, false);
+        player.displayClientMessage(pad ? Texter.pad(message) : message, false);
     }
 
-    public Text generateEntityActions(Entity entity) {
+    public Component generateEntityActions(Player forPlayer, Entity entity) {
         return Texter.concatDelimited(
                 Texter.SPACE,
-                generateHandlingActions(ErroredType.ENTITY, entity.getWorld().getRegistryKey(), entity.getBlockPos(), entity.getUuid()),
-                generateKillAction(entity.getUuid())
+                generateHandlingActions(forPlayer, ErroredType.ENTITY, entity.level().dimension(), entity.getOnPos(), entity.getUUID()),
+                generateKillAction(forPlayer, entity.getUUID())
         );
     }
 
-    public Text generateResourceActions(TickingEntry entry) {
+    public Component generateResourceActions(Player forPlayer, TickingEntry entry) {
         return Texter.concatDelimited(
                 Texter.SPACE,
                 generateInfoAction(),
                 generateCopyCrashAction(entry),
-                generateReportAction(entry)
+                generateReportAction(forPlayer, entry)
         );
     }
 
-    public Text generateHandlingActions(ErroredType type, RegistryKey<World> dimension, BlockPos pos) {
-        return generateHandlingActions(type, dimension, pos, null);
+    public Component generateHandlingActions(Player forPlayer, ErroredType type, ResourceKey<Level> dimension, BlockPos pos) {
+        return generateHandlingActions(forPlayer, type, dimension, pos, null);
     }
 
-    public Text generateHandlingActions(ErroredType type, RegistryKey<World> dimension, BlockPos pos, @Nullable UUID uuid) {
+    public Component generateHandlingActions(Player forPlayer, ErroredType type, ResourceKey<Level> dimension, BlockPos pos, @Nullable UUID uuid) {
         return Texter.concatDelimited(
                 Texter.SPACE,
-                generateTeleportAction(type, dimension, pos),
-                generateResumeAction(type, uuid != null ? uuid.toString() : posAsNums(pos))
+                generateTeleportAction(forPlayer, type, dimension, pos),
+                generateResumeAction(forPlayer, type, uuid != null ? uuid.toString() : posAsNums(pos))
         );
     }
 
-    public Text generateKillAction(UUID uuid) {
-        return generateCommandAction("neruina.kill", Formatting.DARK_RED, "/neruina kill %s".formatted(uuid));
+    public Component generateKillAction(Player forPlayer, UUID uuid) {
+        return generateCommandAction(forPlayer, "neruina.kill", ChatFormatting.DARK_RED, "/neruina kill %s".formatted(uuid));
     }
 
-    public Text generateCopyCrashAction(TickingEntry entry) {
+    public Component generateCopyCrashAction(TickingEntry entry) {
         StringWriter traceString = new StringWriter();
         PrintWriter writer = new PrintWriter(traceString);
         entry.error().printStackTrace(writer);
         String trace = traceString.toString();
         writer.flush();
         writer.close();
-        return generateAction("neruina.copy_crash", Formatting.GOLD, ClickEvent.Action.COPY_TO_CLIPBOARD, trace);
+        return generateAction("neruina.copy_crash", ChatFormatting.GOLD, ClickEvent.Action.COPY_TO_CLIPBOARD, trace);
     }
 
-    public Text generateReportAction(TickingEntry entry) {
+    public Component generateReportAction(Player forPlayer, TickingEntry entry) {
         return generateCommandAction(
-                "neruina.report",
-                Formatting.LIGHT_PURPLE,
+                forPlayer, "neruina.report",
+                ChatFormatting.LIGHT_PURPLE,
                 "/neruina report %s".formatted(entry.uuid())
         );
     }
 
-    public Text generateTeleportAction(ErroredType type, RegistryKey<World> dimension, BlockPos pos) {
+    public Component generateTeleportAction(Player forPlayer, ErroredType type, ResourceKey<Level> dimension, BlockPos pos) {
         return generateCommandAction(
-                "neruina.teleport",
+                forPlayer, "neruina.teleport",
                 "neruina.teleport.%s.tooltip".formatted(type.getName()),
-                Formatting.DARK_AQUA,
-                "/execute in %s run tp @s %s".formatted(dimension.getValue().toString(), posAsNums(pos))
+                ChatFormatting.DARK_AQUA,
+                "/execute in %s run tp @s %s".formatted(dimension.location().toString(), posAsNums(pos))
         );
     }
 
-    public Text generateInfoAction() {
+    public Component generateInfoAction() {
         return generateAction(
                 "neruina.info",
-                Formatting.GREEN,
+                ChatFormatting.GREEN,
                 ClickEvent.Action.OPEN_URL,
                 "https://github.com/Bawnorton/Neruina/wiki/What-Is-This%3F"
         );
     }
 
-    public Text generateResumeAction(ErroredType type, String args) {
+    public Component generateResumeAction(Player forPlayer, ErroredType type, String args) {
         return generateCommandAction(
-                "neruina.try_resume",
+                forPlayer, "neruina.try_resume",
                 "neruina.try_resume.%s.tooltip".formatted(type.getName()),
-                Formatting.YELLOW,
+                ChatFormatting.YELLOW,
                 "/neruina resume %s %s".formatted(type.getName(), args)
         );
     }
 
-    public Text generateClearAction() {
-        return generateCommandAction("neruina.clear", Formatting.BLUE, "/neruina clear_tracked");
+    public Component generateClearAction(Player forPlayer) {
+        return generateCommandAction(forPlayer, "neruina.clear", ChatFormatting.BLUE, "/neruina clear_tracked");
     }
 
-    public Text generateOpenReportAction(String url) {
-        return generateAction("neruina.open_report", Formatting.LIGHT_PURPLE, ClickEvent.Action.OPEN_URL, url);
+    public Component generateOpenReportAction(String url) {
+        return generateAction("neruina.open_report", ChatFormatting.LIGHT_PURPLE, ClickEvent.Action.OPEN_URL, url);
     }
 
-    public Text generateCancelLoginAction() {
-        return generateCommandAction("neruina.cancel", Formatting.DARK_RED, "/neruina cancel_login");
+    public Component generateCancelLoginAction(Player forPlayer) {
+        return generateCommandAction(forPlayer, "neruina.cancel", ChatFormatting.DARK_RED, "/neruina cancel_login");
     }
 
-    private Text generateCommandAction(String key, Formatting color, String command) {
-        return generateCommandAction(key, "%s.tooltip".formatted(key), color, command);
+    private Component generateCommandAction(Player forPlayer, String key, ChatFormatting color, String command) {
+        return generateCommandAction(forPlayer, key, "%s.tooltip".formatted(key), color, command);
     }
 
-    private Text generateCommandAction(String key, String hoverKey, Formatting color, String command) {
-        return generateAction(key, hoverKey, color, ClickEvent.Action.RUN_COMMAND, command);
+    private Component generateCommandAction(Player forPlayer, String key, String hoverKey, ChatFormatting color, String command) {
+        if (forPlayer.hasPermissions(Config.minPermissionLevelForCommands)) {
+            return generateAction(key, hoverKey, color, ClickEvent.Action.RUN_COMMAND, command);
+        } else {
+            return Texter.empty();
+        }
     }
 
     @SuppressWarnings("SameParameterValue")
-    private Text generateCommandAction(Text message, String hoverKey, Formatting color, String command) {
-        return generateCommandAction(message, Texter.translatable(hoverKey), color, command);
+    private Component generateCommandAction(Player forPlayer, Component message, String hoverKey, ChatFormatting color, String command) {
+        return generateCommandAction(forPlayer, message, Texter.translatable(hoverKey), color, command);
     }
 
-    private Text generateCommandAction(Text message, Text hoverMessage, Formatting color, String command) {
-        return generateAction(message, hoverMessage, color, ClickEvent.Action.RUN_COMMAND, command);
+    private Component generateCommandAction(Player forPlayer, Component message, Component hoverMessage, ChatFormatting color, String command) {
+        if (forPlayer.hasPermissions(Config.minPermissionLevelForCommands)) {
+            return generateAction(message, hoverMessage, color, ClickEvent.Action.RUN_COMMAND, command);
+        } else {
+            return Texter.empty();
+        }
     }
 
-    private Text generateAction(String key, Formatting color, ClickEvent.Action action, String value) {
+    private Component generateAction(String key, ChatFormatting color, ClickEvent.Action action, String value) {
         return generateAction(key, "%s.tooltip".formatted(key), color, action, value);
     }
 
-    private Text generateAction(String key, String hoverKey, Formatting color, ClickEvent.Action action, String value) {
+    private Component generateAction(String key, String hoverKey, ChatFormatting color, ClickEvent.Action action, String value) {
         return generateAction(Texter.translatable(key), Texter.translatable(hoverKey), color, action, value);
     }
 
-    private Text generateAction(Text message, Text hoverMessage, Formatting color, ClickEvent.Action action, String value) {
-        return Texts.bracketed(Texter.withStyle(
+    private Component generateAction(Component message, Component hoverMessage, ChatFormatting color, ClickEvent.Action action, String value) {
+        return ComponentUtils.wrapInSquareBrackets(Texter.withStyle(
                 message,
                 style -> style.withColor(color)
-                        //? if >1.21.4 {
-                        .withClickEvent(switch (action) {
-                                    case OPEN_URL -> new ClickEvent.OpenUrl(URI.create(value));
-                                    case OPEN_FILE -> new ClickEvent.OpenFile(value);
-                                    case RUN_COMMAND -> new ClickEvent.RunCommand(value);
-                                    case SUGGEST_COMMAND -> new ClickEvent.SuggestCommand(value);
-                                    case COPY_TO_CLIPBOARD -> new ClickEvent.CopyToClipboard(value);
-                                    case CHANGE_PAGE -> new ClickEvent.ChangePage(Integer.parseInt(value));
-                                })
-                        .withHoverEvent(new HoverEvent.ShowText(hoverMessage))
-                        //?} else {
-                        /*.withClickEvent(new ClickEvent(action, value))
-                        .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT,
-                                hoverMessage
-                        ))
-                        *///?}
+                        .withClickEvent(Texter.clickEvent(action, value))
+                        .withHoverEvent(Texter.hoverEvent(HoverEvent.Action.SHOW_TEXT, hoverMessage))
         ));
     }
 
-    public Text generateSuspendedInfo() {
+    public Component generateSuspendedInfo(Player forPlayer) {
         TickHandler tickHandler = Neruina.getInstance().getTickHandler();
-        List<Text> tickingEntryMessages = new ArrayList<>();
+        List<Component> tickingEntryMessages = new ArrayList<>();
         int count = tickHandler.getTickingEntries().size();
 
-        if(count == 1) {
+        if (count == 1) {
             tickingEntryMessages.add(formatText("neruina.ticking_entries.count.single"));
         } else {
             tickingEntryMessages.add(formatText("neruina.ticking_entries.count", count));
         }
         tickHandler.getTickingEntries().forEach(entry -> tickingEntryMessages.add(
                 generateCommandAction(
-                        Texter.translatable(
+                        forPlayer, Texter.translatable(
                                 "neruina.ticking_entries.entry",
                                 entry.getCauseName(),
                                 posAsNums(entry.pos())
                         ),
                         "neruina.ticking_entries.entry.tooltip",
-                        Formatting.DARK_RED,
+                        ChatFormatting.DARK_RED,
                         "/neruina info %s".formatted(entry.uuid())
                 )
         ));
         tickingEntryMessages.add(Texter.concatDelimited(
                 Texter.SPACE,
                 generateInfoAction(),
-                generateClearAction()
+                generateClearAction(forPlayer)
         ));
-        return Texter.concatDelimited(Texter.LINE_BREAK, tickingEntryMessages.toArray(new Text[0]));
+        return Texter.concatDelimited(Texter.LINE_BREAK, tickingEntryMessages.toArray(new Component[0]));
     }
 
-    public Text formatText(String key, Object... args) {
+    public Component formatText(String key, Object... args) {
         return Texter.format(Texter.translatable(key, args));
     }
 
     public String posAsNums(BlockPos pos) {
         return "%s %s %s".formatted(pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    public interface ActionGetter {
+        Component get(Player player);
     }
 }

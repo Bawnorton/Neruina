@@ -30,7 +30,13 @@ public class IssueFormatter {
             new Placeholder("name", true, Restriction.NONE, (config, entry) -> entry.getCauseName()),
             new Placeholder("modloader", true, Restriction.NONE, (config, entry) -> Platform.getModLoader().name().toLowerCase(Locale.ROOT)),
             new Placeholder("modversion", false, Restriction.NONE, (config, entry) -> Platform.getModVersion(config.modid())),
-            new Placeholder("mcversion", false, Restriction.NONE, (config, entry) -> SharedConstants.getGameVersion().getName()),
+            new Placeholder("mcversion", false, Restriction.NONE, (config, entry) -> {
+                //? if 1.21.1 {
+                /*return SharedConstants.getCurrentVersion().getName();
+                *///?} else {
+                return SharedConstants.getCurrentVersion().name();
+                //?}
+            }),
             new Placeholder("report", false, Restriction.BODY, (config, entry) -> "```\n%s\n```".formatted(entry.createCrashReport()))
     );
 

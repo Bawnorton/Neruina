@@ -7,55 +7,43 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import java.io.IOException;
 import java.util.List;
 
-public final class Blacklist {
+public record Blacklist(List<String> namespaces, List<ResourceLocation> entities, List<ResourceLocation> blocks, List<ResourceLocation> blockEntities, List<ResourceLocation> items) {
     private static final Gson GSON = new GsonBuilder()
-        .setPrettyPrinting()
-        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-        .registerTypeAdapter(Identifier.class, new TypeAdapter<>() {
-            @Override
-            public void write(JsonWriter out, Object value) throws IOException {
-                if (value instanceof Identifier id) {
-                    out.value(id.toString());
-                } else if (value == null) {
-                    out.nullValue();
-                }
-            }
+            .setPrettyPrinting()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .registerTypeAdapter(
+                    ResourceLocation.class, new TypeAdapter<>() {
+                        @Override
+                        public void write(JsonWriter out, Object value) throws IOException {
+                            if (value instanceof ResourceLocation id) {
+                                out.value(id.toString());
+                            } else if (value == null) {
+                                out.nullValue();
+                            }
+                        }
 
-            @Override
-            public Object read(JsonReader in) throws IOException {
-                String value = in.nextString();
-                Identifier identifier = Identifier.tryParse(value);
-                if (identifier == null) {
-                    throw new IOException("Invalid Identifier: " + value);
-                }
-                return identifier;
-            }
-        })
-        .create();
-
-    private List<String> namespaces;
-    private List<Identifier> entities;
-    private List<Identifier> blocks;
-    private List<Identifier> blockEntities;
-    private List<Identifier> items;
-
-    public Blacklist(List<String> namespaces, List<Identifier> entities, List<Identifier> blocks, List<Identifier> blockEntities, List<Identifier> items) {
-        this.namespaces = namespaces;
-        this.entities = entities;
-        this.blocks = blocks;
-        this.blockEntities = blockEntities;
-        this.items = items;
-    }
+                        @Override
+                        public Object read(JsonReader in) throws IOException {
+                            String value = in.nextString();
+                            ResourceLocation identifier = ResourceLocation.tryParse(value);
+                            if (identifier == null) {
+                                throw new IOException("Invalid ResourceLocation: " + value);
+                            }
+                            return identifier;
+                        }
+                    }
+            )
+            .create();
 
     public static Blacklist fromJson(JsonReader reader) {
         return GSON.fromJson(reader, Blacklist.class);
     }
 
-    public boolean isBlacklisted(ErroredType type, Identifier id) {
+    public boolean isBlacklisted(ErroredType type, ResourceLocation id) {
         if (id == null) {
             return false;
         }

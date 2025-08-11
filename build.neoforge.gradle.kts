@@ -1,4 +1,3 @@
-import dev.kikugie.fletching_table.annotation.MixinEnvironment
 import neruina.utils.*
 
 plugins {
@@ -8,24 +7,14 @@ plugins {
     id("neruina.common")
     id("me.modmuss50.mod-publish-plugin")
     id("com.google.devtools.ksp") version "2.2.0-2.0.2"
-    id("dev.kikugie.fletching-table.neoforge") version "0.1.0-alpha.13"
+    id("dev.kikugie.fletching-table.neoforge") version "0.1.0-alpha.15"
 }
 
 repositories {
-    fun strictMaven(url: String, alias: String, vararg groups: String) = exclusiveContent {
-        forRepository { maven(url) { name = alias } }
-        filter { groups.forEach(::includeGroup) }
-    }
-
+    mavenLocal()
     maven("https://maven.bawnorton.com/releases")
-    maven("https://maven.quiltmc.org/repository/release/")
-    maven("https://maven.blamejared.com/")
-    maven("https://maven.shedaniel.me/")
-    maven("https://thedarkcolour.github.io/KotlinForForge/")
     maven("https://maven.parchmentmc.org")
-
-    strictMaven("https://www.cursemaven.com", "Curseforge", "curse.maven")
-    strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
+    maven("https://repo.jenkins-ci.org/public/")
 }
 
 val minecraft: String by project
@@ -33,6 +22,15 @@ val loader: String by project
 base.archivesName = "${mod("id")}-${mod("version")}+$minecraft-$loader"
 
 dependencies {
+    deps("kohsuke_github") {
+        jarJar(implementation("org.kohsuke:github-api:$it") {
+            exclude("commons-io", "commons-io")
+            exclude("org.apache.commons", "commons-lang3")
+            exclude("com.fasterxml.jackson.core", "jackson-databind")
+            exclude("com.fasterxml.jackson.core", "jackson-annotations")
+            exclude("com.fasterxml.jackson.core", "jackson-core")
+        })
+    }
     deps("configurable") {
         implementation(annotationProcessor("com.bawnorton.configurable:configurable-$loader:$it")!!)
     }

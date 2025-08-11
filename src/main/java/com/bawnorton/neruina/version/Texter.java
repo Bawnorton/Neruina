@@ -1,60 +1,111 @@
 package com.bawnorton.neruina.version;
 
-import net.minecraft.text.*;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.ItemStack;
+import java.net.URI;
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 public interface Texter {
-    Text LINE_BREAK = literal("\n");
-    Text SPACE = literal(" ");
-    Text NERUINA_HEADER = withStyle(literal("[Neruina]: "), style -> style.withColor(Formatting.AQUA));
+    Component LINE_BREAK = literal("\n");
+    Component SPACE = literal(" ");
+    Component NERUINA_HEADER = withStyle(literal("[Neruina]: "), style -> style.withColor(ChatFormatting.AQUA));
 
-    static Text literal(String text) {
-        return Text.literal(text);
+    static Component literal(String component) {
+        return Component.literal(component);
     }
 
-    static Text translatable(String key, Object... args) {
-        return Text.translatable(key, args);
+    static Component translatable(String key, Object... args) {
+        return Component.translatable(key, args);
     }
 
-    static Text withStyle(Text text, UnaryOperator<Style> style) {
-        if (text instanceof MutableText mutableText) {
-            mutableText.styled(style);
+    static Component empty() {
+        return Component.empty();
+    }
+
+    static Component withStyle(Component component, UnaryOperator<Style> style) {
+        if (component instanceof MutableComponent mutableComponent) {
+            mutableComponent.withStyle(style);
         }
-        return text;
+        return component;
     }
 
-    static Text concat(Text... texts) {
-        MutableText text = Text.empty();
-        for (Text t : texts) {
-            text.append(t);
+    static Component concat(Component... texts) {
+        MutableComponent component = Component.empty();
+        for (Component t : texts) {
+            if (t.getString().isEmpty()) continue;
+
+            component.append(t);
         }
-        return text;
+        return component;
     }
 
-    static Text concatDelimited(Text delimiter, Text... texts) {
-        MutableText text = Text.empty();
+    static Component concatDelimited(Component delimiter, Component... texts) {
+        MutableComponent component = Component.empty();
         for (int i = 0; i < texts.length; i++) {
-            text.append(texts[i]);
+            component.append(texts[i]);
             if(texts[i].getString().isEmpty()) {
+                List<Component> siblings = component.getSiblings();
+                if (!siblings.isEmpty()) {
+                    siblings.removeLast();
+                }
                 continue;
             }
             if (i != texts.length - 1) {
-                text.append(delimiter);
+                component.append(delimiter);
             }
         }
-        return text;
+        return component;
     }
 
-    static Text pad(Text text) {
-        MutableText padded = Text.empty();
+    static Component pad(Component component) {
+        if (component.getString().isEmpty()) return component;
+
+        MutableComponent padded = Component.empty();
         padded.append(LINE_BREAK);
-        padded.append(text);
+        padded.append(component);
         padded.append(LINE_BREAK);
         return padded;
     }
 
-    static Text format(Text text) {
-        return concat(NERUINA_HEADER, withStyle(text, style -> style.withColor(Formatting.RED)));
+    static Component format(Component component) {
+        if  (component.getString().isEmpty()) return component;
+
+        return concat(NERUINA_HEADER, withStyle(component, style -> style.withColor(ChatFormatting.RED)));
     }
+
+    static ClickEvent clickEvent(ClickEvent.Action action, String value) {
+        //? if 1.21.1 {
+        /*return new ClickEvent(action, value);
+        *///?} else {
+        return switch (action) {
+            case OPEN_URL -> new ClickEvent.OpenUrl(URI.create(value));
+            case OPEN_FILE -> new ClickEvent.OpenFile(value);
+            case RUN_COMMAND -> new ClickEvent.RunCommand(value);
+            case SUGGEST_COMMAND -> new ClickEvent.SuggestCommand(value);
+            case COPY_TO_CLIPBOARD -> new ClickEvent.CopyToClipboard(value);
+            case CHANGE_PAGE -> new ClickEvent.ChangePage(Integer.parseInt(value));
+            default -> null;
+        };
+        //?}
+    }
+
+    //? if 1.21.1 {
+    /*static <T> HoverEvent hoverEvent(HoverEvent.Action<T> action, T value) {
+        return new HoverEvent(action, value);
+    }
+    *///?} else {
+    static HoverEvent hoverEvent(HoverEvent.Action action, Object value) {
+        return switch (action) {
+            case SHOW_TEXT -> new HoverEvent.ShowText((Component) value);
+            case SHOW_ITEM -> new HoverEvent.ShowItem((ItemStack) value);
+            case SHOW_ENTITY -> new HoverEvent.ShowEntity((HoverEvent.EntityTooltipInfo) value);
+        };
+    }
+    //?}
 }

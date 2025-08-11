@@ -1,12 +1,14 @@
 package com.bawnorton.neruina.mixin;
 
-import com.bawnorton.neruina.extend.CrashReportSectionExtender;
-import net.minecraft.util.crash.CrashReportSection;
+import com.bawnorton.neruina.extend.CrashReportCategoryExtender;
+import dev.kikugie.fletching_table.annotation.MixinEnvironment;
+import net.minecraft.CrashReportCategory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(CrashReportSection.class)
-public abstract class CrashReportSectionMixin implements CrashReportSectionExtender {
+@MixinEnvironment
+@Mixin(CrashReportCategory.class)
+public abstract class CrashReportCategoryMixin implements CrashReportCategoryExtender {
     @Shadow
     private StackTraceElement[] stackTrace;
 

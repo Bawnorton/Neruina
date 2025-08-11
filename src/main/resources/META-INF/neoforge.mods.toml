@@ -23,4 +23,4 @@ license = "${mod_license}"
 [[dependencies.${mod_id}]]
     modId = "configurable"
     type = "required"
-    versionRange = "[3.0.2,)"
+    versionRange = "[3.1.0,)"

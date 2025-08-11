@@ -1,8 +1,8 @@
 package com.bawnorton.neruina.platform;
 
-import java.nio.file.Path;
 
 //? if fabric {
+import java.nio.file.Path;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -10,10 +10,6 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.api.metadata.ModOrigin;
 
 public final class Platform {
-    public static Path getConfigDir() {
-        return FabricLoader.getInstance().getConfigDir();
-    }
-
     public static boolean isModLoaded(String modid) {
         return FabricLoader.getInstance().isModLoaded(modid);
     }
@@ -56,6 +52,10 @@ public final class Platform {
     public static boolean isClient() {
         return FabricLoader.getInstance().getEnvironmentType().equals(EnvType.CLIENT);
     }
+
+    public static boolean isDev() {
+        return FabricLoader.getInstance().isDevelopmentEnvironment();
+    }
 }
 //?} elif neoforge {
 /*import java.util.List;
@@ -63,15 +63,10 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.loading.LoadingModList;
 import net.neoforged.fml.loading.moddiscovery.ModInfo;
 
 public final class Platform {
-    public static Path getConfigDir() {
-        return FMLPaths.CONFIGDIR.get();
-    }
-
     public static boolean isModLoaded(String modid) {
         List<ModInfo> mods = LoadingModList.get().getMods();
         for (ModInfo mod : mods) {
@@ -116,6 +111,10 @@ public final class Platform {
 
     public static boolean isClient() {
         return FMLLoader.getDist().isClient();
+    }
+
+    public static boolean isDev() {
+        return !FMLLoader.isProduction();
     }
 }
 *///?}

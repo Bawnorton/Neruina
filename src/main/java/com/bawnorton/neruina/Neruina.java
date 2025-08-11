@@ -1,7 +1,6 @@
 package com.bawnorton.neruina;
 
 import com.bawnorton.neruina.blacklist.BlacklistHandler;
-import com.bawnorton.neruina.config.ConfigManager;
 import com.bawnorton.neruina.handler.MessageHandler;
 import com.bawnorton.neruina.handler.PersitanceHandler;
 import com.bawnorton.neruina.handler.TickHandler;
@@ -29,7 +28,6 @@ public class Neruina {
     }
 
     public static void init() {
-        ConfigManager.loadConfig();
     }
 
     public static Neruina getInstance() {

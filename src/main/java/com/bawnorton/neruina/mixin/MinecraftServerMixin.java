@@ -2,38 +2,33 @@ package com.bawnorton.neruina.mixin;
 
 import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.report.Storage;
+import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@SuppressWarnings("DataFlowIssue")
+@MixinEnvironment
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
-    //? if >=1.19.3 {
-    @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;createMetadata()Lnet/minecraft/server/ServerMetadata;", ordinal = 0))
+    @Inject(
+            method = "runServer",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/MinecraftServer;buildServerStatus()Lnet/minecraft/network/protocol/status/ServerStatus;"
+            )
+    )
     private void onServerStart(CallbackInfo ci) {
-        MinecraftServer this$ = (MinecraftServer) (Object) this;
-        Neruina.getInstance().getAutoReportHandler().init(this$);
-        Neruina.getInstance().getBlacklistHandler().init(this$);
+        MinecraftServer self = (MinecraftServer) (Object) this;
+        Neruina.getInstance().getAutoReportHandler().init(self);
+        Neruina.getInstance().getBlacklistHandler().init(self);
         Neruina.getInstance().getTickHandler().init();
-        Neruina.getInstance().updateServerState(this$);
-        Storage.init(this$);
+        Neruina.getInstance().updateServerState(self);
+        Storage.init(self);
     }
-    //?} else {
-    /*@Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setFavicon(Lnet/minecraft/server/ServerMetadata;)V", ordinal = 0))
-    private void onServerStart(CallbackInfo ci) {
-        MinecraftServer this$ = (MinecraftServer) (Object) this;
-        Neruina.getInstance().getAutoReportHandler().init(this$);
-        Neruina.getInstance().getBlacklistHandler().init(this$);
-        Neruina.getInstance().getTickHandler().init();
-        Neruina.getInstance().updateServerState(this$);
-        Storage.init(this$);
-    }
-    *///?}
 
-    @Inject(method = "shutdown", at = @At("HEAD"))
+    @Inject(method = "stopServer", at = @At("HEAD"))
     private void onServerStop(CallbackInfo ci) {
         Neruina.getInstance().updateServerState((MinecraftServer) (Object) this);
     }

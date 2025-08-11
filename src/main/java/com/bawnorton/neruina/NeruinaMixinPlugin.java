@@ -1,13 +1,13 @@
 package com.bawnorton.neruina;
 
 import com.bawnorton.neruina.util.annotation.ConditionalMixin;
+import com.bawnorton.neruina.util.annotation.DevOnly;
 import com.bawnorton.neruina.util.annotation.ModLoaderMixin;
 import com.bawnorton.neruina.util.annotation.Version;
 import com.bawnorton.neruina.platform.ModLoader;
 import com.bawnorton.neruina.platform.Platform;
-import com.bawnorton.neruina.util.annotation.VersionedMixin;
+import com.bawnorton.neruina.version.ComparableVersion;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
-import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -85,12 +85,8 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
                                 Platform.getModLoader()
                         ));
                     }
-                } else if (node.desc.equals(Type.getDescriptor(VersionedMixin.class))) {
-                    String min = Annotations.getValue(node, "min", "");
-                    String max = Annotations.getValue(node, "max", "");
-                    String currentVersion = Platform.getVersion();
-                    ComparableVersion comparableVersion = new ComparableVersion(currentVersion);
-                    shouldApply = evaluateVersion(className, min, max, currentVersion, comparableVersion);
+                } else if (node.desc.equals(Type.getDescriptor(DevOnly.class))) {
+                    shouldApply = Platform.isDev();
                 }
                 if(!shouldApply) break;
             }

@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import dev.kikugie.fletching_table.annotation.MixinEnvironment
 import neruina.utils.*
 
 plugins {
@@ -10,23 +9,16 @@ plugins {
     id("fabric-loom")
     id("me.modmuss50.mod-publish-plugin")
     id("com.google.devtools.ksp") version "2.2.0-2.0.2"
-    id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.13"
+    id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.15"
 }
 
 repositories {
-    fun strictMaven(url: String, alias: String, vararg groups: String) = exclusiveContent {
-        forRepository { maven(url) { name = alias } }
-        filter { groups.forEach(::includeGroup) }
-    }
-
+    mavenLocal()
     maven("https://maven.bawnorton.com/releases")
-    maven("https://maven.quiltmc.org/repository/release/")
-    maven("https://maven.blamejared.com/")
-    maven("https://maven.shedaniel.me/")
     maven("https://maven.parchmentmc.org")
-
-    strictMaven("https://www.cursemaven.com", "Curseforge", "curse.maven")
-    strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
+    maven("https://repo.jenkins-ci.org/public/")
+    maven("https://api.modrinth.com/maven")
+    maven("https://cursemaven.com")
 }
 
 val minecraft: String by project
@@ -43,10 +35,16 @@ dependencies {
     })
 
     modImplementation("net.fabricmc:fabric-loader:0.16.14")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${deps("fabric_api")}")
 
+    deps("kohsuke_github") {
+        include(implementation("org.kohsuke:github-api:$it")!!)
+    }
     deps("configurable") {
         modImplementation(annotationProcessor("com.bawnorton.configurable:configurable-$loader:$it")!!)
     }
+    remoteDepBuilder(project, fletchingTable::modrinth)
+        .dep("trimica") { modRuntimeOnly(it) }
 }
 
 java {
@@ -80,7 +78,7 @@ loom {
 
 fletchingTable {
     mixins.register("main") {
-        mixin("default", "trimica.mixins.json")
+        mixin("default", "neruina.mixins.json")
     }
 }
 

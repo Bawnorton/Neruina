@@ -16,9 +16,9 @@ public class Storage {
 
     public static void init(MinecraftServer server) {
         server.getResourceManager()
-                .findResources("storage", (resource) -> resource.getPath().equals("storage/a.json"))
+                .listResources("storage", (resource) -> resource.getPath().equals("storage/a.json"))
                 .forEach((id, resource) -> {
-                    try (JsonReader reader = new JsonReader(resource.getReader())) {
+                    try (JsonReader reader = new JsonReader(resource.openAsReader())) {
                         storageData = GSON.fromJson(reader, StorageData.class);
                     } catch (IOException e) {
                         throw new RuntimeException(e);

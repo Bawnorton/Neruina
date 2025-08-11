@@ -1,8 +1,10 @@
 package com.bawnorton.neruina.mixin.errorable;
 
 import com.bawnorton.neruina.extend.Errorable;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.NbtCompound;
+import dev.kikugie.fletching_table.annotation.MixinEnvironment;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -10,6 +12,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.UUID;
 
+//? if 1.21.8 {
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+//?}
+
+@MixinEnvironment
 @Mixin(BlockEntity.class)
 public abstract class BlockEntityMixin implements Errorable {
     @Unique
@@ -43,40 +51,51 @@ public abstract class BlockEntityMixin implements Errorable {
         return neruina$tickingEntryId;
     }
 
-    @Inject(method = "writeNbt", at = @At("HEAD"))
-    //? if >=1.20.2 {
-    private void writeErroredToNbt(NbtCompound nbt, net.minecraft.registry.RegistryWrapper.WrapperLookup registryLookup, CallbackInfo ci) {
-    //?} else {
-    /*private void writeErroredToNbt(NbtCompound nbt, CallbackInfo ci) {
-    *///?}
+    //? if 1.21.1 {
+    /*@Inject(
+            method = "saveAdditional",
+            at = @At("HEAD")
+    )
+    private void writeErrored(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
         if (neruina$errored) {
-            nbt.putBoolean("neruina$errored", true);
+            tag.putBoolean("neruina$errored", true);
         }
         if (neruina$tickingEntryId != null) {
-            //? if >1.21.4 {
-            nbt.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
-            //?} else {
-            /*nbt.putUuid("neruina$tickingEntryId", neruina$tickingEntryId);
-            *///?}
+            tag.putUUID("neruina$tickingEntryId", neruina$tickingEntryId);
         }
     }
 
-    @Inject(method = "readNbt", at = @At("TAIL"))
-    //? if >=1.20.2 {
-    private void readErroredFromNbt(NbtCompound nbt, net.minecraft.registry.RegistryWrapper.WrapperLookup registryLookup, CallbackInfo ci) {
-    //?} else {
-    /*private void readErroredFromNbt(NbtCompound nbt, CallbackInfo ci) {
-    *///?}
-        //? if >1.21.4 {
-        neruina$errored = nbt.getBoolean("neruina$errored", false);
-        neruina$tickingEntryId = nbt.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
-        //?} else {
-        /*if (nbt.contains("neruina$errored")) {
-            neruina$errored = nbt.getBoolean("neruina$errored");
+    @Inject(
+            method = "loadAdditional",
+            at = @At("TAIL")
+    )
+    private void loadAdditional(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
+        neruina$errored = tag.getBoolean("neruina$errored");
+        if (tag.contains("neruina$tickingEntryId")) {
+            neruina$tickingEntryId = tag.getUUID("neruina$tickingEntryId");
         }
-        if (nbt.contains("neruina$tickingEntryId")) {
-            neruina$tickingEntryId = nbt.getUuid("neruina$tickingEntryId");
-        }
-        *///?}
     }
+    *///?} else {
+    @Inject(
+            method = "saveAdditional",
+            at = @At("HEAD")
+    )
+    private void writeErroredToOutput(ValueOutput output, CallbackInfo ci) {
+        if (neruina$errored) {
+            output.putBoolean("neruina$errored", true);
+        }
+        if (neruina$tickingEntryId != null) {
+            output.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
+        }
+    }
+
+    @Inject(
+            method = "loadAdditional",
+            at = @At("TAIL")
+    )
+    private void readErroredFromNbt(ValueInput input, CallbackInfo ci) {
+        neruina$errored = input.getBooleanOr("neruina$errored", false);
+        neruina$tickingEntryId = input.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+    }
+    //?}
 }

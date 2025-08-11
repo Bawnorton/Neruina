@@ -79,6 +79,7 @@
   "commands.neruina.id.item_stack.not_errored": "%s's held Item Stack [%s] is not errored.",
   "commands.neruina.info.entity": "Entity [%s] at (%s) is suspended.",
   "commands.neruina.info.block_entity": "Block [%s] at (%s) is suspended.",
+  "commands.neruina.info.block_state": "Block [%s] at is suspended.",
   "commands.neruina.info.item_stack": "Item Stack [%s] is suspended.",
   "commands.neruina.info.null_cause": "%s at (%s) is suspended, but could not be found. It may have been unloaded or removed.",
   "commands.neruina.info.not_found": "Could not get information about the specified ticking entry. It may have been unloaded, removed or cleared.",

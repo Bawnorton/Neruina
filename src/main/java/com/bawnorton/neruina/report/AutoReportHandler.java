@@ -6,10 +6,10 @@ import com.bawnorton.neruina.exception.InProgressException;
 import com.bawnorton.neruina.util.TickingEntry;
 import com.google.gson.stream.JsonReader;
 import com.mojang.datafixers.util.Either;
-import net.minecraft.resource.Resource;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.resources.Resource;
 import org.jetbrains.annotations.Nullable;
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHIssueBuilder;
@@ -28,11 +28,11 @@ public final class AutoReportHandler {
     private AutoReportConfig masterConfig;
 
     public void init(MinecraftServer server) {
-        Map<Identifier, Resource> neruinaAutoGhFiles = server.getResourceManager().findResources(Neruina.MOD_ID, (resource) -> resource.getPath().equals("neruina/auto_report.json"));
-        for (Map.Entry<Identifier, Resource> entry : neruinaAutoGhFiles.entrySet()) {
-            Identifier id = entry.getKey();
+        Map<ResourceLocation, Resource> neruinaAutoGhFiles = server.getResourceManager().listResources(Neruina.MOD_ID, (resource) -> resource.getPath().equals("neruina/auto_report.json"));
+        for (Map.Entry<ResourceLocation, Resource> entry : neruinaAutoGhFiles.entrySet()) {
+            ResourceLocation id = entry.getKey();
             Resource resource = entry.getValue();
-            try (JsonReader reader = new JsonReader(resource.getReader())) {
+            try (JsonReader reader = new JsonReader(resource.openAsReader())) {
                 AutoReportConfig config = AutoReportConfig.fromJson(reader);
                 if (config.isVaild()) {
                     if (id.getNamespace().equals(Neruina.MOD_ID)) {
@@ -55,11 +55,11 @@ public final class AutoReportHandler {
         }
     }
 
-    public CompletableFuture<ReportStatus> createReports(ServerPlayerEntity player, TickingEntry entry) {
+    public CompletableFuture<ReportStatus> createReports(ServerPlayer player, TickingEntry entry) {
         return createReports(player, entry, true);
     }
 
-    public CompletableFuture<ReportStatus> createReports(ServerPlayerEntity player, TickingEntry entry, boolean publish) {
+    public CompletableFuture<ReportStatus> createReports(ServerPlayer player, TickingEntry entry, boolean publish) {
         UUID entryId = entry.uuid();
         if (reportedEntries.contains(entryId)) {
             return CompletableFuture.completedFuture(ReportStatus.alreadyExists());
@@ -88,7 +88,7 @@ public final class AutoReportHandler {
 
         reportedEntries.add(entryId);
         Set<String> modids = entry.findPotentialSources();
-        Map<String, @Nullable GHIssueBuilder> issueBuilders = new HashMap<>();
+        Map<String, GHIssueBuilder> issueBuilders = new HashMap<>();
         for (String modid : modids) {
             issueBuilders.put(modid, null);
             RepositoryReference repository = repositories.computeIfAbsent(modid, key -> {
@@ -206,12 +206,12 @@ public final class AutoReportHandler {
                         .body(formatter.getBody(entry, github));
     }
 
-    public void testReporting(ServerPlayerEntity player) {
+    public void testReporting(ServerPlayer player) {
         TickingEntry dummyEntry = new TickingEntry(
                 player,
                 false,
-                player.getWorld().getRegistryKey(),
-                player.getBlockPos(),
+                player.level().dimension(),
+                player.getOnPos(),
                 new RuntimeException()
         );
         createReports(player, dummyEntry, false);

@@ -1,5 +1,5 @@
 package com.bawnorton.neruina.extend;
 
-public interface CrashReportSectionExtender {
+public interface CrashReportCategoryExtender {
     void neruin$setStacktrace(Throwable throwable);
 }

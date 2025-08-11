@@ -5,31 +5,32 @@ import com.bawnorton.neruina.config.Config;
 import com.bawnorton.neruina.exception.TickingException;
 import com.bawnorton.neruina.extend.Errorable;
 import com.bawnorton.neruina.handler.client.ClientTickHandler;
-import com.bawnorton.neruina.mixin.accessor.WorldChunkAccessor;
+import com.bawnorton.neruina.mixin.accessor.LevelChunkAccessor;
 import com.bawnorton.neruina.platform.Platform;
 import com.bawnorton.neruina.util.ErroredType;
 import com.bawnorton.neruina.util.MultiSetMap;
 import com.bawnorton.neruina.util.TickingEntry;
 import com.bawnorton.neruina.version.Texter;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.CrashReport;
+import net.minecraft.CrashReportCategory;
+import net.minecraft.ReportedException;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.crash.CrashException;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.crash.CrashReportSection;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,11 +41,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-//? if >1.19.3 {
-import net.minecraft.registry.Registries;
-//?} else {
-/*import net.minecraft.util.registry.Registry;
-*///?}
 
 public final class TickHandler {
     private final List<TickingEntry> recentErrors = new ArrayList<>();
@@ -56,7 +52,7 @@ public final class TickHandler {
         stopwatch++;
         if (stopwatch >= 600) {
             if (!recentErrors.isEmpty()) {
-                recentErrors.remove(0);
+                recentErrors.removeFirst();
             }
             stopwatch = 0;
         }
@@ -68,38 +64,38 @@ public final class TickHandler {
     }
 
     @SuppressWarnings("unused")
-    public void safelyTickItemStack(ItemStack instance, World world, Entity entity, EquipmentSlot slot, int slotIndex, Operation<Void> original) {
+    public void safelyTickItemStack(ItemStack instance, Level level, Entity entity, EquipmentSlot slot, int slotIndex, Operation<Void> original) {
         try {
             if (isErrored(instance)) {
                 return;
             }
-            original.call(instance, world, entity, slot);
+            original.call(instance, level, entity, slot);
         } catch (Throwable e) {
-            handleTickingItemStack(e, instance, !world.isClient(), (PlayerEntity) entity, slotIndex);
+            handleTickingItemStack(e, instance, !level.isClientSide(), (Player) entity, slotIndex);
         }
     }
 
     @SuppressWarnings("unused")
-    public void safelyTickItemStack(ItemStack instance, World world, Entity entity, int slot, boolean selected, Operation<Void> original) {
+    public void safelyTickItemStack(ItemStack instance, Level level, Entity entity, int slot, boolean selected, Operation<Void> original) {
         try {
             if (isErrored(instance)) {
                 return;
             }
-            original.call(instance, world, entity, slot, selected);
+            original.call(instance, level, entity, slot, selected);
         } catch (Throwable e) {
-            handleTickingItemStack(e, instance, !world.isClient(), (PlayerEntity) entity, slot);
+            handleTickingItemStack(e, instance, !level.isClientSide(), (Player) entity, slot);
         }
     }
 
     @SuppressWarnings("unused")
-    public void safelyTickItemStack(ItemStack instance, World world, PlayerEntity player, int slot, int selected, Operation<Void> original) {
+    public void safelyTickItemStack(ItemStack instance, Level level, Player player, int slot, int selected, Operation<Void> original) {
         try {
             if (isErrored(instance)) {
                 return;
             }
-            original.call(instance, world, player, slot, selected);
+            original.call(instance, level, player, slot, selected);
         } catch (Throwable e) {
-            handleTickingItemStack(e, instance, !world.isClient(), player, slot);
+            handleTickingItemStack(e, instance, !level.isClientSide(), player, slot);
         }
     }
 
@@ -117,13 +113,13 @@ public final class TickHandler {
         }
     }
 
-    public <T extends Entity> void safelyTickEntities(Consumer<T> consumer, T entity, World world, Object random, Operation<Void> original) {
+    public <T extends Entity> void safelyTickEntities(Consumer<T> consumer, T entity, Level level, Object random, Operation<Void> original) {
         try {
             if (isErrored(entity)) {
                 handleErroredEntity(entity);
                 return;
             }
-            original.call(consumer, entity, world, random);
+            original.call(consumer, entity, level, random);
         } catch (TickingException e) {
             throw e;
         } catch (Throwable e) {
@@ -131,151 +127,146 @@ public final class TickHandler {
         }
     }
 
-    public void safelyTickPlayer(ServerPlayerEntity instance, Operation<Void> original) {
+    public void safelyTickPlayer(ServerPlayer instance, Operation<Void> original) {
         try {
             original.call(instance);
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingPlayers) {
+            if (!Config.handleTickingPlayers) {
                 throw TickingException.notHandled("handle_ticking_players", e);
             }
             handleTickingPlayer(instance, e);
         }
     }
 
-    public void safelyTickBlockState(BlockState instance, ServerWorld world, BlockPos pos, Object random, Operation<Void> original) {
+    public void safelyTickBlockState(BlockState instance, ServerLevel level, BlockPos pos, Object random, Operation<Void> original) {
         try {
             if (isErrored(instance, pos)) {
                 return;
             }
-            original.call(instance, world, pos, random);
+            original.call(instance, level, pos, random);
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingBlockStates) {
+            if (!Config.handleTickingBlockStates) {
                 throw TickingException.notHandled("handle_ticking_block_states", e);
             }
-            //? if >1.19.3 {
-            Identifier blockId = Registries.BLOCK.getId(instance.getBlock());
-            //?} else {
-            /*Identifier blockId = Registry.BLOCK.getId(instance.getBlock());
-            *///?}
-            Identifier owningBlacklist = getBlacklistFor(ErroredType.BLOCK_STATE, blockId);
+            ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(instance.getBlock());
+            ResourceLocation owningBlacklist = getBlacklistFor(ErroredType.BLOCK_STATE, blockId);
             if (owningBlacklist != null) {
                 throw TickingException.blacklisted(owningBlacklist, blockId, e);
             }
             MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
-            Text message = messageHandler.formatText("neruina.ticking.block_state",
+            Component message = messageHandler.formatText(
+                    "neruina.ticking.block_state",
                     instance.getBlock().getName().getString(),
                     messageHandler.posAsNums(pos)
             );
             Neruina.LOGGER.warn("Neruina Caught An Exception, see below for cause", e);
             addErrored(instance, pos);
-            TickingEntry tickingEntry = new TickingEntry(instance, true, world.getRegistryKey(), pos, e);
+            TickingEntry tickingEntry = new TickingEntry(instance, true, level.dimension(), pos, e);
             trackError(tickingEntry);
-            messageHandler.broadcastToPlayers(world.getServer(),
+            messageHandler.broadcastToPlayers(
+                    level.getServer(),
                     message,
-                    messageHandler.generateHandlingActions(ErroredType.BLOCK_STATE, world.getRegistryKey(), pos),
-                    messageHandler.generateResourceActions(tickingEntry)
+                    forPlayer -> Texter.concatDelimited(
+                            Texter.LINE_BREAK,
+                            messageHandler.generateHandlingActions(forPlayer, ErroredType.BLOCK_STATE, level.dimension(), pos),
+                            messageHandler.generateResourceActions(forPlayer, tickingEntry)
+                    )
             );
         }
     }
 
-    public void safelyTickBlockEntity(BlockEntityTicker<? extends BlockEntity> instance, World world, BlockPos pos, BlockState state, BlockEntity blockEntity, Operation<Void> original) {
+    public void safelyTickBlockEntity(BlockEntityTicker<? extends BlockEntity> instance, Level level, BlockPos pos, BlockState state, BlockEntity blockEntity, Operation<Void> original) {
         try {
             if (isErrored(blockEntity)) {
-                if (world.isClient()) {
+                if (level.isClientSide()) {
                     return;
                 }
 
-                WorldChunk chunk = world.getWorldChunk(pos);
-                ((WorldChunkAccessor) chunk).invokeRemoveBlockEntityTicker(pos);
+                LevelChunk chunk = level.getChunkAt(pos);
+                ((LevelChunkAccessor) chunk).neruina$removeBlockEntityTicker(pos);
                 return;
             }
-            original.call(instance, world, pos, state, blockEntity);
+            original.call(instance, level, pos, state, blockEntity);
         } catch (Throwable e) {
-            if (!Config.getInstance().handleTickingBlockEntities) {
+            if (!Config.handleTickingBlockEntities) {
                 throw TickingException.notHandled("handle_ticking_block_entities", e);
             }
-            //? if >1.19.3 {
-            Identifier blockEntityId = Registries.BLOCK_ENTITY_TYPE.getId(blockEntity.getType());
-            //?} else {
-            /*Identifier blockEntityId = Registry.BLOCK_ENTITY_TYPE.getId(blockEntity.getType());
-            *///?}
-            Identifier owningBlacklist = getBlacklistFor(ErroredType.BLOCK_ENTITY, blockEntityId);
+            ResourceLocation blockEntityId = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntity.getType());
+            ResourceLocation owningBlacklist = getBlacklistFor(ErroredType.BLOCK_ENTITY, blockEntityId);
             if (owningBlacklist != null) {
                 throw TickingException.blacklisted(owningBlacklist, blockEntityId, e);
             }
             MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
-            Text message = messageHandler.formatText("neruina.ticking.block_entity",
+            Component message = messageHandler.formatText(
+                    "neruina.ticking.block_entity",
                     state.getBlock().getName().getString(),
                     messageHandler.posAsNums(pos)
             );
             Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
             addErrored(blockEntity);
-            if (!world.isClient()) {
-                TickingEntry tickingEntry = new TickingEntry(blockEntity, true, world.getRegistryKey(), pos, e);
-                trackError((Errorable) blockEntity, tickingEntry);
-                messageHandler.broadcastToPlayers(world.getServer(),
+            if (!level.isClientSide()) {
+                TickingEntry tickingEntry = new TickingEntry(blockEntity, true, level.dimension(), pos, e);
+                trackError(blockEntity, tickingEntry);
+                messageHandler.broadcastToPlayers(
+                        level.getServer(),
                         message,
-                        messageHandler.generateHandlingActions(ErroredType.BLOCK_ENTITY, world.getRegistryKey(), pos),
-                        messageHandler.generateResourceActions(tickingEntry)
+                        forPlayer -> Texter.concatDelimited(
+                                Texter.LINE_BREAK,
+                                messageHandler.generateHandlingActions(forPlayer, ErroredType.BLOCK_ENTITY, level.dimension(), pos),
+                                messageHandler.generateResourceActions(forPlayer, tickingEntry)
+                        )
                 );
             }
         }
     }
 
     private void preHandleTickingEntity(Entity entity, Throwable e) {
-        if (!Config.getInstance().handleTickingEntities) {
+        if (!Config.handleTickingEntities) {
             throw TickingException.notHandled("handle_ticking_entities", e);
         }
-        //? if >1.19.3 {
-        Identifier entityId = Registries.ENTITY_TYPE.getId(entity.getType());
-        //?} else {
-        /*Identifier entityId = Registry.ENTITY_TYPE.getId(entity.getType());
-        *///?}
-        Identifier owningBlacklist = getBlacklistFor(ErroredType.ENTITY, entityId);
+        ResourceLocation entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+        ResourceLocation owningBlacklist = getBlacklistFor(ErroredType.ENTITY, entityId);
         if (owningBlacklist != null) {
             throw TickingException.blacklisted(owningBlacklist, entityId, e);
         }
         handleTickingEntity(entity, e);
     }
 
-    private void handleTickingItemStack(Throwable e, ItemStack instance, boolean isServer, PlayerEntity player, int slot) {
-        if (!Config.getInstance().handleTickingItemStacks) {
+    private void handleTickingItemStack(Throwable e, ItemStack instance, boolean isServer, Player player, int slot) {
+        if (!Config.handleTickingItemStacks) {
             throw TickingException.notHandled("handle_ticking_item_stacks", e);
         }
-        //? if >1.19.3 {
-        Identifier itemId = Registries.ITEM.getId(instance.getItem());
-        //?} else {
-        /*Identifier itemId = Registry.ITEM.getId(instance.getItem());
-        *///?}
-        Identifier owningBlacklist = getBlacklistFor(ErroredType.ITEM_STACK, itemId);
+        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(instance.getItem());
+        ResourceLocation owningBlacklist = getBlacklistFor(ErroredType.ITEM_STACK, itemId);
         if (owningBlacklist != null) {
             throw TickingException.blacklisted(owningBlacklist, itemId, e);
         }
         Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
         addErrored(instance);
         if (isServer) {
-            TickingEntry tickingEntry = new TickingEntry(instance, false, player.getWorld().getRegistryKey(), player.getBlockPos(), e);
-            trackError((Errorable) (Object) instance, tickingEntry);
+            TickingEntry tickingEntry = new TickingEntry(instance, false, player.level().dimension(), player.getOnPos(), e);
+            trackError(instance, tickingEntry);
             MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
-            messageHandler.sendToPlayer(player,
-                    Texter.translatable("neruina.ticking.item_stack", instance.getName().getString(), slot),
-                    messageHandler.generateResumeAction(ErroredType.ITEM_STACK, player.getUuidAsString()),
-                    messageHandler.generateResourceActions(tickingEntry)
+            messageHandler.sendToPlayer(
+                    player,
+                    Texter.translatable("neruina.ticking.item_stack", instance.getHoverName().getString(), slot),
+                    messageHandler.generateResumeAction(player, ErroredType.ITEM_STACK, player.getStringUUID()),
+                    messageHandler.generateResourceActions(player, tickingEntry)
             );
         }
     }
 
     private void handleErroredEntity(Entity entity) {
         try {
-            if (entity instanceof PlayerEntity) {
+            if (entity instanceof Player) {
                 return;
             }
-            if (entity.getWorld().isClient()) {
+            if (entity.level().isClientSide()) {
                 return;
             }
 
             entity.baseTick();
-            if (Config.getInstance().autoKillTickingEntities || !entity.isAlive()) {
+            if (Config.autoKillTickingEntities || !entity.isAlive()) {
                 killEntity(entity, null);
             }
         } catch (Throwable e) {
@@ -287,14 +278,14 @@ public final class TickHandler {
         }
     }
 
-    public void killEntity(Entity entity, @Nullable Text withMessage) {
-        //? if >1.21.2 {
-        if(entity.getWorld() instanceof ServerWorld serverWorld) {
+    public void killEntity(Entity entity, @Nullable Component withMessage) {
+        //? if >1.21.1 {
+        if (entity.level() instanceof ServerLevel serverWorld) {
             entity.kill(serverWorld);
         }
         //?} else {
         /*entity.kill();
-        *///?}
+         *///?}
         entity.remove(Entity.RemovalReason.KILLED); // Necessary for any living entity
         removeErrored(entity);
         if (withMessage != null) {
@@ -303,8 +294,8 @@ public final class TickHandler {
     }
 
     private void handleTickingEntity(Entity entity, Throwable e) {
-        if (entity instanceof PlayerEntity player) {
-            if (player instanceof ServerPlayerEntity serverPlayer) {
+        if (entity instanceof Player player) {
+            if (player instanceof ServerPlayer serverPlayer) {
                 handleTickingPlayer(serverPlayer, e);
             } else {
                 handleTickingClient(player, e);
@@ -314,42 +305,47 @@ public final class TickHandler {
 
         Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
         addErrored(entity);
-        World world = entity.getWorld();
-        if (!world.isClient()) {
-            BlockPos pos = entity.getBlockPos();
-            TickingEntry tickingEntry = new TickingEntry(entity, true, world.getRegistryKey(), pos, e);
-            trackError((Errorable) entity, tickingEntry);
+        Level level = entity.level();
+        if (!level.isClientSide()) {
+            BlockPos pos = entity.getOnPos();
+            TickingEntry tickingEntry = new TickingEntry(entity, true, level.dimension(), pos, e);
+            trackError(entity, tickingEntry);
             MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
-            Text message = messageHandler.formatText("neruina.ticking.entity.%s".formatted(
-                    Config.getInstance().autoKillTickingEntities
-                            ? "killed" : "suspended"
+            Component message = messageHandler.formatText(
+                    "neruina.ticking.entity.%s".formatted(
+                            Config.autoKillTickingEntities
+                                    ? "killed" : "suspended"
                     ),
                     entity.getName().getString(),
                     messageHandler.posAsNums(pos)
             );
-            Text actions = messageHandler.generateResourceActions(tickingEntry);
-            if (!Config.getInstance().autoKillTickingEntities) {
-                actions = Texter.concatDelimited(
-                        Texter.LINE_BREAK,
-                        messageHandler.generateEntityActions(entity),
-                        actions
-                );
-            }
-            messageHandler.broadcastToPlayers(entity.getServer(), message, actions);
+            messageHandler.broadcastToPlayers(
+                    entity.getServer(), message, forPlayer -> {
+                        Component actions = messageHandler.generateResourceActions(forPlayer, tickingEntry);
+                        if (!Config.autoKillTickingEntities) {
+                            actions = Texter.concatDelimited(
+                                    Texter.LINE_BREAK,
+                                    messageHandler.generateEntityActions(forPlayer, entity),
+                                    actions
+                            );
+                        }
+                        return actions;
+                    }
+            );
         }
     }
 
-    private void handleTickingPlayer(ServerPlayerEntity player, Throwable e) {
+    private void handleTickingPlayer(ServerPlayer player, Throwable e) {
         Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
         MinecraftServer server = player.getServer();
-        String name = player.getDisplayName() == null ? player.getName().getString() : player.getDisplayName().getString();
+        String name = player.getDisplayName().getString();
         MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
-        Text message = messageHandler.formatText("neruina.ticking.player", name);
-        TickingEntry tickingEntry = new TickingEntry(player, false, player.getWorld().getRegistryKey(), player.getBlockPos(), e);
+        Component message = messageHandler.formatText("neruina.ticking.player", name);
+        TickingEntry tickingEntry = new TickingEntry(player, false, player.level().dimension(), player.getOnPos(), e);
         trackError(tickingEntry);
-        messageHandler.broadcastToPlayers(server, message, messageHandler.generateResourceActions(tickingEntry));
+        messageHandler.broadcastToPlayers(server, message, forPlayer -> messageHandler.generateResourceActions(forPlayer, tickingEntry));
         try {
-            player.networkHandler.disconnect(
+            player.connection.disconnect(
                     Texter.concat(
                             Texter.translatable("neruina.kick.message"),
                             Texter.translatable("neruina.kick.reason")
@@ -360,8 +356,8 @@ public final class TickHandler {
         }
     }
 
-    private void handleTickingClient(PlayerEntity player, Throwable e) {
-        if(player.getWorld().isClient() || Platform.isClient()) {
+    private void handleTickingClient(Player player, Throwable e) {
+        if (player.level().isClientSide() || Platform.isClient()) {
             ClientTickHandler.handleTickingClient(player, e);
         } else {
             Neruina.LOGGER.error("Neruina caught an exception, but the player is not a server player, this should not happen. Behaviour is undefined.", e);
@@ -372,35 +368,44 @@ public final class TickHandler {
         trackError(null, entry);
     }
 
+    private void trackError(Object object, TickingEntry entry) {
+        if (object instanceof Errorable errorable) {
+            trackError(errorable, entry);
+        } else if (object == null) {
+            trackError(null, entry);
+        }
+    }
+
     private void trackError(@Nullable Errorable errorable, TickingEntry entry) {
         recentErrors.add(entry);
         addTickingEntry(entry);
         if (errorable != null) {
             errorable.neruina$setTickingEntryId(entry.uuid());
         }
-        if (Config.getInstance().tickingExceptionThreshold != -1 && recentErrors.size() >= Config.getInstance().tickingExceptionThreshold) {
-            CrashReport report = CrashReport.create(
+        if (Config.tickingExceptionThreshold != -1 && recentErrors.size() >= Config.tickingExceptionThreshold) {
+            CrashReport report = CrashReport.forThrowable(
                     new RuntimeException("Too Many Ticking Exceptions"),
                     "Neruina has caught too many ticking exceptions in a short period of time, something is very wrong, see below for more info"
             );
-            CrashReportSection header = report.addElement("Information");
-            header.add("Threshold",
+            CrashReportCategory header = report.addCategory("Information");
+            header.setDetail(
+                    "Threshold",
                     "%d, set \"ticking_exception_threshold\" to -1 to disable.".formatted(
-                            Config.getInstance().tickingExceptionThreshold
+                            Config.tickingExceptionThreshold
                     )
             );
-            header.add("Caught", recentErrors.size());
+            header.setDetail("Caught", recentErrors.size());
             String wiki = "https://github.com/Bawnorton/Neruina/wiki/Too-Many-Ticking-Exceptions";
             String lines = "=".repeat(wiki.length() + "Wiki".length() + 2);
-            header.add("", lines);
-            header.add("Wiki", wiki);
-            header.add("", lines);
+            header.setDetail("", lines);
+            header.setDetail("Wiki", wiki);
+            header.setDetail("", lines);
             for (int i = 0; i < recentErrors.size(); i++) {
                 TickingEntry error = recentErrors.get(i);
-                CrashReportSection section = report.addElement("Ticking Exception #%s - (%s: %s)".formatted(i + 1, error.getCauseType(), error.getCauseName()));
-                error.populate(section);
+                CrashReportCategory category = report.addCategory("Ticking Exception #%s - (%s: %s)".formatted(i + 1, error.getCauseType(), error.getCauseName()));
+                error.populate(category);
             }
-            throw new CrashException(report);
+            throw new ReportedException(report);
         }
     }
 
@@ -475,7 +480,7 @@ public final class TickHandler {
         return size;
     }
 
-    private Identifier getBlacklistFor(ErroredType type, Identifier id) {
+    private ResourceLocation getBlacklistFor(ErroredType type, ResourceLocation id) {
         return Neruina.getInstance().getBlacklistHandler().getBlacklistFor(type, id);
     }
 }

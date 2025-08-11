@@ -1,34 +1,32 @@
 package com.bawnorton.neruina.config;
 
+import com.bawnorton.configurable.Configurable;
+
 public final class Config {
-    private static Config INSTANCE;
+    @Configurable
+    public static Integer minPermissionLevelForMessages = 0;
 
-    public Integer minPermissionLevelForMessages;
+    @Configurable
+    public static Integer minPermissionLevelForCommands = 2;
 
-    public Integer minPermissionLevelForCommands;
+    @Configurable
+    public static Boolean autoKillTickingEntities = false;
 
-    public Boolean autoKillTickingEntities;
+    @Configurable
+    public static Integer tickingExceptionThreshold = 10;
 
-    public Integer tickingExceptionThreshold;
+    @Configurable
+    public static Boolean handleTickingEntities = true;
 
-    public Boolean handleTickingEntities;
+    @Configurable
+    public static Boolean handleTickingBlockEntities = true;
 
-    public Boolean handleTickingBlockEntities;
+    @Configurable
+    public static Boolean handleTickingBlockStates = true;
 
-    public Boolean handleTickingBlockStates;
+    @Configurable
+    public static Boolean handleTickingItemStacks = true;
 
-    public Boolean handleTickingItemStacks;
-
-    public Boolean handleTickingPlayers;
-
-    public static Config getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Config();
-        }
-        return INSTANCE;
-    }
-
-    public static void update(Config config) {
-        INSTANCE = config;
-    }
+    @Configurable
+    public static Boolean handleTickingPlayers = true;
 }

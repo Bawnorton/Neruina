@@ -13,9 +13,9 @@ import com.bawnorton.neruina.thread.AbortableCountDownLatch;
 import com.bawnorton.neruina.version.Texter;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.Util;
+import net.minecraft.Util;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.GsonHelper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -56,8 +56,8 @@ public final class GithubAuthManager {
 
     private static final Map<UUID, LoginRecord> logins = new HashMap<>();
 
-    public static boolean cancelLogin(ServerPlayerEntity player) {
-        LoginRecord record = logins.get(player.getUuid());
+    public static boolean cancelLogin(ServerPlayer player) {
+        LoginRecord record = logins.get(player.getUUID());
         if(record == null || !record.inProgress) {
             return false;
         }
@@ -66,11 +66,12 @@ public final class GithubAuthManager {
         return true;
     }
 
-    public static CompletableFuture<GitHub> getOrLogin(ServerPlayerEntity player) {
+    public static CompletableFuture<GitHub> getOrLogin(ServerPlayer player) {
         MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
-        LoginRecord record = logins.computeIfAbsent(player.getUuid(), uuid -> new LoginRecord());
+        LoginRecord record = logins.computeIfAbsent(player.getUUID(), uuid -> new LoginRecord());
         if (record.gitHub != null) {
-            messageHandler.sendToPlayer(player,
+            messageHandler.sendToPlayer(
+                    player,
                     Texter.translatable("commands.neruina.report.reporting"),
                     false
             );
@@ -82,10 +83,11 @@ public final class GithubAuthManager {
             return CompletableFuture.failedFuture(new InProgressException("Login already in progress"));
         }
 
-        messageHandler.sendToPlayer(player,
+        messageHandler.sendToPlayer(
+                player,
                 Texter.translatable("commands.neruina.report.processing"),
                 false,
-                messageHandler.generateCancelLoginAction()
+                messageHandler.generateCancelLoginAction(player)
         );
 
         record.inProgress = true;
@@ -108,7 +110,6 @@ public final class GithubAuthManager {
                 Neruina.LOGGER.info("Getting OAuth token...");
                 return getOAuthToken(code);
             } catch (Exception e) {
-                Neruina.LOGGER.error("Failed to get OAuth token");
                 throw new CompletionException(e);
             }
         }).thenApply(oauthCode -> {
@@ -162,7 +163,7 @@ public final class GithubAuthManager {
                     .addParameter("client_id", CLIENT_ID)
                     .addParameter("state", state);
             URI uri = builder.build();
-            Util.getOperatingSystem().open(uri);
+            Util.getPlatform().openUri(uri);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -195,7 +196,7 @@ public final class GithubAuthManager {
             HttpPost request = createRequest(code);
 
             HttpResponse response = client.execute(request);
-            JsonObject json = JsonHelper.deserialize(EntityUtils.toString(response.getEntity()));
+            JsonObject json = GsonHelper.parse(EntityUtils.toString(response.getEntity()));
             return json.get("access_token").getAsString();
         } catch (IOException e) {
             Neruina.LOGGER.error("Failed to get OAuth token");
