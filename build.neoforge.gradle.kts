@@ -97,6 +97,9 @@ tasks {
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
+    processResources {
+        exclude("fabric.mod.json")
+    }
 }
 
 extensions.configure<PublishingExtension> {
