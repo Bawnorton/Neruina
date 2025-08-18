@@ -1,3 +1,8 @@
+# 3.0.1
+
+- Fix 1.21.2+ support in 1.21.1 jar (#148)
+- Update configurable to 3.2.2
+
 # 3.0.0
 
 - Update to 1.21.8
