@@ -6,6 +6,7 @@ import com.bawnorton.neruina.handler.MessageHandler;
 import com.bawnorton.neruina.util.TickingEntry;
 import com.bawnorton.neruina.version.Texter;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -127,18 +128,15 @@ public abstract class EntityMixin implements Errorable {
     }
     //?}
 
-    //? if 1.21.1 {
-    /*@ModifyReturnValue(
-            method = "isInvulnerableTo",
-            at = @At("RETURN")
-    )
-    *///?} else {
     @ModifyReturnValue(
-            method = "isInvulnerableToBase",
+            method = {
+                    "isInvulnerableTo",
+                    "method_64421",
+                    "isInvulnerableToBase"
+            },
             at = @At("RETURN")
     )
-    //?}
-    private boolean ignoreDamageWhenErrored(boolean original, DamageSource source) {
+    private boolean ignoreDamageWhenErrored(boolean original, @Local(argsOnly = true) DamageSource source) {
         if (original) return true;
 
         if (neruina$errored && neruina$tickingEntryId != null) {
