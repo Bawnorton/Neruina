@@ -17,7 +17,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.world.level.saveddata.SavedData;
 
-//? if 1.21.8
+//? if >=1.21.5
 import net.minecraft.world.level.saveddata.SavedDataType;
 
 public final class PersitanceHandler extends SavedData {

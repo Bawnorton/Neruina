@@ -21,6 +21,7 @@ stonecutter {
             loaders.forEach { version("$name-$it", mcVersion).buildscript = "build.$it.gradle.kts" }
 
         mc("1.21.1", loaders = listOf("fabric", "neoforge"))
+        mc("1.21.5", loaders = listOf("fabric", "neoforge"))
         mc("1.21.8", loaders = listOf("fabric", "neoforge"))
 
         vcsVersion = "1.21.8-fabric"

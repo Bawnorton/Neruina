@@ -68,7 +68,7 @@ public abstract class EntityMixin implements Errorable {
         return neruina$tickingEntryId;
     }
 
-    //? if 1.21.1 {
+    //? if <=1.21.5 {
     /*@Inject(
             method = "saveWithoutId",
             at = @At(
@@ -81,7 +81,7 @@ public abstract class EntityMixin implements Errorable {
             tag.putBoolean("neruina$errored", true);
         }
         if (neruina$tickingEntryId != null) {
-            tag.putUUID("neruina$tickingEntryId", neruina$tickingEntryId);
+            tag.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
         }
     }
 
@@ -93,10 +93,15 @@ public abstract class EntityMixin implements Errorable {
             )
     )
     private void loadAdditional(CompoundTag tag, CallbackInfo ci) {
-        neruina$errored = tag.getBoolean("neruina$errored");
+        //? if 1.21.1 {
+        /^neruina$errored = tag.getBoolean("neruina$errored");
         if (tag.contains("neruina$tickingEntryId")) {
-            neruina$tickingEntryId = tag.getUUID("neruina$tickingEntryId");
+            neruina$tickingEntryId = UUID.fromString(tag.getString("neruina$tickingEntryId"));
         }
+        ^///?} else {
+        neruina$errored = tag.getBooleanOr("neruina$errored", false);
+        neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+        //?}
     }
     *///?} else {
     @Inject(

@@ -31,7 +31,7 @@ public class IssueFormatter {
             new Placeholder("modloader", true, Restriction.NONE, (config, entry) -> Platform.getModLoader().name().toLowerCase(Locale.ROOT)),
             new Placeholder("modversion", false, Restriction.NONE, (config, entry) -> Platform.getModVersion(config.modid())),
             new Placeholder("mcversion", false, Restriction.NONE, (config, entry) -> {
-                //? if 1.21.1 {
+                //? if <=1.21.5 {
                 /*return SharedConstants.getCurrentVersion().getName();
                 *///?} else {
                 return SharedConstants.getCurrentVersion().name();

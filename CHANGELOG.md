@@ -1,3 +1,7 @@
+# 3.0.2
+
+- Add 1.21.5-7 Jar as cannot use intermediary from 1.21.1 jar for 1.21.5+
+
 # 3.0.1
 
 - Fix 1.21.2+ support in 1.21.1 jar (#148)
