@@ -1,4 +1,5 @@
 import neruina.utils.*
+import net.neoforged.moddevgradle.dsl.ModModel
 
 plugins {
     kotlin("jvm")
@@ -77,6 +78,12 @@ neoForge {
         runs.configureEach {
             applyMixinDebugSettings(::jvmArgument, ::systemProperty)
         }
+    }
+
+    mods {
+        create("${mod("id")}", Action {
+            sourceSet(sourceSets.main.get())
+        })
     }
 }
 

@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm") version "2.2.0" apply false
     id("dev.kikugie.stonecutter")
     id("fabric-loom") version "1.11-SNAPSHOT" apply false
-    id("net.neoforged.moddev") version "2.0.95" apply false
+    id("net.neoforged.moddev") version "2.0.107" apply false
     id("me.modmuss50.mod-publish-plugin") version "0.8.+" apply false
 }
 

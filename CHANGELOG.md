@@ -1,3 +1,7 @@
+# 3.0.3
+
+- Update deps
+
 # 3.0.2
 
 - Add 1.21.5-7 Jar as cannot use intermediary from 1.21.1 jar for 1.21.5+
