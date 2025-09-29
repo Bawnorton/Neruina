@@ -1,14 +1,21 @@
 package com.bawnorton.neruina.version;
 
+import com.bawnorton.neruina.Neruina;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.ItemStack;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.UnaryOperator;
 
 public interface Texter {
@@ -16,12 +23,22 @@ public interface Texter {
     Component SPACE = literal(" ");
     Component NERUINA_HEADER = withStyle(literal("[Neruina]: "), style -> style.withColor(ChatFormatting.AQUA));
 
+    Map<String, String> FALLBACK_LANG = Util.make(new HashMap<>(), map -> {
+        try(InputStream langStream = Texter.class.getClassLoader().getResourceAsStream("assets/neruina/lang/en_us.json")) {
+            if (langStream == null) return;
+
+            Language.loadFromJson(langStream, map::put);
+        } catch (IOException e) {
+            Neruina.LOGGER.error("Failed to load default lang from en_us.json", e);
+        }
+    });
+
     static Component literal(String component) {
         return Component.literal(component);
     }
 
     static Component translatable(String key, Object... args) {
-        return Component.translatable(key, args);
+        return Component.translatableWithFallback(key, FALLBACK_LANG.getOrDefault(key, key), args);
     }
 
     static Component empty() {

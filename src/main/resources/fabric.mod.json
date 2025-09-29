@@ -16,9 +16,9 @@
   "icon": "assets/neruina/icon.png",
   "environment": "*",
   "depends": {
-    "minecraft": "~${minecraft_version}",
+    "minecraft": "~${minecraft_dependency}",
     "fabricloader": ">=0.16.0",
-    "configurable": ">=3.2.4"
+    "configurable": ">=3.2.9"
   },
   "breaks": {
     "eer": "*"
