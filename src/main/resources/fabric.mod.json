@@ -18,7 +18,7 @@
   "depends": {
     "minecraft": "~${minecraft_dependency}",
     "fabricloader": ">=0.16.0",
-    "configurable": ">=3.2.9"
+    "configurable": ">=3.2.10"
   },
   "breaks": {
     "eer": "*"

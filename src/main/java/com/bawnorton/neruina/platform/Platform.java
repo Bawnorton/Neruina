@@ -58,63 +58,109 @@ public final class Platform {
     }
 }
 //?} elif neoforge {
+
 /*import java.util.List;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.LoadingModList;
 import net.neoforged.fml.loading.moddiscovery.ModInfo;
 
 public final class Platform {
-    public static boolean isModLoaded(String modid) {
-        List<ModInfo> mods = LoadingModList.get().getMods();
-        for (ModInfo mod : mods) {
-            if (mod.getModId().equals(modid)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	public static ModLoader getModLoader() {
+		return ModLoader.NEOFORGE;
+	}
 
-    public static ModLoader getModLoader() {
-        return ModLoader.NEOFORGE;
-    }
+	public static String getModVersion(String modid) {
+		return ModList.get().getModFileById(modid).versionString();
+	}
 
-    public static String modidFromJar(String jarName) {
-        for (ModInfo mod : LoadingModList.get().getMods()) {
-            String modLocation = mod.getOwningFile()
-                    .getFile()
-                    .getFilePath()
-                    .toString()
-                    .replace("+", " ");
+	//? if >=1.21.10 {
+	public static boolean isModLoaded(String modid) {
+		List<ModInfo> mods = FMLLoader.getCurrent().getLoadingModList().getMods();
+		for (ModInfo mod : mods) {
+			if (mod.getModId().equals(modid)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-            String decodedJarName = URLDecoder.decode(jarName, StandardCharsets.UTF_8);
-            int hashIndex = decodedJarName.lastIndexOf("#");
-            if (hashIndex != -1) {
-                decodedJarName = decodedJarName.substring(0, hashIndex);
-            }
-            if (modLocation.endsWith(decodedJarName)) {
-                return mod.getModId();
-            }
-        }
-        return null;
-    }
+	public static String modidFromJar(String jarName) {
+		for (ModInfo mod : FMLLoader.getCurrent().getLoadingModList().getMods()) {
+			String modLocation = mod.getOwningFile()
+					.getFile()
+					.getFilePath()
+					.toString()
+					.replace("+", " ");
 
-    public static String getModVersion(String modid) {
-        return ModList.get().getModFileById(modid).versionString();
-    }
+			String decodedJarName = URLDecoder.decode(jarName, StandardCharsets.UTF_8);
+			int hashIndex = decodedJarName.lastIndexOf("#");
+			if (hashIndex != -1) {
+				decodedJarName = decodedJarName.substring(0, hashIndex);
+			}
+			if (modLocation.endsWith(decodedJarName)) {
+				return mod.getModId();
+			}
+		}
+		return null;
+	}
 
-    public static String getVersion() {
-        return FMLLoader.versionInfo().neoForgeVersion();
-    }
+	public static String getVersion() {
+		return FMLLoader.getCurrent().getVersionInfo().neoForgeVersion();
+	}
 
-    public static boolean isClient() {
-        return FMLLoader.getDist().isClient();
-    }
+	public static boolean isClient() {
+		return FMLLoader.getCurrent().getDist().isClient();
+	}
 
-    public static boolean isDev() {
-        return !FMLLoader.isProduction();
-    }
+	public static boolean isDev() {
+		return !FMLLoader.getCurrent().isProduction();
+	}
+	//?} else {
+	/^public static boolean isModLoaded(String modid) {
+		List<ModInfo> mods = LoadingModList.get().getMods();
+		for (ModInfo mod : mods) {
+			if (mod.getModId().equals(modid)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static String modidFromJar(String jarName) {
+		for (ModInfo mod : LoadingModList.get().getMods()) {
+			String modLocation = mod.getOwningFile()
+					.getFile()
+					.getFilePath()
+					.toString()
+					.replace("+", " ");
+
+			String decodedJarName = URLDecoder.decode(jarName, StandardCharsets.UTF_8);
+			int hashIndex = decodedJarName.lastIndexOf("#");
+			if (hashIndex != -1) {
+				decodedJarName = decodedJarName.substring(0, hashIndex);
+			}
+			if (modLocation.endsWith(decodedJarName)) {
+				return mod.getModId();
+			}
+		}
+		return null;
+	}
+
+	public static String getVersion() {
+		return FMLLoader.versionInfo().neoForgeVersion();
+	}
+
+	public static boolean isClient() {
+		return FMLLoader.getDist().isClient();
+	}
+
+	public static boolean isDev() {
+		return !FMLLoader.isProduction();
+	}
+	^///?}
 }
 *///?}

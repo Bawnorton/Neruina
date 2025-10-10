@@ -1,6 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
-import neruina.utils.*
+import neruina.utils.applyMixinDebugSettings
+import neruina.utils.deps
+import neruina.utils.mod
 
 plugins {
     kotlin("jvm")
@@ -43,8 +45,6 @@ dependencies {
     deps("configurable") {
         modImplementation(annotationProcessor("com.bawnorton.configurable:configurable-$loader:$it")!!)
     }
-    remoteDepBuilder(project, fletchingTable::modrinth)
-        .dep("trimica") { modRuntimeOnly(it) }
 }
 
 java {
@@ -121,7 +121,7 @@ publishMods {
     val mrToken = providers.gradleProperty("MODRINTH_TOKEN")
     val cfToken = providers.gradleProperty("CURSEFORGE_TOKEN")
 
-    type = BETA
+    type = STABLE
     file = tasks.remapJar.map { it.archiveFile.get() }
     additionalFiles.from(tasks.remapSourcesJar.map { it.archiveFile.get() })
 

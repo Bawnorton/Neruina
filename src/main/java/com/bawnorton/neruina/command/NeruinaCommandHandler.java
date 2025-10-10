@@ -78,9 +78,9 @@ public final class NeruinaCommandHandler {
                         .then(Commands.argument("id", UuidArgument.uuid())
                                 .executes(NeruinaCommandHandler::executeReport)
                         )
-                        .then(Commands.literal("test")
-                                .executes(NeruinaCommandHandler::executeTestReport)
-                        )
+//                        .then(Commands.literal("test")
+//                                .executes(NeruinaCommandHandler::executeTestReport)
+//                        )
                 )
                 .then(Commands.literal("cancel_login")
                         .executes(NeruinaCommandHandler::executeCancelLogin)
@@ -320,7 +320,11 @@ public final class NeruinaCommandHandler {
                 return 0;
             }
             Player player = context.getSource().getPlayerOrException();
-            if(!player.getGameProfile().getId().equals(UUID.fromString("17c06cab-bf05-4ade-a8d6-ed14aaf70545"))) {
+						//? if >=1.21.10 {
+	          if (!player.getGameProfile().id().equals(UUID.fromString("17c06cab-bf05-4ade-a8d6-ed14aaf70545"))) {
+						//?} else {
+            /*if(!player.getGameProfile().getId().equals(UUID.fromString("17c06cab-bf05-4ade-a8d6-ed14aaf70545"))) {
+						*///?}
                 return 0;
             }
             Neruina.getInstance().getAutoReportHandler().testReporting(context.getSource().getPlayerOrException());
