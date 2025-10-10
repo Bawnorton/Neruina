@@ -1,3 +1,7 @@
+# 3.1.2
+
+- Fix configurable dep
+
 # 3.1.1
 
 - Update to 1.21.10
