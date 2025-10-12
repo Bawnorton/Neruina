@@ -1,3 +1,7 @@
+# 3.1.3
+
+- Fix injection failure in 1.21.10 (#154)
+
 # 3.1.2
 
 - Fix configurable dep
