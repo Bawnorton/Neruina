@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.At;
 @MixinEnvironment
 @Mixin(ServerGamePacketListenerImpl.class)
 public abstract class ServerGamePacketListenerImplMixin {
-    @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;doTick()V"))
-    private void catchTickingPlayer$notTheCauseOfTickLag(ServerPlayer instance, Operation<Void> original) {
-        Neruina.getInstance().getTickHandler().safelyTickPlayer(instance, original);
-    }
+	@WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;doTick()V"))
+	private void catchTickingPlayer$notTheCauseOfTickLag(ServerPlayer instance, Operation<Void> original) {
+		Neruina.getInstance().getTickHandler().safelyTickPlayer(instance, original);
+	}
 }

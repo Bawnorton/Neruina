@@ -9,11 +9,11 @@ import org.spongepowered.asm.mixin.Shadow;
 @MixinEnvironment
 @Mixin(CrashReportCategory.class)
 public abstract class CrashReportCategoryMixin implements CrashReportCategoryExtender {
-    @Shadow
-    private StackTraceElement[] stackTrace;
+	@Shadow
+	private StackTraceElement[] stackTrace;
 
-    @Override
-    public void neruin$setStacktrace(Throwable throwable) {
-        stackTrace = throwable.getStackTrace();
-    }
+	@Override
+	public void neruin$setStacktrace(Throwable throwable) {
+		stackTrace = throwable.getStackTrace();
+	}
 }

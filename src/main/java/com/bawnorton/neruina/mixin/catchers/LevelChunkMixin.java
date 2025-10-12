@@ -21,30 +21,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @MixinEnvironment
 @Mixin(LevelChunk.class)
 public abstract class LevelChunkMixin {
-    @Shadow
-    public abstract @Nullable BlockEntity getBlockEntity(BlockPos pos);
+	@Shadow
+	public abstract @Nullable BlockEntity getBlockEntity(BlockPos pos);
 
-    @Inject(method = "removeBlockEntity", at = @At("HEAD"))
-    private void removeErrored(BlockPos pos, CallbackInfo ci) {
-        BlockEntity blockEntity = getBlockEntity(pos);
-        TickHandler tickHandler = Neruina.getInstance().getTickHandler();
-        if (tickHandler.isErrored(blockEntity)) {
-            tickHandler.removeErrored(blockEntity);
-        }
-    }
+	@Inject(method = "removeBlockEntity", at = @At("HEAD"))
+	private void removeErrored(BlockPos pos, CallbackInfo ci) {
+		BlockEntity blockEntity = getBlockEntity(pos);
+		TickHandler tickHandler = Neruina.getInstance().getTickHandler();
+		if (tickHandler.isErrored(blockEntity)) {
+			tickHandler.removeErrored(blockEntity);
+		}
+	}
 
-    @MixinEnvironment
-    @Mixin(targets = "net.minecraft.world.level.chunk.LevelChunk$BoundTickingBlockEntity")
-    private abstract static class BoundTickingBlockEntityMixin {
-        @WrapOperation(
-                method = "tick",
-                at = @At(
-                        value = "INVOKE",
-                        target = "Lnet/minecraft/world/level/block/entity/BlockEntityTicker;tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;)V"
-                )
-        )
-        private void catchTickingBlockEntity$notTheCauseOfTickLag(BlockEntityTicker<? extends BlockEntity> instance, Level level, BlockPos pos, BlockState state, BlockEntity blockEntity, Operation<Void> original) {
-            Neruina.getInstance().getTickHandler().safelyTickBlockEntity(instance, level, pos, state, blockEntity, original);
-        }
-    }
+	@MixinEnvironment
+	@Mixin(targets = "net.minecraft.world.level.chunk.LevelChunk$BoundTickingBlockEntity")
+	private abstract static class BoundTickingBlockEntityMixin {
+		@WrapOperation(
+				method = "tick",
+				at = @At(
+						value = "INVOKE",
+						target = "Lnet/minecraft/world/level/block/entity/BlockEntityTicker;tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;)V"
+				)
+		)
+		private void catchTickingBlockEntity$notTheCauseOfTickLag(BlockEntityTicker<? extends BlockEntity> instance, Level level, BlockPos pos, BlockState state, BlockEntity blockEntity, Operation<Void> original) {
+			Neruina.getInstance().getTickHandler().safelyTickBlockEntity(instance, level, pos, state, blockEntity, original);
+		}
+	}
 }

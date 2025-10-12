@@ -24,14 +24,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @MixinEnvironment
 @Mixin(Inventory.class)
 public abstract class InventoryMixin {
-    @Shadow @Final
-    //? if 1.21.1 {
-    /*public NonNullList<ItemStack> items;
-    *///?} else {
-    private NonNullList<ItemStack> items;
-    //?}
+	@Shadow
+	@Final
+			//? if 1.21.1 {
+	/*public NonNullList<ItemStack> items;
+	 *///?} else {
+	private NonNullList<ItemStack> items;
+	//?}
 
-    //? if 1.21.1 {
+	//? if 1.21.1 {
     /*@WrapOperation(
             method = "tick",
             at = @At(
@@ -43,34 +44,34 @@ public abstract class InventoryMixin {
         Neruina.getInstance().getTickHandler().safelyTickItemStack(instance, level, entity, i, b, original);
     }
     *///?} else {
-    @WrapOperation(
-            method = "tick",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/item/ItemStack;inventoryTick(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/EquipmentSlot;)V"
-            )
-    )
-    private void catchTickingItemStack$notTheCauseOfTickLag(ItemStack instance, Level level, Entity entity, EquipmentSlot slot, Operation<Void> original, @Local(ordinal = 0) int slotIndex) {
-        Neruina.getInstance().getTickHandler().safelyTickItemStack(instance, level, entity, slot, slotIndex, original);
-    }
-    //?}
+	@WrapOperation(
+			method = "tick",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/item/ItemStack;inventoryTick(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/EquipmentSlot;)V"
+			)
+	)
+	private void catchTickingItemStack$notTheCauseOfTickLag(ItemStack instance, Level level, Entity entity, EquipmentSlot slot, Operation<Void> original, @Local(ordinal = 0) int slotIndex) {
+		Neruina.getInstance().getTickHandler().safelyTickItemStack(instance, level, entity, slot, slotIndex, original);
+	}
+	//?}
 
-    @Inject(method = "load", at = @At("TAIL"))
-    private void removeErroredStatusOnInvInit(CallbackInfo ci) {
-        items.forEach(stack -> {
-            CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-            if (data == null) return;
+	@Inject(method = "load", at = @At("TAIL"))
+	private void removeErroredStatusOnInvInit(CallbackInfo ci) {
+		items.forEach(stack -> {
+			CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+			if (data == null) return;
 
-            CompoundTag tag = data.copyTag();
-            //? if 1.21.1 {
+			CompoundTag tag = data.copyTag();
+			//? if 1.21.1 {
             /*if (tag.getBoolean("neruina$errored")) {
                 Neruina.getInstance().getTickHandler().removeErrored(stack);
             }
             *///?} else {
-            if (tag.getBoolean("neruina$errored").orElse(false)) {
-                Neruina.getInstance().getTickHandler().removeErrored(stack);
-            }
-            //?}
-        });
-    }
+			if (tag.getBoolean("neruina$errored").orElse(false)) {
+				Neruina.getInstance().getTickHandler().removeErrored(stack);
+			}
+			//?}
+		});
+	}
 }

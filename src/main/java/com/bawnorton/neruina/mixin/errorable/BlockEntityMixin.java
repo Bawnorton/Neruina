@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 import java.util.UUID;
 
 //? if >=1.21.8 {
@@ -20,38 +21,38 @@ import net.minecraft.world.level.storage.ValueOutput;
 @MixinEnvironment
 @Mixin(BlockEntity.class)
 public abstract class BlockEntityMixin implements Errorable {
-    @Unique
-    private boolean neruina$errored = false;
+	@Unique
+	private boolean neruina$errored = false;
 
-    @Unique
-    private UUID neruina$tickingEntryId = null;
+	@Unique
+	private UUID neruina$tickingEntryId = null;
 
-    @Override
-    public boolean neruina$isErrored() {
-        return neruina$errored;
-    }
+	@Override
+	public boolean neruina$isErrored() {
+		return neruina$errored;
+	}
 
-    @Override
-    public void neruina$setErrored() {
-        neruina$errored = true;
-    }
+	@Override
+	public void neruina$setErrored() {
+		neruina$errored = true;
+	}
 
-    @Override
-    public void neruina$clearErrored() {
-        neruina$errored = false;
-    }
+	@Override
+	public void neruina$clearErrored() {
+		neruina$errored = false;
+	}
 
-    @Override
-    public void neruina$setTickingEntryId(UUID uuid) {
-        neruina$tickingEntryId = uuid;
-    }
+	@Override
+	public void neruina$setTickingEntryId(UUID uuid) {
+		neruina$tickingEntryId = uuid;
+	}
 
-    @Override
-    public UUID neruina$getTickingEntryId() {
-        return neruina$tickingEntryId;
-    }
+	@Override
+	public UUID neruina$getTickingEntryId() {
+		return neruina$tickingEntryId;
+	}
 
-    //? if <=1.21.5 {
+	//? if <=1.21.5 {
     /*@Inject(
             method = "saveAdditional",
             at = @At("HEAD")
@@ -81,26 +82,26 @@ public abstract class BlockEntityMixin implements Errorable {
         //?}
     }
     *///?} else {
-    @Inject(
-            method = "saveAdditional",
-            at = @At("HEAD")
-    )
-    private void writeErroredToOutput(ValueOutput output, CallbackInfo ci) {
-        if (neruina$errored) {
-            output.putBoolean("neruina$errored", true);
-        }
-        if (neruina$tickingEntryId != null) {
-            output.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
-        }
-    }
+	@Inject(
+			method = "saveAdditional",
+			at = @At("HEAD")
+	)
+	private void writeErroredToOutput(ValueOutput output, CallbackInfo ci) {
+		if (neruina$errored) {
+			output.putBoolean("neruina$errored", true);
+		}
+		if (neruina$tickingEntryId != null) {
+			output.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
+		}
+	}
 
-    @Inject(
-            method = "loadAdditional",
-            at = @At("TAIL")
-    )
-    private void readErroredFromNbt(ValueInput input, CallbackInfo ci) {
-        neruina$errored = input.getBooleanOr("neruina$errored", false);
-        neruina$tickingEntryId = input.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
-    }
-    //?}
+	@Inject(
+			method = "loadAdditional",
+			at = @At("TAIL")
+	)
+	private void readErroredFromNbt(ValueInput input, CallbackInfo ci) {
+		neruina$errored = input.getBooleanOr("neruina$errored", false);
+		neruina$tickingEntryId = input.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+	}
+	//?}
 }

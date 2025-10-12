@@ -12,11 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @MixinEnvironment
 @Mixin(Zombie.class)
 public abstract class ZombieMixin {
-    @Inject(
-            method = "tick",
-            at = @At("HEAD")
-    )
-    private void crash(CallbackInfo ci) {
-        throw new RuntimeException();
-    }
+	@Inject(
+			method = "tick",
+			at = @At("HEAD")
+	)
+	private void crash(CallbackInfo ci) {
+		throw new RuntimeException();
+	}
 }

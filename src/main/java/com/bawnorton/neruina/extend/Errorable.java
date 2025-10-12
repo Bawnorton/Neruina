@@ -3,13 +3,13 @@ package com.bawnorton.neruina.extend;
 import java.util.UUID;
 
 public interface Errorable {
-    boolean neruina$isErrored();
+	boolean neruina$isErrored();
 
-    void neruina$setErrored();
+	void neruina$setErrored();
 
-    void neruina$clearErrored();
+	void neruina$clearErrored();
 
-    UUID neruina$getTickingEntryId();
+	UUID neruina$getTickingEntryId();
 
-    void neruina$setTickingEntryId(UUID uuid);
+	void neruina$setTickingEntryId(UUID uuid);
 }

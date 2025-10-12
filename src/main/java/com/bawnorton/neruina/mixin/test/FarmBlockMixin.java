@@ -12,11 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @MixinEnvironment
 @Mixin(FarmBlock.class)
 public abstract class FarmBlockMixin {
-    @Inject(
-            method = "randomTick",
-            at = @At("HEAD")
-    )
-    private void crash(CallbackInfo ci) {
-        throw new RuntimeException();
-    }
+	@Inject(
+			method = "randomTick",
+			at = @At("HEAD")
+	)
+	private void crash(CallbackInfo ci) {
+		throw new RuntimeException();
+	}
 }

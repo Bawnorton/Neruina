@@ -12,11 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @MixinEnvironment
 @Mixin(CompassItem.class)
 public abstract class CompassItemMixin {
-    @Inject(
-            method = "inventoryTick",
-            at = @At("HEAD")
-    )
-    private void crash(CallbackInfo ci) {
-        throw new RuntimeException();
-    }
+	@Inject(
+			method = "inventoryTick",
+			at = @At("HEAD")
+	)
+	private void crash(CallbackInfo ci) {
+		throw new RuntimeException();
+	}
 }

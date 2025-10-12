@@ -8,10 +8,10 @@ import net.fabricmc.api.ModInitializer;
 
 @Entrypoint
 public class NeruinaWrapper implements ModInitializer {
-    @Override
-    public void onInitialize() {
-        Neruina.init();
-    }
+	@Override
+	public void onInitialize() {
+		Neruina.init();
+	}
 }
 //?} elif neoforge {
 /*import net.neoforged.fml.common.Mod;

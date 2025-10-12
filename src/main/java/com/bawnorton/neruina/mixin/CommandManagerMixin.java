@@ -15,12 +15,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @MixinEnvironment
 @Mixin(Commands.class)
 public abstract class CommandManagerMixin {
-    @Shadow
-    @Final
-    private CommandDispatcher<CommandSourceStack> dispatcher;
+	@Shadow
+	@Final
+	private CommandDispatcher<CommandSourceStack> dispatcher;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void addCommands(CallbackInfo ci) {
-        NeruinaCommandHandler.register(dispatcher);
-    }
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void addCommands(CallbackInfo ci) {
+		NeruinaCommandHandler.register(dispatcher);
+	}
 }

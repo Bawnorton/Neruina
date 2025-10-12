@@ -5,36 +5,36 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class ConditionalRunnable {
-    private final Runnable runnable;
-    private final ConditionChecker conditionChecker;
-    private final ScheduledExecutorService scheduler;
+	private final Runnable runnable;
+	private final ConditionChecker conditionChecker;
+	private final ScheduledExecutorService scheduler;
 
-    private ConditionalRunnable(Runnable runnable, ConditionChecker conditionChecker) {
-        this.runnable = runnable;
-        this.conditionChecker = conditionChecker;
-        this.scheduler = Executors.newScheduledThreadPool(1);
-    }
+	private ConditionalRunnable(Runnable runnable, ConditionChecker conditionChecker) {
+		this.runnable = runnable;
+		this.conditionChecker = conditionChecker;
+		this.scheduler = Executors.newScheduledThreadPool(1);
+	}
 
-    public static void create(Runnable runnable, ConditionChecker conditionChecker) {
-        new ConditionalRunnable(runnable, conditionChecker).start();
-    }
+	public static void create(Runnable runnable, ConditionChecker conditionChecker) {
+		new ConditionalRunnable(runnable, conditionChecker).start();
+	}
 
-    public void start() {
-        if (conditionChecker.checkCondition()) {
-            runnable.run();
-            return;
-        }
-        scheduler.scheduleAtFixedRate(this::executeIfConditionSucceeds, 0, 10, TimeUnit.MILLISECONDS);
-    }
+	public void start() {
+		if (conditionChecker.checkCondition()) {
+			runnable.run();
+			return;
+		}
+		scheduler.scheduleAtFixedRate(this::executeIfConditionSucceeds, 0, 10, TimeUnit.MILLISECONDS);
+	}
 
-    private void executeIfConditionSucceeds() {
-        if (conditionChecker.checkCondition()) {
-            scheduler.shutdown();
-            runnable.run();
-        }
-    }
+	private void executeIfConditionSucceeds() {
+		if (conditionChecker.checkCondition()) {
+			scheduler.shutdown();
+			runnable.run();
+		}
+	}
 
-    public interface ConditionChecker {
-        boolean checkCondition();
-    }
+	public interface ConditionChecker {
+		boolean checkCondition();
+	}
 }

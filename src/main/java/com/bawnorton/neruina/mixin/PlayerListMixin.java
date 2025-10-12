@@ -17,22 +17,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @MixinEnvironment
 @Mixin(PlayerList.class)
 public abstract class PlayerListMixin {
-    @Inject(
-            method = "placeNewPlayer",
-            at = @At("TAIL")
-    )
-    private void sendSuspendedInfoOnJoin(CallbackInfo ci, @Local(argsOnly = true) ServerPlayer player) {
-        TickHandler tickHandler = Neruina.getInstance().getTickHandler();
-        int count = tickHandler.getTickingEntries().size();
-        if (count > 0) {
-            MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
-            Component message = messageHandler.generateSuspendedInfo(player);
-            int permissionLevel = Config.minPermissionLevelForMessages;
-            if(permissionLevel < 0) return;
+	@Inject(
+			method = "placeNewPlayer",
+			at = @At("TAIL")
+	)
+	private void sendSuspendedInfoOnJoin(CallbackInfo ci, @Local(argsOnly = true) ServerPlayer player) {
+		TickHandler tickHandler = Neruina.getInstance().getTickHandler();
+		int count = tickHandler.getTickingEntries().size();
+		if (count > 0) {
+			MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
+			Component message = messageHandler.generateSuspendedInfo(player);
+			int permissionLevel = Config.minPermissionLevelForMessages;
+			if (permissionLevel < 0) return;
 
-            if(player.hasPermissions(permissionLevel)) {
-                player.sendSystemMessage(message, false);
-            }
-        }
-    }
+			if (player.hasPermissions(permissionLevel)) {
+				player.sendSystemMessage(message, false);
+			}
+		}
+	}
 }

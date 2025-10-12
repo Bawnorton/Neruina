@@ -2,7 +2,9 @@ package com.bawnorton.neruina.platform;
 
 
 //? if fabric {
+
 import java.nio.file.Path;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -10,52 +12,52 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.api.metadata.ModOrigin;
 
 public final class Platform {
-    public static boolean isModLoaded(String modid) {
-        return FabricLoader.getInstance().isModLoaded(modid);
-    }
+	public static boolean isModLoaded(String modid) {
+		return FabricLoader.getInstance().isModLoaded(modid);
+	}
 
-    public static ModLoader getModLoader() {
-        return ModLoader.FABRIC;
-    }
+	public static ModLoader getModLoader() {
+		return ModLoader.FABRIC;
+	}
 
-    public static String modidFromJar(String jarName) {
-        for (ModContainer modContainer : FabricLoader.getInstance().getAllMods()) {
-            ModMetadata metadata = modContainer.getMetadata();
-            ModOrigin origin = modContainer.getOrigin();
-            switch (origin.getKind()) {
-                case PATH -> {
-                    for (Path path : origin.getPaths()) {
-                        if (path.endsWith(jarName)) {
-                            return metadata.getId();
-                        }
-                    }
-                }
-                case NESTED -> {
-                    String parentLocation = origin.getParentSubLocation();
-                    if (parentLocation != null && parentLocation.endsWith(jarName)) {
-                        return metadata.getId();
-                    }
-                }
-            }
-        }
-        return null;
-    }
+	public static String modidFromJar(String jarName) {
+		for (ModContainer modContainer : FabricLoader.getInstance().getAllMods()) {
+			ModMetadata metadata = modContainer.getMetadata();
+			ModOrigin origin = modContainer.getOrigin();
+			switch (origin.getKind()) {
+				case PATH -> {
+					for (Path path : origin.getPaths()) {
+						if (path.endsWith(jarName)) {
+							return metadata.getId();
+						}
+					}
+				}
+				case NESTED -> {
+					String parentLocation = origin.getParentSubLocation();
+					if (parentLocation != null && parentLocation.endsWith(jarName)) {
+						return metadata.getId();
+					}
+				}
+			}
+		}
+		return null;
+	}
 
-    public static String getModVersion(String modid) {
-        return FabricLoader.getInstance().getModContainer(modid).map(ModContainer::getMetadata).map(modMetadata -> modMetadata.getVersion().getFriendlyString()).orElse("unknown");
-    }
+	public static String getModVersion(String modid) {
+		return FabricLoader.getInstance().getModContainer(modid).map(ModContainer::getMetadata).map(modMetadata -> modMetadata.getVersion().getFriendlyString()).orElse("unknown");
+	}
 
-    public static String getVersion() {
-        return getModVersion("fabricloader");
-    }
+	public static String getVersion() {
+		return getModVersion("fabricloader");
+	}
 
-    public static boolean isClient() {
-        return FabricLoader.getInstance().getEnvironmentType().equals(EnvType.CLIENT);
-    }
+	public static boolean isClient() {
+		return FabricLoader.getInstance().getEnvironmentType().equals(EnvType.CLIENT);
+	}
 
-    public static boolean isDev() {
-        return FabricLoader.getInstance().isDevelopmentEnvironment();
-    }
+	public static boolean isDev() {
+		return FabricLoader.getInstance().isDevelopmentEnvironment();
+	}
 }
 //?} elif neoforge {
 

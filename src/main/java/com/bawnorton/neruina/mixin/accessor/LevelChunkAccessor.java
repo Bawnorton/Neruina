@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @MixinEnvironment
 @Mixin(LevelChunk.class)
 public interface LevelChunkAccessor {
-    @Invoker("removeBlockEntityTicker")
-    void neruina$removeBlockEntityTicker(BlockPos pos);
+	@Invoker("removeBlockEntityTicker")
+	void neruina$removeBlockEntityTicker(BlockPos pos);
 }

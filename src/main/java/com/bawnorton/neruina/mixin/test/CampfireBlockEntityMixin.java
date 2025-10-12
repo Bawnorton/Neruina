@@ -12,11 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @MixinEnvironment
 @Mixin(CampfireBlockEntity.class)
 public abstract class CampfireBlockEntityMixin {
-    @Inject(
-            method = "cookTick",
-            at = @At("HEAD")
-    )
-    private static void crash(CallbackInfo ci) {
-        throw new RuntimeException();
-    }
+	@Inject(
+			method = "cookTick",
+			at = @At("HEAD")
+	)
+	private static void crash(CallbackInfo ci) {
+		throw new RuntimeException();
+	}
 }

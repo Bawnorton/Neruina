@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import java.util.UUID;
 
 //? if >=1.21.8 {
@@ -31,44 +32,46 @@ import net.minecraft.world.level.storage.ValueOutput;
 @MixinEnvironment
 @Mixin(Entity.class)
 public abstract class EntityMixin implements Errorable {
-    @Shadow public abstract Component getName();
+	@Shadow
+	public abstract Component getName();
 
-    @Shadow public abstract Level level();
+	@Shadow
+	public abstract Level level();
 
-    @Shadow
-    private Level level;
-    @Unique
-    private boolean neruina$errored = false;
+	@Shadow
+	private Level level;
+	@Unique
+	private boolean neruina$errored = false;
 
-    @Unique
-    private UUID neruina$tickingEntryId = null;
+	@Unique
+	private UUID neruina$tickingEntryId = null;
 
-    @Override
-    public boolean neruina$isErrored() {
-        return neruina$errored;
-    }
+	@Override
+	public boolean neruina$isErrored() {
+		return neruina$errored;
+	}
 
-    @Override
-    public void neruina$setErrored() {
-        neruina$errored = true;
-    }
+	@Override
+	public void neruina$setErrored() {
+		neruina$errored = true;
+	}
 
-    @Override
-    public void neruina$clearErrored() {
-        neruina$errored = false;
-    }
+	@Override
+	public void neruina$clearErrored() {
+		neruina$errored = false;
+	}
 
-    @Override
-    public void neruina$setTickingEntryId(UUID uuid) {
-        neruina$tickingEntryId = uuid;
-    }
+	@Override
+	public void neruina$setTickingEntryId(UUID uuid) {
+		neruina$tickingEntryId = uuid;
+	}
 
-    @Override
-    public UUID neruina$getTickingEntryId() {
-        return neruina$tickingEntryId;
-    }
+	@Override
+	public UUID neruina$getTickingEntryId() {
+		return neruina$tickingEntryId;
+	}
 
-    //? if <=1.21.5 {
+	//? if <=1.21.5 {
     /*@Inject(
             method = "saveWithoutId",
             at = @At(
@@ -104,72 +107,72 @@ public abstract class EntityMixin implements Errorable {
         //?}
     }
     *///?} else {
-    @Inject(
-            method = "saveWithoutId",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/world/level/storage/ValueOutput;)V"
-            )
-    )
-    private void writeErroredToNbt(ValueOutput output, CallbackInfo ci) {
-        if (neruina$errored) {
-            output.putBoolean("neruina$errored", true);
-        }
-        if (neruina$tickingEntryId != null) {
-            output.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
-        }
-    }
+	@Inject(
+			method = "saveWithoutId",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/world/level/storage/ValueOutput;)V"
+			)
+	)
+	private void writeErroredToNbt(ValueOutput output, CallbackInfo ci) {
+		if (neruina$errored) {
+			output.putBoolean("neruina$errored", true);
+		}
+		if (neruina$tickingEntryId != null) {
+			output.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
+		}
+	}
 
-    @Inject(
-            method = "load",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/entity/Entity;setAirSupply(I)V"
-            )
-    )
-    private void readErroredFromNbt(ValueInput input, CallbackInfo ci) {
-        neruina$errored = input.getBooleanOr("neruina$errored", false);
-        neruina$tickingEntryId = input.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
-    }
-    //?}
+	@Inject(
+			method = "load",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/Entity;setAirSupply(I)V"
+			)
+	)
+	private void readErroredFromNbt(ValueInput input, CallbackInfo ci) {
+		neruina$errored = input.getBooleanOr("neruina$errored", false);
+		neruina$tickingEntryId = input.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+	}
+	//?}
 
-    @ModifyReturnValue(
-            method = {
-                    "isInvulnerableTo",
-                    "method_64421",
-                    "isInvulnerableToBase"
-            },
-            at = @At("RETURN")
-    )
-    private boolean ignoreDamageWhenErrored(boolean original, @Local(argsOnly = true) DamageSource source) {
-        if (original) return true;
+	@ModifyReturnValue(
+			method = {
+					"isInvulnerableTo",
+					"method_64421",
+					"isInvulnerableToBase"
+			},
+			at = @At("RETURN")
+	)
+	private boolean ignoreDamageWhenErrored(boolean original, @Local(argsOnly = true) DamageSource source) {
+		if (original) return true;
 
-        if (neruina$errored && neruina$tickingEntryId != null) {
-            if (source.getEntity() instanceof ServerPlayer player) {
-                TickingEntry entry = Neruina.getInstance().getTickHandler().getTickingEntry(neruina$tickingEntryId);
-                MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
-                if(entry == null) {
-                    messageHandler.sendToPlayer(
-                            player,
-                            Texter.concatDelimited(
-                                    Texter.LINE_BREAK,
-                                    Texter.translatable("neruina.suspended.entity", getName().getString()),
-                                    Texter.translatable("neruina.suspended.entity.untracked")
-                            ),
-                            messageHandler.generateEntityActions(player, (Entity) (Object) this),
-                            messageHandler.generateInfoAction()
-                    );
-                } else {
-                    messageHandler.sendToPlayer(
-                            player,
-                            Texter.translatable("neruina.suspended.entity", getName().getString()),
-                            messageHandler.generateEntityActions(player, (Entity) (Object) this),
-                            messageHandler.generateResourceActions(player, entry)
-                    );
-                }
-            }
-            return source != level.damageSources().genericKill();
-        }
-        return false;
-    }
+		if (neruina$errored && neruina$tickingEntryId != null) {
+			if (source.getEntity() instanceof ServerPlayer player) {
+				TickingEntry entry = Neruina.getInstance().getTickHandler().getTickingEntry(neruina$tickingEntryId);
+				MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
+				if (entry == null) {
+					messageHandler.sendToPlayer(
+							player,
+							Texter.concatDelimited(
+									Texter.LINE_BREAK,
+									Texter.translatable("neruina.suspended.entity", getName().getString()),
+									Texter.translatable("neruina.suspended.entity.untracked")
+							),
+							messageHandler.generateEntityActions(player, (Entity) (Object) this),
+							messageHandler.generateInfoAction()
+					);
+				} else {
+					messageHandler.sendToPlayer(
+							player,
+							Texter.translatable("neruina.suspended.entity", getName().getString()),
+							messageHandler.generateEntityActions(player, (Entity) (Object) this),
+							messageHandler.generateResourceActions(player, entry)
+					);
+				}
+			}
+			return source != level.damageSources().genericKill();
+		}
+		return false;
+	}
 }
