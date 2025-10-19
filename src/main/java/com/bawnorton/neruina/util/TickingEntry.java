@@ -37,11 +37,11 @@ public final class TickingEntry {
 	public static final Codec<TickingEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.STRING.fieldOf("causeType").forGetter(TickingEntry::getCauseType),
 			Codec.STRING.fieldOf("causeName").forGetter(TickingEntry::getCauseName),
-			UUIDUtil.CODEC.fieldOf("uuid").forGetter(TickingEntry::uuid),
+			UUIDUtil.LENIENT_CODEC.fieldOf("uuid").forGetter(TickingEntry::uuid),
 			Level.RESOURCE_KEY_CODEC.fieldOf("dimension").forGetter(TickingEntry::dimension),
 			BlockPos.CODEC.fieldOf("pos").forGetter(TickingEntry::pos),
 			ThrowableData.CODEC.fieldOf("error").forGetter(tickingEntry -> ThrowableData.fromThrowable(tickingEntry.error())),
-			UUIDUtil.CODEC.optionalFieldOf("entityUuid").forGetter(tickingEntry -> {
+			UUIDUtil.LENIENT_CODEC.optionalFieldOf("entityUuid").forGetter(tickingEntry -> {
 				try {
 					if (tickingEntry.getCauseType().equals(Type.ENTITY.type)) {
 						if (tickingEntry.cachedEntityUuid != null) {
@@ -109,7 +109,7 @@ public final class TickingEntry {
 	}
 
 	public void populate(CrashReportCategory category) {
-		category.setDetail("Message", error.getMessage());
+		category.setDetail("Message", error.toString());
 		((CrashReportCategoryExtender) category).neruin$setStacktrace(error);
 		Object cause = getCause();
 		switch (cause) {

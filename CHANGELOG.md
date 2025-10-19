@@ -1,3 +1,7 @@
+# 3.1.4
+
+- Use lenient UUID codec to fix occasional crashes
+
 # 3.1.3
 
 - Fix injection failure in 1.21.10 (#154)
