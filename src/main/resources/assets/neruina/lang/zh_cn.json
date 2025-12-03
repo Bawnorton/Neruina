@@ -7,7 +7,7 @@
   "commands.neruina.id.entity.not_errored": "在实体 %s 上未发现错误。",
   "commands.neruina.id.item_stack.not_errored": "在玩家 %s 持有的物品 [%s] 上未发现错误。",
   "commands.neruina.id.tooltip": "点击复制到剪贴板。",
-  "commands.neruina.info.block_entity": "位于 (%s) 的方块 [%s] 的刻处理(tick)已被暂停。",
+  "commands.neruina.info.block_entity": "位于 (%s) 的方块实体 [%s] 的刻处理(tick)已被暂停。",
   "commands.neruina.info.block_state": "方块 [%s] 的刻处理(tick)已被暂停。",
   "commands.neruina.info.entity": "位于 (%s) 的实体 [%s] 的刻处理(tick)已被暂停。",
   "commands.neruina.info.item_stack": "物品 [%s] 的刻处理(tick)已被暂停。",
