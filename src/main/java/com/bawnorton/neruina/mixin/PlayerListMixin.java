@@ -4,6 +4,7 @@ import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.config.Config;
 import com.bawnorton.neruina.handler.MessageHandler;
 import com.bawnorton.neruina.handler.TickHandler;
+import com.bawnorton.neruina.version.PermissionWrapper;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.network.chat.Component;
@@ -30,7 +31,7 @@ public abstract class PlayerListMixin {
 			int permissionLevel = Config.minPermissionLevelForMessages;
 			if (permissionLevel < 0) return;
 
-			if (player.hasPermissions(permissionLevel)) {
+			if (PermissionWrapper.hasPermission(player, permissionLevel)) {
 				player.sendSystemMessage(message, false);
 			}
 		}

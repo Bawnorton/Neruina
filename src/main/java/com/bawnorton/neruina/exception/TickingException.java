@@ -1,6 +1,6 @@
 package com.bawnorton.neruina.exception;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class TickingException extends RuntimeException {
 	public TickingException(String message, Throwable cause) {
@@ -14,7 +14,7 @@ public class TickingException extends RuntimeException {
 		);
 	}
 
-	public static TickingException blacklisted(ResourceLocation owningBlacklist, ResourceLocation tickingId, Throwable cause) {
+	public static TickingException blacklisted(Identifier owningBlacklist, Identifier tickingId, Throwable cause) {
 		return new TickingException(
 				"Ticking exception not handled as handling for \"%s\" is blacklisted by \"%s\"".formatted(
 						tickingId,

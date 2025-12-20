@@ -4,7 +4,7 @@ import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.util.ErroredType;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,16 +13,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class BlacklistHandler {
-	private final Map<ResourceLocation, Blacklist> blacklists = new HashMap<>();
+	private final Map<Identifier, Blacklist> blacklists = new HashMap<>();
 
 	public void init(MinecraftServer server) {
-		Map<ResourceLocation, Resource> blacklistFiles = server.getResourceManager().listResources(Neruina.MOD_ID, (resource) -> resource.getPath().equals("neruina/blacklist.json"));
+		Map<Identifier, Resource> blacklistFiles = server.getResourceManager().listResources(Neruina.MOD_ID, (resource) -> resource.getPath().equals("neruina/blacklist.json"));
 		if (blacklistFiles.isEmpty()) {
 			Neruina.LOGGER.info("No blacklist files found, skipping blacklist loading");
 			return;
 		}
-		for (Map.Entry<ResourceLocation, Resource> entry : blacklistFiles.entrySet()) {
-			ResourceLocation id = entry.getKey();
+		for (Map.Entry<Identifier, Resource> entry : blacklistFiles.entrySet()) {
+			Identifier id = entry.getKey();
 			Resource resource = entry.getValue();
 			try (JsonReader reader = new JsonReader(resource.openAsReader())) {
 				Blacklist blacklist = Blacklist.fromJson(reader);
@@ -39,9 +39,9 @@ public final class BlacklistHandler {
 	}
 
 	@Nullable
-	public ResourceLocation getBlacklistFor(ErroredType type, ResourceLocation id) {
-		for (Map.Entry<ResourceLocation, Blacklist> entry : blacklists.entrySet()) {
-			ResourceLocation blacklistId = entry.getKey();
+	public Identifier getBlacklistFor(ErroredType type, Identifier id) {
+		for (Map.Entry<Identifier, Blacklist> entry : blacklists.entrySet()) {
+			Identifier blacklistId = entry.getKey();
 			Blacklist blacklist = entry.getValue();
 			if (blacklist.isBlacklisted(type, id)) {
 				return blacklistId;

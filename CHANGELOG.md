@@ -1,3 +1,7 @@
+# 3.1.5
+
+- Update to 1.21.11
+
 # 3.1.4
 
 - Use lenient UUID codec to fix occasional crashes

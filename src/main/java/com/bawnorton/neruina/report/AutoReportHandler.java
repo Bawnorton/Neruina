@@ -7,7 +7,7 @@ import com.bawnorton.neruina.util.TickingEntry;
 import com.google.gson.stream.JsonReader;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.Resource;
 import org.jetbrains.annotations.Nullable;
@@ -29,9 +29,9 @@ public final class AutoReportHandler {
 	private AutoReportConfig masterConfig;
 
 	public void init(MinecraftServer server) {
-		Map<ResourceLocation, Resource> neruinaAutoGhFiles = server.getResourceManager().listResources(Neruina.MOD_ID, (resource) -> resource.getPath().equals("neruina/auto_report.json"));
-		for (Map.Entry<ResourceLocation, Resource> entry : neruinaAutoGhFiles.entrySet()) {
-			ResourceLocation id = entry.getKey();
+		Map<Identifier, Resource> neruinaAutoGhFiles = server.getResourceManager().listResources(Neruina.MOD_ID, (resource) -> resource.getPath().equals("neruina/auto_report.json"));
+		for (Map.Entry<Identifier, Resource> entry : neruinaAutoGhFiles.entrySet()) {
+			Identifier id = entry.getKey();
 			Resource resource = entry.getValue();
 			try (JsonReader reader = new JsonReader(resource.openAsReader())) {
 				AutoReportConfig config = AutoReportConfig.fromJson(reader);

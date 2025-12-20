@@ -5,6 +5,7 @@ import com.bawnorton.neruina.config.Config;
 import com.bawnorton.neruina.thread.ConditionalRunnable;
 import com.bawnorton.neruina.util.ErroredType;
 import com.bawnorton.neruina.util.TickingEntry;
+import com.bawnorton.neruina.version.PermissionWrapper;
 import com.bawnorton.neruina.version.Texter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -36,7 +37,7 @@ public final class MessageHandler {
 					server.getPlayerList()
 							.getPlayers()
 							.stream()
-							.filter(player -> player.hasPermissions(permissionLevel))
+							.filter(player -> PermissionWrapper.hasPermission(player, permissionLevel))
 							.forEach(player -> {
 								Component actions = getter.get(player);
 								player.sendSystemMessage(
@@ -126,7 +127,14 @@ public final class MessageHandler {
 				forPlayer, "neruina.teleport",
 				"neruina.teleport.%s.tooltip".formatted(type.getName()),
 				ChatFormatting.DARK_AQUA,
-				"/execute in %s run tp @s %s".formatted(dimension.location().toString(), posAsNums(pos))
+				"/execute in %s run tp @s %s".formatted(
+						//? if >=1.21.11 {
+						dimension.identifier().toString(),
+						//?} else {
+						/*dimension.location().toString(),
+						*///?}
+						posAsNums(pos)
+				)
 		);
 	}
 
@@ -165,7 +173,7 @@ public final class MessageHandler {
 	}
 
 	private Component generateCommandAction(Player forPlayer, String key, String hoverKey, ChatFormatting color, String command) {
-		if (forPlayer.hasPermissions(Config.minPermissionLevelForCommands)) {
+		if (PermissionWrapper.hasPermission(forPlayer, Config.minPermissionLevelForCommands)) {
 			return generateAction(key, hoverKey, color, ClickEvent.Action.RUN_COMMAND, command);
 		} else {
 			return Texter.empty();
@@ -178,7 +186,7 @@ public final class MessageHandler {
 	}
 
 	private Component generateCommandAction(Player forPlayer, Component message, Component hoverMessage, ChatFormatting color, String command) {
-		if (forPlayer.hasPermissions(Config.minPermissionLevelForCommands)) {
+		if (PermissionWrapper.hasPermission(forPlayer, Config.minPermissionLevelForCommands)) {
 			return generateAction(message, hoverMessage, color, ClickEvent.Action.RUN_COMMAND, command);
 		} else {
 			return Texter.empty();

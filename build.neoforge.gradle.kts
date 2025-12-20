@@ -32,6 +32,12 @@ dependencies {
             exclude("com.fasterxml.jackson.core", "jackson-core")
         })
     }
+  deps("http_core") {
+    jarJar(implementation("org.apache.httpcomponents:httpcore:$it")!!)
+  }
+  deps("http_client") {
+    jarJar(implementation("org.apache.httpcomponents:httpclient:$it")!!)
+  }
     deps("configurable") {
         implementation(annotationProcessor("com.bawnorton.configurable:configurable-$loader:$it")!!)
     }
@@ -91,6 +97,15 @@ fletchingTable {
     mixins.register("main") {
         mixin("default", "neruina.mixins.json")
     }
+}
+
+stonecutter {
+  replacements.string(eval(current.version, ">=1.21.11")) {
+    replace("net.minecraft.resources.ResourceLocation", "net.minecraft.resources.Identifier")
+  }
+  replacements.string(eval(current.version, ">=1.21.11")) {
+    replace("ResourceLocation", "Identifier")
+  }
 }
 
 tasks {

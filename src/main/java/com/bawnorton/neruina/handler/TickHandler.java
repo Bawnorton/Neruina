@@ -18,7 +18,7 @@ import net.minecraft.ReportedException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -149,8 +149,8 @@ public final class TickHandler {
 			if (!Config.handleTickingBlockStates) {
 				throw TickingException.notHandled("handle_ticking_block_states", e);
 			}
-			ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(instance.getBlock());
-			ResourceLocation owningBlacklist = getBlacklistFor(ErroredType.BLOCK_STATE, blockId);
+			Identifier blockId = BuiltInRegistries.BLOCK.getKey(instance.getBlock());
+			Identifier owningBlacklist = getBlacklistFor(ErroredType.BLOCK_STATE, blockId);
 			if (owningBlacklist != null) {
 				throw TickingException.blacklisted(owningBlacklist, blockId, e);
 			}
@@ -192,8 +192,8 @@ public final class TickHandler {
 			if (!Config.handleTickingBlockEntities) {
 				throw TickingException.notHandled("handle_ticking_block_entities", e);
 			}
-			ResourceLocation blockEntityId = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntity.getType());
-			ResourceLocation owningBlacklist = getBlacklistFor(ErroredType.BLOCK_ENTITY, blockEntityId);
+			Identifier blockEntityId = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntity.getType());
+			Identifier owningBlacklist = getBlacklistFor(ErroredType.BLOCK_ENTITY, blockEntityId);
 			if (owningBlacklist != null) {
 				throw TickingException.blacklisted(owningBlacklist, blockEntityId, e);
 			}
@@ -225,8 +225,8 @@ public final class TickHandler {
 		if (!Config.handleTickingEntities) {
 			throw TickingException.notHandled("handle_ticking_entities", e);
 		}
-		ResourceLocation entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
-		ResourceLocation owningBlacklist = getBlacklistFor(ErroredType.ENTITY, entityId);
+		Identifier entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+		Identifier owningBlacklist = getBlacklistFor(ErroredType.ENTITY, entityId);
 		if (owningBlacklist != null) {
 			throw TickingException.blacklisted(owningBlacklist, entityId, e);
 		}
@@ -237,8 +237,8 @@ public final class TickHandler {
 		if (!Config.handleTickingItemStacks) {
 			throw TickingException.notHandled("handle_ticking_item_stacks", e);
 		}
-		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(instance.getItem());
-		ResourceLocation owningBlacklist = getBlacklistFor(ErroredType.ITEM_STACK, itemId);
+		Identifier itemId = BuiltInRegistries.ITEM.getKey(instance.getItem());
+		Identifier owningBlacklist = getBlacklistFor(ErroredType.ITEM_STACK, itemId);
 		if (owningBlacklist != null) {
 			throw TickingException.blacklisted(owningBlacklist, itemId, e);
 		}
@@ -481,7 +481,7 @@ public final class TickHandler {
 		return size;
 	}
 
-	private ResourceLocation getBlacklistFor(ErroredType type, ResourceLocation id) {
+	private Identifier getBlacklistFor(ErroredType type, Identifier id) {
 		return Neruina.getInstance().getBlacklistHandler().getBlacklistFor(type, id);
 	}
 }

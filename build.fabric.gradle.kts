@@ -36,11 +36,17 @@ dependencies {
         }
     })
 
-    modImplementation("net.fabricmc:fabric-loader:0.16.14")
+    modImplementation("net.fabricmc:fabric-loader:0.18.2")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${deps("fabric_api")}")
 
     deps("kohsuke_github") {
         include(implementation("org.kohsuke:github-api:$it")!!)
+    }
+    deps("http_core") {
+        include(implementation("org.apache.httpcomponents:httpcore:$it")!!)
+    }
+    deps("http_client") {
+        include(implementation("org.apache.httpcomponents:httpclient:$it")!!)
     }
     deps("configurable") {
         modImplementation(annotationProcessor("com.bawnorton.configurable:configurable-$loader:$it")!!)
@@ -80,6 +86,15 @@ fletchingTable {
     mixins.register("main") {
         mixin("default", "neruina.mixins.json")
     }
+}
+
+stonecutter {
+  replacements.string(eval(current.version, ">=1.21.11")) {
+    replace("net.minecraft.resources.ResourceLocation", "net.minecraft.resources.Identifier")
+  }
+  replacements.string(eval(current.version, ">=1.21.11")) {
+    replace("ResourceLocation", "Identifier")
+  }
 }
 
 tasks {

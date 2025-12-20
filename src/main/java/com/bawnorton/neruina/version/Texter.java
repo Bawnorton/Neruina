@@ -2,7 +2,6 @@ package com.bawnorton.neruina.version;
 
 import com.bawnorton.neruina.Neruina;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -18,6 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
+
+//? if >=1.21.11 {
+import net.minecraft.util.Util;
+//?} else {
+/*import net.minecraft.Util;
+ *///?}
 
 public interface Texter {
 	Component LINE_BREAK = literal("\n");

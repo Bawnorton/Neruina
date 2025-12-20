@@ -7,21 +7,21 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 import java.util.List;
 
-public record Blacklist(List<String> namespaces, List<ResourceLocation> entities, List<ResourceLocation> blocks,
-                        List<ResourceLocation> blockEntities, List<ResourceLocation> items) {
+public record Blacklist(List<String> namespaces, List<Identifier> entities, List<Identifier> blocks,
+                        List<Identifier> blockEntities, List<Identifier> items) {
 	private static final Gson GSON = new GsonBuilder()
 			.setPrettyPrinting()
 			.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 			.registerTypeAdapter(
-					ResourceLocation.class, new TypeAdapter<>() {
+					Identifier.class, new TypeAdapter<>() {
 						@Override
 						public void write(JsonWriter out, Object value) throws IOException {
-							if (value instanceof ResourceLocation id) {
+							if (value instanceof Identifier id) {
 								out.value(id.toString());
 							} else if (value == null) {
 								out.nullValue();
@@ -31,9 +31,9 @@ public record Blacklist(List<String> namespaces, List<ResourceLocation> entities
 						@Override
 						public Object read(JsonReader in) throws IOException {
 							String value = in.nextString();
-							ResourceLocation identifier = ResourceLocation.tryParse(value);
+							Identifier identifier = Identifier.tryParse(value);
 							if (identifier == null) {
-								throw new IOException("Invalid ResourceLocation: " + value);
+								throw new IOException("Invalid Identifier: " + value);
 							}
 							return identifier;
 						}
@@ -45,7 +45,7 @@ public record Blacklist(List<String> namespaces, List<ResourceLocation> entities
 		return GSON.fromJson(reader, Blacklist.class);
 	}
 
-	public boolean isBlacklisted(ErroredType type, ResourceLocation id) {
+	public boolean isBlacklisted(ErroredType type, Identifier id) {
 		if (id == null) {
 			return false;
 		}

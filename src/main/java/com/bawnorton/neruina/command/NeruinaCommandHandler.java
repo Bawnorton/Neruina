@@ -10,6 +10,7 @@ import com.bawnorton.neruina.report.GithubAuthManager;
 import com.bawnorton.neruina.report.ReportStatus;
 import com.bawnorton.neruina.util.ErroredType;
 import com.bawnorton.neruina.util.TickingEntry;
+import com.bawnorton.neruina.version.PermissionWrapper;
 import com.bawnorton.neruina.version.Texter;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -40,7 +41,7 @@ public final class NeruinaCommandHandler {
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(Commands.literal("neruina")
-						.requires(source -> source.hasPermission(Config.minPermissionLevelForCommands))
+						.requires(source -> PermissionWrapper.hasPermission(source, Config.minPermissionLevelForCommands))
 						.then(Commands.literal("reload")
 								.executes(context -> {
 									ConfigurableApi.loadFromDisk();

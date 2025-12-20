@@ -13,7 +13,6 @@ import com.bawnorton.neruina.thread.AbortableCountDownLatch;
 import com.bawnorton.neruina.version.Texter;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpServer;
-import net.minecraft.Util;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -47,6 +46,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+//? if >=1.21.11 {
+import net.minecraft.util.Util;
+//?} else {
+/*import net.minecraft.Util;
+ *///?}
 
 public final class GithubAuthManager {
 	private static final String CLIENT_ID = "1907e7c3f988a98face9";
@@ -141,7 +146,7 @@ public final class GithubAuthManager {
 
 		AtomicReference<String> code = new AtomicReference<>();
 		server.createContext("/github/callback", exchange -> {
-			Map<String, String> query = URLEncodedUtils.parse(exchange.getRequestURI(), StandardCharsets.UTF_8)
+			Map<String, String> query = URLEncodedUtils.parse(exchange.getRequestURI(), StandardCharsets.UTF_8.toString())
 					.stream()
 					.collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
 			if (!state.equals(query.get("state"))) {
