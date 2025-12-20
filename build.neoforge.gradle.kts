@@ -1,5 +1,4 @@
 import neruina.utils.*
-import net.neoforged.moddevgradle.dsl.ModModel
 
 plugins {
     kotlin("jvm")
