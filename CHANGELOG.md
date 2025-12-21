@@ -1,3 +1,7 @@
+# 3.1.6
+
+- Split 1.21.5-7 build into 1.21.5, 1.21.6-7 builds
+
 # 3.1.5
 
 - Update to 1.21.11

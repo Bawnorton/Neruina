@@ -24,27 +24,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.UUID;
 
-//? if >=1.21.8 {
+//? if >=1.21.6 {
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 //?}
 
 @MixinEnvironment
 @Mixin(Entity.class)
-public abstract class EntityMixin implements Errorable {
+abstract class EntityMixin implements Errorable {
+	@Shadow
+	private Level level;
+	@Unique
+	private boolean neruina$errored = false;
+	@Unique
+	private UUID neruina$tickingEntryId = null;
+
 	@Shadow
 	public abstract Component getName();
 
 	@Shadow
 	public abstract Level level();
-
-	@Shadow
-	private Level level;
-	@Unique
-	private boolean neruina$errored = false;
-
-	@Unique
-	private UUID neruina$tickingEntryId = null;
 
 	@Override
 	public boolean neruina$isErrored() {
@@ -72,41 +71,41 @@ public abstract class EntityMixin implements Errorable {
 	}
 
 	//? if <=1.21.5 {
-    /*@Inject(
-            method = "saveWithoutId",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"
-            )
-    )
-    private void writeErrored(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
-        if (neruina$errored) {
-            tag.putBoolean("neruina$errored", true);
-        }
-        if (neruina$tickingEntryId != null) {
-            tag.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
-        }
-    }
+	/*@Inject(
+			method = "saveWithoutId",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"
+			)
+	)
+	private void writeErrored(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
+		if (neruina$errored) {
+			tag.putBoolean("neruina$errored", true);
+		}
+		if (neruina$tickingEntryId != null) {
+			tag.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
+		}
+	}
 
-    @Inject(
-            method = "load",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/entity/Entity;setAirSupply(I)V"
-            )
-    )
-    private void loadAdditional(CompoundTag tag, CallbackInfo ci) {
-        //? if 1.21.1 {
+	@Inject(
+			method = "load",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/Entity;setAirSupply(I)V"
+			)
+	)
+	private void loadAdditional(CompoundTag tag, CallbackInfo ci) {
+		//? if 1.21.1 {
         /^neruina$errored = tag.getBoolean("neruina$errored");
         if (tag.contains("neruina$tickingEntryId")) {
             neruina$tickingEntryId = UUID.fromString(tag.getString("neruina$tickingEntryId"));
         }
         ^///?} else {
-        neruina$errored = tag.getBooleanOr("neruina$errored", false);
-        neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
-        //?}
-    }
-    *///?} else {
+		neruina$errored = tag.getBooleanOr("neruina$errored", false);
+		neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+		//?}
+	}
+	*///?} else {
 	@Inject(
 			method = "saveWithoutId",
 			at = @At(

@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @MixinEnvironment
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin implements Errorable {
+abstract class ItemStackMixin implements Errorable {
 	@Shadow
 	@Final
 	PatchedDataComponentMap components;
