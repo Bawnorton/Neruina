@@ -110,7 +110,7 @@ public final class TickHandler {
 		} catch (TickingException e) {
 			throw e;
 		} catch (Throwable e) {
-			preHandleTickingEntity(entity, e);
+			checkBlacklistAndHandle(entity, e);
 		}
 	}
 
@@ -124,7 +124,7 @@ public final class TickHandler {
 		} catch (TickingException e) {
 			throw e;
 		} catch (Throwable e) {
-			preHandleTickingEntity(entity, e);
+			checkBlacklistAndHandle(entity, e);
 		}
 	}
 
@@ -221,7 +221,7 @@ public final class TickHandler {
 		}
 	}
 
-	private void preHandleTickingEntity(Entity entity, Throwable e) {
+	private void checkBlacklistAndHandle(Entity entity, Throwable e) {
 		if (!Config.handleTickingEntities) {
 			throw TickingException.notHandled("handle_ticking_entities", e);
 		}
@@ -274,7 +274,9 @@ public final class TickHandler {
 			try {
 				killEntity(entity, Neruina.getInstance().getMessageHandler().formatText("neruina.ticking.entity.suspend_failed", entity.getName().getString()));
 			} catch (Throwable ex) {
-				throw new TickingException("Exception occurred while handling errored entity", ex);
+				TickingException exception = new TickingException("Failed to handle errored entity, deliberately crashing to prevent further issues.", ex);
+				exception.addSuppressed(e);
+				throw exception;
 			}
 		}
 	}

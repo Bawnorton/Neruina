@@ -7,6 +7,10 @@ public class TickingException extends RuntimeException {
 		super(message, cause);
 	}
 
+	public TickingException(String message) {
+		super(message);
+	}
+
 	public static TickingException notHandled(String configOption, Throwable cause) {
 		return new TickingException(
 				"Ticking exception not handled as \"%s\" is set to \"false\"".formatted(configOption),

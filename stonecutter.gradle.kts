@@ -28,3 +28,17 @@ for (version in stonecutter.versions.map { it.version }.distinct()) tasks.regist
     group = "publishing"
     dependsOn(stonecutter.tasks.named("publishMods") { metadata.version == version })
 }
+
+for (version in stonecutter.versions.map { it.version }.distinct()) tasks.register("publishAll${version}FabricPublicationsToBawnortonRepository") {
+  group = "publishing"
+  dependsOn(stonecutter.tasks.named("publishAllPublicationsToBawnortonRepository") {
+    metadata.version == version && metadata.project.contains("fabric")
+  })
+}
+
+for (version in stonecutter.versions.map { it.version }.distinct()) tasks.register("publishAll${version}NeoforgePublicationsToBawnortonRepository") {
+  group = "publishing"
+  dependsOn(stonecutter.tasks.named("publishAllPublicationsToBawnortonRepository") {
+    metadata.version == version && metadata.project.contains("neoforge")
+  })
+}
