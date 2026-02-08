@@ -4,11 +4,14 @@ import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.version.Texter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.client.gui.screens.GenericMessageScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+
+//? if >1.20.1 {
+import net.minecraft.client.gui.screens.GenericMessageScreen;
+//?}
 
 public final class ClientTickHandler {
 	public static void handleTickingClient(Player player, Throwable e) {
@@ -16,15 +19,24 @@ public final class ClientTickHandler {
 			Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
 			clientPlayer.connection.getConnection().disconnect(Component.translatable("neruina.toast.desc"));
 			Minecraft client = Minecraft.getInstance();
+			//? if >1.20.1 {
 			client.disconnect(new GenericMessageScreen(Texter.translatable("menu.savingLevel")), false);
+			//?} else {
+			/*client.getConnection().onDisconnect(Texter.translatable("menu.savingLevel"));
+			*///?}
 			client.setScreen(new TitleScreen());
-			//? if 1.21.1 {
+			//? if <=1.21.1 {
 			/*client.getToasts()
 			 *///?} else {
 			client.getToastManager()
-					//?}
-					.addToast(SystemToast.multiline(client,
+			//?}
+					.addToast(SystemToast.multiline(
+							client,
+							//? if >1.20.1 {
 							SystemToast.SystemToastId.WORLD_ACCESS_FAILURE,
+							//?} else {
+							/*SystemToast.SystemToastIds.WORLD_ACCESS_FAILURE,
+							*///?}
 							Texter.translatable("neruina.toast.title"),
 							Texter.translatable("neruina.toast.desc")
 					));

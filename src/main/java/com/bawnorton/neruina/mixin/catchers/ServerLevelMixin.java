@@ -4,7 +4,6 @@ import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.handler.TickHandler;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,16 +13,15 @@ import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@MixinEnvironment
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin {
-	//? if 1.21.1 {
+	//? if <=1.21.1 {
     /*@Inject(method = "sendBlockUpdated", at = @At("HEAD"))
     private void removeErrored(BlockPos pos, BlockState oldState, BlockState newState, int flags, CallbackInfo ci) {
-        TickHandler tickHandler = Neruina.getInstance().getTickHandler();
-        if (tickHandler.isErrored(oldState, pos)) {
-            tickHandler.removeErrored(oldState, pos);
-        }
+      TickHandler tickHandler = Neruina.getInstance().getTickHandler();
+      if (tickHandler.isErrored(oldState, pos)) {
+        tickHandler.removeErrored(oldState, pos);
+      }
     }
     *///?} else {
 	@Inject(method = "updatePOIOnBlockStateChange", at = @At("HEAD"))

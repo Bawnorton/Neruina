@@ -1,7 +1,6 @@
 package com.bawnorton.neruina.mixin.errorable;
 
 import com.bawnorton.neruina.extend.Errorable;
-import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,7 +17,6 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 //?}
 
-@MixinEnvironment
 @Mixin(BlockEntity.class)
 abstract class BlockEntityMixin implements Errorable {
 	@Unique
@@ -52,36 +50,62 @@ abstract class BlockEntityMixin implements Errorable {
 		return neruina$tickingEntryId;
 	}
 
-	//? if <=1.21.5 {
-    /*@Inject(
-            method = "saveAdditional",
-            at = @At("HEAD")
-    )
-    private void writeErrored(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
-        if (neruina$errored) {
-            tag.putBoolean("neruina$errored", true);
-        }
-        if (neruina$tickingEntryId != null) {
-            tag.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
-        }
-    }
+	//? if <=1.20.1 {
+	/*@Inject(
+			method = "saveAdditional",
+			at = @At("HEAD")
+	)
+	private void writeErroredToNbt(CompoundTag nbt, CallbackInfo ci) {
+		if (neruina$errored) {
+			nbt.putBoolean("neruina$errored", true);
+		}
+		if (neruina$tickingEntryId != null) {
+			nbt.putUUID("neruina$tickingEntryId", neruina$tickingEntryId);
+		}
+	}
 
-    @Inject(
-            method = "loadAdditional",
-            at = @At("TAIL")
-    )
-    private void loadAdditional(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
-        //? if 1.21.1 {
-        /^neruina$errored = tag.getBoolean("neruina$errored");
-        if (tag.contains("neruina$tickingEntryId")) {
-            neruina$tickingEntryId = UUID.fromString(tag.getString("neruina$tickingEntryId"));
-        }
-        ^///?} else {
-        neruina$errored = tag.getBooleanOr("neruina$errored", false);
-        neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
-        //?}
+	@Inject(
+			method = "load",
+			at = @At("TAIL")
+	)
+	private void readErroredFromNbt(CompoundTag nbt, CallbackInfo ci) {
+		if (nbt.contains("neruina$errored")) {
+			neruina$errored = nbt.getBoolean("neruina$errored");
+		}
+		if (nbt.contains("neruina$tickingEntryId")) {
+			neruina$tickingEntryId = nbt.getUUID("neruina$tickingEntryId");
+		}
+	}
+	*///?} elif <=1.21.5 {
+  /*@Inject(
+		  method = "saveAdditional",
+		  at = @At("HEAD")
+  )
+  private void writeErrored(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
+    if (neruina$errored) {
+      tag.putBoolean("neruina$errored", true);
     }
-    *///?} else {
+    if (neruina$tickingEntryId != null) {
+      tag.putString("neruina$tickingEntryId", neruina$tickingEntryId.toString());
+    }
+  }
+
+  @Inject(
+	    method = "loadAdditional",
+	    at = @At("TAIL")
+  )
+  private void loadAdditional(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
+    //? if <=1.21.1 {
+    neruina$errored = tag.getBoolean("neruina$errored");
+    if (tag.contains("neruina$tickingEntryId")) {
+      neruina$tickingEntryId = UUID.fromString(tag.getString("neruina$tickingEntryId"));
+    }
+    //?} else {
+    /^neruina$errored = tag.getBooleanOr("neruina$errored", false);
+    neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+    ^///?}
+  }
+  *///?} else {
 	@Inject(
 			method = "saveAdditional",
 			at = @At("HEAD")

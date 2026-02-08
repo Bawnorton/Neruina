@@ -12,6 +12,10 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.api.metadata.ModOrigin;
 
 public final class Platform {
+	public static Path getConfigDir() {
+    return FabricLoader.getInstance().getConfigDir();
+  }
+
 	public static boolean isModLoaded(String modid) {
 		return FabricLoader.getInstance().isModLoaded(modid);
 	}
@@ -60,7 +64,6 @@ public final class Platform {
 	}
 }
 //?} elif neoforge {
-
 /*import java.util.List;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -164,5 +167,65 @@ public final class Platform {
 		return !FMLLoader.isProduction();
 	}
 	^///?}
+}
+*///?} elif forge {
+
+/*import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.LoadingModList;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+
+import java.nio.file.Path;
+import java.util.List;
+
+public final class Platform {
+	public static boolean isModLoaded(String modid) {
+		List<ModInfo> mods = LoadingModList.get().getMods();
+		for (ModInfo mod : mods) {
+			if (mod.getModId().equals(modid)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static ModLoader getModLoader() {
+		return ModLoader.FORGE;
+	}
+
+	public static String modidFromJar(String jarName) {
+		for (ModInfo mod : LoadingModList.get().getMods()) {
+			String modLocation = mod.getOwningFile()
+					.getFile()
+					.getFilePath()
+					.toString()
+					.replace("+", " ");
+
+			if (modLocation.endsWith(jarName)) {
+				return mod.getModId();
+			}
+		}
+		return null;
+	}
+
+	public static String getVersion() {
+		return FMLLoader.versionInfo().forgeVersion();
+	}
+
+	public static boolean isClient() {
+		return FMLLoader.getDist().isClient();
+	}
+
+	public static boolean isDev() {
+		return !FMLLoader.isProduction();
+	}
+
+	public static String getModVersion(String modid) {
+		return LoadingModList.get().getModFileById(modid).versionString();
+	}
+
+	public static Path getConfigDir() {
+		return FMLPaths.CONFIGDIR.get();
+	}
 }
 *///?}

@@ -7,7 +7,6 @@ import com.bawnorton.neruina.util.TickingEntry;
 import com.bawnorton.neruina.version.Texter;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,7 +28,6 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 //?}
 
-@MixinEnvironment
 @Mixin(Entity.class)
 abstract class EntityMixin implements Errorable {
 	@Shadow
@@ -95,12 +93,12 @@ abstract class EntityMixin implements Errorable {
 			)
 	)
 	private void loadAdditional(CompoundTag tag, CallbackInfo ci) {
-		//? if 1.21.1 {
-        /^neruina$errored = tag.getBoolean("neruina$errored");
-        if (tag.contains("neruina$tickingEntryId")) {
-            neruina$tickingEntryId = UUID.fromString(tag.getString("neruina$tickingEntryId"));
-        }
-        ^///?} else {
+		//? if <=1.21.1 {
+    /^neruina$errored = tag.getBoolean("neruina$errored");
+    if (tag.contains("neruina$tickingEntryId")) {
+      neruina$tickingEntryId = UUID.fromString(tag.getString("neruina$tickingEntryId"));
+    }
+    ^///?} else {
 		neruina$errored = tag.getBooleanOr("neruina$errored", false);
 		neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
 		//?}

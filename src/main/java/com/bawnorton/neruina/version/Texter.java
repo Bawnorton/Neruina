@@ -75,7 +75,11 @@ public interface Texter {
 			if (texts[i].getString().isEmpty()) {
 				List<Component> siblings = component.getSiblings();
 				if (!siblings.isEmpty()) {
+					//? if >1.20.1 {
 					siblings.removeLast();
+					//?} else {
+					/*siblings.remove(siblings.size() - 1);
+					*///?}
 				}
 				continue;
 			}
@@ -103,7 +107,7 @@ public interface Texter {
 	}
 
 	static ClickEvent clickEvent(ClickEvent.Action action, String value) {
-		//? if 1.21.1 {
+		//? if <=1.21.1 {
 		/*return new ClickEvent(action, value);
 		 *///?} else {
 		return switch (action) {
@@ -118,7 +122,7 @@ public interface Texter {
 		//?}
 	}
 
-	//? if 1.21.1 {
+	//? if <=1.21.1 {
     /*static <T> HoverEvent hoverEvent(HoverEvent.Action<T> action, T value) {
         return new HoverEvent(action, value);
     }

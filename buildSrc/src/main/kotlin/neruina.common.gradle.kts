@@ -37,7 +37,7 @@ tasks {
         )
 
         inputs.properties(props)
-        filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml", "pack.mcmeta")) {
+        filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml", "META-INF/mods.toml", "pack.mcmeta")) {
             expand(props)
         }
     }

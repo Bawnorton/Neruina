@@ -1,7 +1,6 @@
 pluginManagement {
 	repositories {
 		maven("https://maven.fabricmc.net/")
-		maven("https://maven.architectury.dev")
 		maven("https://maven.minecraftforge.net/")
 		maven("https://maven.neoforged.net/releases/")
 		maven("https://maven.kikugie.dev/releases/")
@@ -20,6 +19,7 @@ stonecutter {
         fun mc(mcVersion: String, name: String = mcVersion, loaders: Iterable<String>) =
             loaders.forEach { version("$name-$it", mcVersion).buildscript = "build.$it.gradle.kts" }
 
+        mc("1.20.1", loaders = listOf("fabric", "forge"))
         mc("1.21.1", loaders = listOf("fabric", "neoforge"))
         mc("1.21.5", loaders = listOf("fabric", "neoforge"))
         mc("1.21.6", loaders = listOf("fabric", "neoforge"))

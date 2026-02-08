@@ -3,11 +3,11 @@ import neruina.utils.*
 plugins {
   kotlin("jvm")
   `maven-publish`
-  id("net.neoforged.moddev")
+  id("net.neoforged.moddev.legacyforge")
   id("neruina.common")
   id("me.modmuss50.mod-publish-plugin")
   id("com.google.devtools.ksp") version "2.2.0-2.0.2"
-  id("dev.kikugie.fletching-table.neoforge") version "0.1.0-alpha.15"
+  id("dev.kikugie.fletching-table") version "0.1.0-alpha.15"
 }
 
 repositories {
@@ -15,6 +15,7 @@ repositories {
   maven("https://maven.bawnorton.com/releases")
   maven("https://maven.parchmentmc.org")
   maven("https://repo.jenkins-ci.org/public/")
+  maven("https://maven.minecraftforge.net")
 }
 
 val minecraft: String by project
@@ -40,16 +41,27 @@ dependencies {
   deps("configurable") {
     implementation(annotationProcessor("com.bawnorton.configurable:configurable-$loader:$it")!!)
   }
+
+  implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.3")!!)
+  jarJar(implementation("io.github.llamalad7:mixinextras-forge:0.5.3")!!)
+
+  annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
 }
 
 java {
   withSourcesJar()
-  sourceCompatibility = JavaVersion.VERSION_21
-  targetCompatibility = JavaVersion.VERSION_21
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
 }
 
-neoForge {
-  version = deps("neoforge")
+legacyForge {
+  version = deps("forge")
+
+  mods {
+    register(mod("id")!!) {
+      sourceSet(sourceSets["main"])
+    }
+  }
 
   deps("parchment") {
     parchment {
@@ -65,18 +77,14 @@ neoForge {
     }
 
     register("client") {
-      ideName = "NeoForge Client $minecraft"
+      ideName = "Forge Client $minecraft"
       client()
 
       programArgument("--username=Bawnorton")
       programArgument("--uuid=17c06cab-bf05-4ade-a8d6-ed14aaf70545")
-    }
 
-    register("server") {
-      ideName = "NeoForge Server $minecraft"
-      server()
+      systemProperty("terminal.ansi", "true")
     }
-
   }
 
   afterEvaluate {
@@ -84,26 +92,16 @@ neoForge {
       applyMixinDebugSettings(::jvmArgument, ::systemProperty)
     }
   }
+}
 
-  mods {
-    create("${mod("id")}", Action {
-      sourceSet(sourceSets.main.get())
-    })
-  }
+mixin {
+  add(sourceSets["main"], "${mod("id")}.refmap.json")
+  config("${mod("id")}.mixins.json")
 }
 
 fletchingTable {
   mixins.register("main") {
-    mixin("default", "neruina.mixins.json")
-  }
-}
-
-stonecutter {
-  replacements.string(eval(current.version, ">=1.21.11")) {
-    replace("net.minecraft.resources.ResourceLocation", "net.minecraft.resources.Identifier")
-  }
-  replacements.string(eval(current.version, ">=1.21.11")) {
-    replace("ResourceLocation", "Identifier")
+    mixin("default", "${mod("id")}.mixins.json")
   }
 }
 
@@ -120,7 +118,23 @@ tasks {
   }
 
   processResources {
-    exclude("fabric.mod.json", "META-INF/mods.toml")
+    exclude("fabric.mod.json", "**/neoforge.mods.toml")
+  }
+
+  named<Jar>("jar") {
+    manifest {
+      attributes(
+        "Specification-Title" to mod("name")!!,
+        "Specification-Vendor" to "${mod("author")}",
+        "Specification-Version" to "1",
+        "Implementation-Title" to project.name,
+        "Implementation-Version" to mod("version")!!,
+        "Implementation-Vendor" to "${mod("author")}",
+        "MixinConfigs" to listOf(
+          "${mod("id")}.mixins.json"
+        ).joinToString(", ")
+      )
+    }
   }
 }
 
@@ -146,7 +160,6 @@ extensions.configure<PublishingExtension> {
   }
 }
 
-
 publishMods {
   val mrToken = providers.gradleProperty("MODRINTH_TOKEN")
   val cfToken = providers.gradleProperty("CURSEFORGE_TOKEN")
@@ -155,7 +168,7 @@ publishMods {
   file = tasks.jar.map { it.archiveFile.get() }
   additionalFiles.from(tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar").map { it.archiveFile.get() })
 
-  displayName = "${mod("name")} Neoforge ${mod("version")} for $minecraft"
+  displayName = "${mod("name")} Forge ${mod("version")} for $minecraft"
   version = mod("version")
   changelog = provider { rootProject.file("CHANGELOG.md").readText() }
   modLoaders.add(loader)
@@ -167,13 +180,11 @@ publishMods {
     projectId = property("publishing.modrinth") as String
     accessToken = mrToken
     minecraftVersions.addAll(compatibleVersions)
-    requires("configurable")
   }
 
   curseforge {
     projectId = property("publishing.curseforge") as String
     accessToken = cfToken
     minecraftVersions.addAll(compatibleVersions)
-    requires("configurable")
   }
 }

@@ -25,6 +25,10 @@ public class Neruina {
 		this.messageHandler = new MessageHandler();
 		this.autoReportHandler = new AutoReportHandler();
 		this.blacklistHandler = new BlacklistHandler();
+
+		//? if <=1.20.1 {
+		/*com.bawnorton.neruina.config.ConfigManager.load();
+		*///?}
 	}
 
 	public static void init() {

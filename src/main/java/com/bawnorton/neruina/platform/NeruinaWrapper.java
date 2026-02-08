@@ -22,4 +22,13 @@ public class NeruinaWrapper {
         Neruina.init();
     }
 }
+*///?} elif forge {
+/*import net.minecraftforge.fml.common.Mod;
+
+@Mod(Neruina.MOD_ID)
+public class NeruinaWrapper {
+		public NeruinaWrapper() {
+			Neruina.init();
+		}
+}
 *///?}

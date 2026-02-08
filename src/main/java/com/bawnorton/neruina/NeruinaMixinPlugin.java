@@ -36,7 +36,6 @@ public class NeruinaMixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public void onLoad(String mixinPackage) {
-		MixinExtrasBootstrap.init();
 	}
 
 	@Override

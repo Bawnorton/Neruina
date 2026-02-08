@@ -1,0 +1,19 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+issueTrackerURL = "https://github.com/Bawnorton/${mod_name}/issues"
+license = "${mod_license}"
+
+[[mods]]
+    modId = "${mod_id}"
+    version = "${mod_version}"
+    displayName = "${mod_name}"
+    description = '''${mod_description}'''
+    logoFile = "assets/${mod_id}/icon.png"
+    authors = "Bawnorton"
+
+[[dependencies.${mod_id}]]
+    modId = "minecraft"
+    mandatory = true
+    versionRange = "[${minecraft_dependency},)"
+    ordering = "NONE"
+    side = "BOTH"

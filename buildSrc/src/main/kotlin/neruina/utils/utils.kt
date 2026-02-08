@@ -13,15 +13,21 @@ fun Project.mod(name: String): String? = findProperty("mod.${name}") as String?
 fun Project.mod(name: String, consumer: (prop: String) -> Unit) = mod(name)?.let(consumer)
 
 fun Project.applyMixinDebugSettings(vmArgConsumer: Consumer<String>, propertyConsumer: BiConsumer<String, String>) {
-    val mixinJarFile = configurations.named("runtimeClasspath").get().incoming.artifactView {
+    propertyConsumer.accept("mixin.hotSwap", "true")
+    propertyConsumer.accept("mixin.debug.export", "true")
+
+    val files = configurations.named("runtimeClasspath").get().incoming.artifactView {
         componentFilter {
             it is ModuleComponentIdentifier && it.group == "net.fabricmc" && it.module == "sponge-mixin"
         }
-    }.files.singleFile
+    }.files
+    val mixinJarFile = files.firstOrNull()?.absolutePath
+    if (mixinJarFile == null) {
+        logger.warn("Could not find sponge-mixin jar in runtimeClasspath for mixin debug settings.")
+        return
+    }
     vmArgConsumer.accept("-javaagent:$mixinJarFile")
-    vmArgConsumer.accept("-XX:+AllowEnhancedClassRefinition")
-    propertyConsumer.accept("mixin.hotSwap", "true")
-    propertyConsumer.accept("mixin.debug.export", "true")
+    vmArgConsumer.accept("-XX:+AllowEnhancedClassRedefinition")
 }
 
 fun Project.remoteDepBuilder(project: Project, depResolver: (String, String) -> Dependency) : RemoteDepBuilder {

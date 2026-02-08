@@ -4,11 +4,11 @@ import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.extend.CrashReportCategoryExtender;
 import com.bawnorton.neruina.handler.PersitanceHandler;
 import com.bawnorton.neruina.platform.Platform;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
-import net.minecraft.ReportType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.ResourceKey;
@@ -33,15 +33,25 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+//? if >1.20.1 {
+import net.minecraft.ReportType;
+//?}
+
 public final class TickingEntry {
+	private static final Codec<UUID> UUID_CODEC = Codec.either(UUIDUtil.CODEC, UUIDUtil.STRING_CODEC)
+			.xmap(
+					either -> either.map(Function.identity(), Function.identity()),
+					Either::left
+			);
+
 	public static final Codec<TickingEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.STRING.fieldOf("causeType").forGetter(TickingEntry::getCauseType),
 			Codec.STRING.fieldOf("causeName").forGetter(TickingEntry::getCauseName),
-			UUIDUtil.LENIENT_CODEC.fieldOf("uuid").forGetter(TickingEntry::uuid),
+			UUID_CODEC.fieldOf("uuid").forGetter(TickingEntry::uuid),
 			Level.RESOURCE_KEY_CODEC.fieldOf("dimension").forGetter(TickingEntry::dimension),
 			BlockPos.CODEC.fieldOf("pos").forGetter(TickingEntry::pos),
 			ThrowableData.CODEC.fieldOf("error").forGetter(tickingEntry -> ThrowableData.fromThrowable(tickingEntry.error())),
-			UUIDUtil.LENIENT_CODEC.optionalFieldOf("entityUuid").forGetter(tickingEntry -> {
+			UUID_CODEC.optionalFieldOf("entityUuid").forGetter(tickingEntry -> {
 				try {
 					if (tickingEntry.getCauseType().equals(Type.ENTITY.type)) {
 						if (tickingEntry.cachedEntityUuid != null) {
@@ -112,6 +122,7 @@ public final class TickingEntry {
 		category.setDetail("Message", error.toString());
 		((CrashReportCategoryExtender) category).neruin$setStacktrace(error);
 		Object cause = getCause();
+		//? if >1.20.1 {
 		switch (cause) {
 			case Entity entity -> entity.fillCrashReportCategory(category);
 			case BlockEntity blockEntity -> blockEntity.fillCrashReportCategory(category);
@@ -122,21 +133,45 @@ public final class TickingEntry {
 			case ItemStack stack -> category.setDetail("ItemStack", stack);
 			case null, default -> category.setDetail("Errored", "Unknown");
 		}
+		//?} else {
+		/*if (cause instanceof Entity entity) {
+			entity.fillCrashReportCategory(category);
+		} else if (cause instanceof BlockEntity blockEntity) {
+			blockEntity.fillCrashReportCategory(category);
+		} else if (cause instanceof BlockState state) {
+			category.setDetail("Position", pos);
+			category.setDetail("BlockState", state);
+		} else if (cause instanceof ItemStack stack) {
+			category.setDetail("ItemStack", stack);
+		} else {
+			category.setDetail("Errored", "Unknown");
+		}
+		*///?}
 	}
 
 	public String createCrashReport() {
 		CrashReport report = new CrashReport("Ticking %s".formatted(getCauseType()), error);
 		CrashReportCategory category = report.addCategory("Source: %s".formatted(getCauseName()));
 		populate(category);
+		//? if >1.20.1 {
 		return report.getFriendlyReport(ReportType.CRASH);
+		//?} else {
+		/*return report.getFriendlyReport();
+		*///?}
 	}
 
 	public Object getCause() {
-		return causeSupplier.get();
+		try {
+			return causeSupplier.get();
+		} catch (RuntimeException e) {
+			Neruina.LOGGER.warn("Failed to get cause", e);
+			return null;
+		}
 	}
 
 	public void update() {
 		Object cause = causeSupplier.get();
+		//? if >1.20.1 {
 		switch (cause) {
 			case Entity entity -> {
 				cachedCauseType = Type.ENTITY.type;
@@ -159,6 +194,24 @@ public final class TickingEntry {
 				cachedCauseName = Type.UNKNOWN.nameFunction.apply(cause);
 			}
 		}
+		//?} else {
+		/*if (cause instanceof Entity entity) {
+			cachedCauseType = Type.ENTITY.type;
+			cachedCauseName = Type.ENTITY.nameFunction.apply(entity);
+		} else if (cause instanceof BlockEntity blockEntity) {
+			cachedCauseType = Type.BLOCK_ENTITY.type;
+			cachedCauseName = Type.BLOCK_ENTITY.nameFunction.apply(blockEntity);
+		} else if (cause instanceof BlockState state) {
+			cachedCauseType = Type.BLOCK_STATE.type;
+			cachedCauseName = Type.BLOCK_STATE.nameFunction.apply(state);
+		} else if (cause instanceof ItemStack stack) {
+			cachedCauseType = Type.ITEM_STACK.type;
+			cachedCauseName = Type.ITEM_STACK.nameFunction.apply(stack);
+		} else {
+			cachedCauseType = Type.UNKNOWN.type;
+			cachedCauseName = Type.UNKNOWN.nameFunction.apply(cause);
+		}
+		*///?}
 	}
 
 	public String getCauseType() {

@@ -2,6 +2,7 @@ package com.bawnorton.neruina.handler;
 
 import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.util.TickingEntry;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,8 +17,8 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import net.minecraft.world.level.saveddata.SavedData;
+import org.jetbrains.annotations.NotNull;
 
 //? if >=1.21.5
 import net.minecraft.world.level.saveddata.SavedDataType;
@@ -33,20 +34,21 @@ public final class PersitanceHandler extends SavedData {
 				return handler;
 			})
 	));
-	//? if 1.21.1 {
-    /*private static final SavedData.Factory<PersitanceHandler> type = new SavedData.Factory<>(
-            PersitanceHandler::new,
-            (compoundTag, provider) -> load(compoundTag),
-            null
-    );
-    *///?} else {
+
+	//? if >1.21.1 {
 	private static final SavedDataType<PersitanceHandler> type = new SavedDataType<>(
 			Neruina.MOD_ID,
 			PersitanceHandler::new,
 			CODEC,
 			null
 	);
-	//?}
+	//?} elif >1.20.1 {
+  /*private static final SavedData.Factory<PersitanceHandler> type = new SavedData.Factory<>(
+		  PersitanceHandler::new,
+		  (compoundTag, provider) -> load(compoundTag),
+		  null
+  );
+  *///?}
 
 	private static ServerLevel level;
 
@@ -57,16 +59,42 @@ public final class PersitanceHandler extends SavedData {
 			return;
 		}
 		DimensionDataStorage dataStorage = level.getDataStorage();
-		//? if 1.21.1 {
+		//? if <=1.20.1 {
+		/*PersitanceHandler handler = dataStorage.computeIfAbsent(
+				PersitanceHandler::load,
+				PersitanceHandler::new,
+				Neruina.MOD_ID
+		);
+		*///?} elif <=1.21.1 {
 		/*PersitanceHandler handler = dataStorage.computeIfAbsent(type, Neruina.MOD_ID);
 		 *///?} else {
 		PersitanceHandler handler = dataStorage.computeIfAbsent(type);
-		//?}
+		 //?}
 		handler.setDirty();
 	}
 
 	public static ServerLevel getLevel() {
 		return level;
+	}
+
+	private static PersitanceHandler load(CompoundTag tag) {
+		DataResult<PersitanceHandler> dataResult = CODEC.parse(NbtOps.INSTANCE, tag);
+		//? if >1.20.1 {
+		if (dataResult.isSuccess()) {
+			return dataResult.getOrThrow();
+		} else {
+			Neruina.LOGGER.warn("Failed to load persitance handler. {}", dataResult.error().orElseThrow());
+			return new PersitanceHandler();
+		}
+		//?} else {
+		/*Either<PersitanceHandler, DataResult.PartialResult<PersitanceHandler>> either = dataResult.get();
+		if (either.left().isPresent()) {
+			return either.left().get();
+		} else {
+			Neruina.LOGGER.warn("Failed to load persitance handler. {}", either.right().orElseThrow());
+			return new PersitanceHandler();
+		}
+		*///?}
 	}
 
 	private List<TickingEntry> getTickingEntries() {
@@ -78,18 +106,15 @@ public final class PersitanceHandler extends SavedData {
 				.toList();
 	}
 
+	//? if >1.20.1 {
 	public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.Provider registries) {
 		DataResult<Tag> dataResult = CODEC.encode(this, NbtOps.INSTANCE, tag);
 		return (CompoundTag) dataResult.getOrThrow();
 	}
-
-	private static PersitanceHandler load(CompoundTag tag) {
-		DataResult<PersitanceHandler> dataResult = CODEC.parse(NbtOps.INSTANCE, tag);
-		if (dataResult.isSuccess()) {
-			return dataResult.getOrThrow();
-		} else {
-			Neruina.LOGGER.warn("Failed to load persitance handler. {}", dataResult.error().orElseThrow());
-			return new PersitanceHandler();
-		}
+	//?} else {
+	/*public CompoundTag save(CompoundTag compoundTag) {
+		DataResult<Tag> dataResult = CODEC.encode(this, NbtOps.INSTANCE, compoundTag);
+		return (CompoundTag) dataResult.get().left().orElseThrow();
 	}
+	*///?}
 }

@@ -53,7 +53,11 @@ public final class TickHandler {
 		stopwatch++;
 		if (stopwatch >= 600) {
 			if (!recentErrors.isEmpty()) {
+				//? if >1.20.1 {
 				recentErrors.removeFirst();
+				//?} else {
+				/*recentErrors.remove(0);
+				*///?}
 			}
 			stopwatch = 0;
 		}

@@ -1,6 +1,5 @@
 package com.bawnorton.neruina.command;
 
-import com.bawnorton.configurable.api.ConfigurableApi;
 import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.config.Config;
 import com.bawnorton.neruina.extend.Errorable;
@@ -36,12 +35,17 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import java.util.Collection;
 import java.util.UUID;
 
+//? if >1.20.1 {
+import com.bawnorton.configurable.api.ConfigurableApi;
+//?}
+
 public final class NeruinaCommandHandler {
 	private static final MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(Commands.literal("neruina")
 						.requires(source -> PermissionWrapper.hasPermission(source, Config.minPermissionLevelForCommands))
+						//? if >1.20.1 {
 						.then(Commands.literal("reload")
 								.executes(context -> {
 									ConfigurableApi.loadFromDisk();
@@ -49,6 +53,7 @@ public final class NeruinaCommandHandler {
 									return 1;
 								})
 						)
+						//?}
 						.then(Commands.literal("resume")
 								.then(Commands.literal("entity")
 										.then(Commands.argument("entity", EntityArgument.entity())
@@ -419,6 +424,7 @@ public final class NeruinaCommandHandler {
 		}
 		Object cause = entry.getCause();
 		Player player = context.getSource().getPlayerOrException();
+		//? if >1.20.1 {
 		switch (cause) {
 			case Entity entity -> sendSuccess(
 					context,
@@ -497,6 +503,90 @@ public final class NeruinaCommandHandler {
 					)
 			);
 		}
+		//?} else {
+		/*if (cause instanceof Entity entity) {
+			sendSuccess(
+					context,
+					Texter.pad(
+							Texter.concatDelimited(
+									Texter.LINE_BREAK,
+									Texter.format(Texter.translatable(
+													"commands.neruina.info.entity",
+													entry.getCauseName(),
+													messageHandler.posAsNums(entry.pos())
+											)
+									),
+									messageHandler.generateEntityActions(player, entity),
+									messageHandler.generateResourceActions(player, entry)
+							)
+					)
+			);
+		} else if (cause instanceof BlockEntity) {
+			sendSuccess(
+					context,
+					Texter.pad(
+							Texter.concatDelimited(
+									Texter.LINE_BREAK,
+									Texter.format(Texter.translatable(
+											"commands.neruina.info.block_entity",
+											entry.getCauseName(),
+											messageHandler.posAsNums(entry.pos())
+									)),
+									messageHandler.generateHandlingActions(player, ErroredType.BLOCK_ENTITY, entry.dimension(), entry.pos()),
+									messageHandler.generateResourceActions(player, entry)
+							)
+					)
+			);
+		}  else if (cause instanceof ItemStack) {
+			sendSuccess(
+					context,
+					Texter.pad(
+							Texter.concatDelimited(
+									Texter.LINE_BREAK,
+									Texter.format(Texter.translatable(
+											"commands.neruina.info.item_stack",
+											entry.getCauseName()
+									)),
+									messageHandler.generateResumeAction(player, ErroredType.ITEM_STACK, entry.uuid().toString()),
+									messageHandler.generateResourceActions(player, entry)
+							)
+					)
+			);
+		} else if (cause instanceof Block) {
+			sendSuccess(
+					context,
+					Texter.pad(
+							Texter.concatDelimited(
+									Texter.LINE_BREAK,
+									Texter.format(Texter.translatable(
+											"commands.neruina.info.block_state",
+											entry.getCauseName(),
+											messageHandler.posAsNums(entry.pos())
+									)),
+									messageHandler.generateHandlingActions(player, ErroredType.BLOCK_STATE, entry.dimension(), entry.pos()),
+									messageHandler.generateResourceActions(player, entry)
+							)
+					)
+			);
+		} else {
+			sendSuccess(
+					context,
+					Texter.pad(
+							Texter.concatDelimited(
+									Texter.LINE_BREAK,
+									Texter.format(Texter.translatable(
+													"commands.neruina.info.null_cause",
+													entry.getCauseName(),
+													messageHandler.posAsNums(entry.pos())
+											)
+									),
+									messageHandler.generateTeleportAction(player, ErroredType.UNKNOWN, entry.dimension(), entry.pos()),
+									messageHandler.generateResourceActions(player, entry)
+							)
+					)
+			);
+		}
+		*///?}
 		return 1;
 	}
 

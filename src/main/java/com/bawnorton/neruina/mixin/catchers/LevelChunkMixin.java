@@ -4,7 +4,6 @@ import com.bawnorton.neruina.Neruina;
 import com.bawnorton.neruina.handler.TickHandler;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@MixinEnvironment
 @Mixin(LevelChunk.class)
 public abstract class LevelChunkMixin {
 	@Shadow
@@ -33,8 +31,7 @@ public abstract class LevelChunkMixin {
 		}
 	}
 
-	@MixinEnvironment
-	@Mixin(targets = "net.minecraft.world.level.chunk.LevelChunk$BoundTickingBlockEntity")
+		@Mixin(targets = "net.minecraft.world.level.chunk.LevelChunk$BoundTickingBlockEntity")
 	private abstract static class BoundTickingBlockEntityMixin {
 		@WrapOperation(
 				method = "tick",

@@ -6,7 +6,6 @@ import com.bawnorton.neruina.handler.MessageHandler;
 import com.bawnorton.neruina.handler.TickHandler;
 import com.bawnorton.neruina.version.PermissionWrapper;
 import com.llamalad7.mixinextras.sugar.Local;
-import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -15,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@MixinEnvironment
 @Mixin(PlayerList.class)
 public abstract class PlayerListMixin {
 	@Inject(

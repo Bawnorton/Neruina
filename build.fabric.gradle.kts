@@ -55,8 +55,13 @@ dependencies {
 
 java {
     withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    if(stonecutter.eval(minecraft, "<=1.20.1")) {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    } else {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
 }
 
 loom {
@@ -80,11 +85,15 @@ loom {
             applyMixinDebugSettings(::vmArg, ::property)
         }
     }
+
+    mixin {
+        useLegacyMixinAp = true
+    }
 }
 
 fletchingTable {
     mixins.register("main") {
-        mixin("default", "neruina.mixins.json")
+        mixin("default", "${mod("id")}.mixins.json")
     }
 }
 
@@ -106,7 +115,9 @@ tasks {
     }
 
     processResources {
-        exclude("META-INF/neoforge.mods.toml")
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+        exclude("**/neoforge.mods.toml, **/mods.toml")
     }
 }
 
