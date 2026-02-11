@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.bawnorton.neruina.mixin",
+  "plugin": "com.bawnorton.neruina.NeruinaMixinPlugin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "neruina.refmap.json"
+}

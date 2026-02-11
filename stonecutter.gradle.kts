@@ -42,3 +42,10 @@ for (version in stonecutter.versions.map { it.version }.distinct()) tasks.regist
     metadata.version == version && metadata.project.contains("neoforge")
   })
 }
+
+for (version in stonecutter.versions.map { it.version }.distinct()) tasks.register("publishAll${version}ForgePublicationsToBawnortonRepository") {
+  group = "publishing"
+  dependsOn(stonecutter.tasks.named("publishAllPublicationsToBawnortonRepository") {
+    metadata.version == version && metadata.project.contains("forge")
+  })
+}

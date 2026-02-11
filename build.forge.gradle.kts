@@ -105,6 +105,15 @@ fletchingTable {
   }
 }
 
+stonecutter {
+  replacements.string(eval(current.version, ">=1.21.11")) {
+    replace("net.minecraft.resources.ResourceLocation", "net.minecraft.resources.Identifier")
+  }
+  replacements.string(eval(current.version, ">=1.21.11")) {
+    replace("ResourceLocation", "Identifier")
+  }
+}
+
 tasks {
   named("createMinecraftArtifacts") {
     dependsOn("stonecutterGenerate")
@@ -112,12 +121,14 @@ tasks {
 
   register<Copy>("buildAndCollect") {
     group = "build"
-    from(jar.map { it.archiveFile })
+    from(named<Jar>("reobfJar").map { it.archiveFile })
     into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
     dependsOn("build")
   }
 
   processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     exclude("fabric.mod.json", "**/neoforge.mods.toml")
   }
 
@@ -165,8 +176,8 @@ publishMods {
   val cfToken = providers.gradleProperty("CURSEFORGE_TOKEN")
 
   type = BETA
-  file = tasks.jar.map { it.archiveFile.get() }
-  additionalFiles.from(tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar").map { it.archiveFile.get() })
+  file = tasks.named<Jar>("reobfJar").map { it.archiveFile.get() }
+  additionalFiles.from(tasks.named<Jar>("sourcesJar").map { it.archiveFile.get() })
 
   displayName = "${mod("name")} Forge ${mod("version")} for $minecraft"
   version = mod("version")

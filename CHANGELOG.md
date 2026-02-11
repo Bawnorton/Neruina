@@ -1,3 +1,12 @@
+# 3.2.1
+
+- Thanks forge
+
+# 3.2.0
+
+- Backport to 1.20.1 and re-introduce forge support 
+- Fix #166
+
 # 3.1.6
 
 - Split 1.21.5-7 build into 1.21.5, 1.21.6-7 builds
