@@ -1,6 +1,7 @@
 # 3.2.2
 
 - Add config option to kill players instead of kicking them (disabled by default)
+- Prevent invalid UUIDs from crashing
 
 # 3.2.1
 
