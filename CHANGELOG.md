@@ -1,3 +1,7 @@
+# 3.2.2
+
+- Add config option to kill players instead of kicking them (disabled by default)
+
 # 3.2.1
 
 - Thanks forge

@@ -16,6 +16,9 @@ public final class Config {
 	public static Boolean autoKillTickingEntities = false;
 
 	@Configurable
+	public static Boolean killPlayersInstead = false;
+
+	@Configurable
 	public static Integer tickingExceptionThreshold = 10;
 
 	@Configurable
@@ -39,6 +42,8 @@ public final class Config {
 
 	public static Boolean autoKillTickingEntities = false;
 
+	public static Boolean killPlayersInstead = false;
+
 	public static Integer tickingExceptionThreshold = 10;
 
 	public static Boolean handleTickingEntities = true;
@@ -57,6 +62,8 @@ public final class Config {
 		Integer minPermissionLevelForCommands = 2;
 
 		Boolean autoKillTickingEntities = false;
+
+		Boolean killPlayersInstead = false;
 
 		Integer tickingExceptionThreshold = 10;
 

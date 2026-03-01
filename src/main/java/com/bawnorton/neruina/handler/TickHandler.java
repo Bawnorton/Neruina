@@ -134,6 +134,10 @@ public final class TickHandler {
 
 	public void safelyTickPlayer(ServerPlayer instance, Operation<Void> original) {
 		try {
+			if(isErrored(instance)) {
+				instance.baseTick();
+				return;
+			}
 			original.call(instance);
 		} catch (Throwable e) {
 			if (!Config.handleTickingPlayers) {
@@ -285,7 +289,7 @@ public final class TickHandler {
 		}
 	}
 
-	public void killEntity(Entity entity, @Nullable Component withMessage) {
+	public void killEntity(Entity entity, @Nullable Component withMessage, MessageHandler.ActionGetter withActions) {
 		//? if >1.21.1 {
 		if (entity.level() instanceof ServerLevel serverWorld) {
 			entity.kill(serverWorld);
@@ -296,8 +300,14 @@ public final class TickHandler {
 		entity.remove(Entity.RemovalReason.KILLED); // Necessary for any living entity
 		removeErrored(entity);
 		if (withMessage != null) {
-			Neruina.getInstance().getMessageHandler().broadcastToPlayers(entity.level().getServer(), withMessage);
+			Neruina.getInstance()
+					.getMessageHandler()
+					.broadcastToPlayers(entity.level().getServer(), withMessage, withActions);
 		}
+	}
+
+	public void killEntity(Entity entity, @Nullable Component withMessage) {
+		killEntity(entity, withMessage, player -> Texter.empty());
 	}
 
 	private void handleTickingEntity(Entity entity, Throwable e) {
@@ -344,12 +354,25 @@ public final class TickHandler {
 
 	private void handleTickingPlayer(ServerPlayer player, Throwable e) {
 		Neruina.LOGGER.warn("Neruina caught an exception, see below for cause", e);
-		MinecraftServer server = player.level().getServer();
+		Level level = player.level();
+		MinecraftServer server = level.getServer();
 		String name = player.getDisplayName().getString();
 		MessageHandler messageHandler = Neruina.getInstance().getMessageHandler();
-		Component message = messageHandler.formatText("neruina.ticking.player", name);
-		TickingEntry tickingEntry = new TickingEntry(player, false, player.level().dimension(), player.getOnPos(), e);
+		TickingEntry tickingEntry = new TickingEntry(player, false, level.dimension(), player.getOnPos(), e);
 		trackError(tickingEntry);
+		addErrored(player);
+
+		if (Config.killPlayersInstead) {
+			Component message = messageHandler.formatText("neruina.ticking.player_killed", name);
+			killEntity(
+					player,
+					message,
+					forPlayer -> messageHandler.generateResourceActions(forPlayer, tickingEntry)
+			);
+			return;
+		}
+
+		Component message = messageHandler.formatText("neruina.ticking.player", name);
 		messageHandler.broadcastToPlayers(server, message, forPlayer -> messageHandler.generateResourceActions(forPlayer, tickingEntry));
 		try {
 			player.connection.disconnect(

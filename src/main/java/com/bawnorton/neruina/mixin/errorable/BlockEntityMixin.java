@@ -73,7 +73,12 @@ abstract class BlockEntityMixin implements Errorable {
 			neruina$errored = nbt.getBoolean("neruina$errored");
 		}
 		if (nbt.contains("neruina$tickingEntryId")) {
-			neruina$tickingEntryId = nbt.getUUID("neruina$tickingEntryId");
+			try {
+				neruina$tickingEntryId = nbt.getUUID("neruina$tickingEntryId");
+			} catch (IllegalArgumentException e) {
+				neruina$tickingEntryId = null;
+				neruina$clearErrored();
+			}
 		}
 	}
 	*///?} elif <=1.21.5 {
@@ -96,14 +101,24 @@ abstract class BlockEntityMixin implements Errorable {
   )
   private void loadAdditional(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
     //? if <=1.21.1 {
-    neruina$errored = tag.getBoolean("neruina$errored");
+    /^neruina$errored = tag.getBoolean("neruina$errored");
     if (tag.contains("neruina$tickingEntryId")) {
-      neruina$tickingEntryId = UUID.fromString(tag.getString("neruina$tickingEntryId"));
+      try {
+        neruina$tickingEntryId = UUID.fromString(tag.getString("neruina$tickingEntryId"));
+			} catch (IllegalArgumentException e) {
+				neruina$tickingEntryId = null;
+				neruina$clearErrored();
+			}
     }
-    //?} else {
-    /^neruina$errored = tag.getBooleanOr("neruina$errored", false);
-    neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
-    ^///?}
+    ^///?} else {
+    neruina$errored = tag.getBooleanOr("neruina$errored", false);
+		try {
+      neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+		} catch (IllegalArgumentException e) {
+			neruina$tickingEntryId = null;
+			neruina$clearErrored();
+		}
+    //?}
   }
   *///?} else {
 	@Inject(
@@ -125,7 +140,12 @@ abstract class BlockEntityMixin implements Errorable {
 	)
 	private void readErroredFromNbt(ValueInput input, CallbackInfo ci) {
 		neruina$errored = input.getBooleanOr("neruina$errored", false);
-		neruina$tickingEntryId = input.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+		try {
+			neruina$tickingEntryId = input.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
+		} catch (IllegalArgumentException e) {
+			neruina$tickingEntryId = null;
+			neruina$clearErrored();
+		}
 	}
 	//?}
 }

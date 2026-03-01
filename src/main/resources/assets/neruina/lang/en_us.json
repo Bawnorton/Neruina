@@ -77,6 +77,7 @@
   "neruina.ticking.entity.suspended": "Caught Ticking Entity [%s] at (%s). It has been suspended.",
   "neruina.ticking.item_stack": "Caught Ticking Item Stack [%s] in slot [%s].",
   "neruina.ticking.player": "Caught Ticking Player, %s has been kicked.",
+  "neruina.ticking.player_killed": "Caught Ticking Player, %s has been killed. (To kick instead of killing, disable 'kill_players_instead' in the config)",
   "neruina.ticking_entries.count": "There are %s suspended ticking entries:",
   "neruina.ticking_entries.count.single": "There is 1 suspended ticking entry:",
   "neruina.ticking_entries.entry": "<%s> at (%s)",

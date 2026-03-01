@@ -52,6 +52,9 @@ public final class ConfigManager {
 		if (instance.autoKillTickingEntities == null) {
 			instance.autoKillTickingEntities = false;
 		}
+		if (instance.killPlayersInstead == null) {
+			instance.killPlayersInstead = false;
+		}
 		if (instance.tickingExceptionThreshold == null) {
 			instance.tickingExceptionThreshold = 10;
 		}
@@ -74,6 +77,7 @@ public final class ConfigManager {
 		Config.minPermissionLevelForMessages = instance.minPermissionLevelForMessages;
 		Config.minPermissionLevelForCommands = instance.minPermissionLevelForCommands;
 		Config.autoKillTickingEntities = instance.autoKillTickingEntities;
+		Config.killPlayersInstead = instance.killPlayersInstead;
 		Config.tickingExceptionThreshold = instance.tickingExceptionThreshold;
 		Config.handleTickingEntities = instance.handleTickingEntities;
 		Config.handleTickingBlockEntities = instance.handleTickingBlockEntities;
@@ -89,6 +93,7 @@ public final class ConfigManager {
 		instance.minPermissionLevelForMessages = Config.minPermissionLevelForMessages;
 		instance.minPermissionLevelForCommands = Config.minPermissionLevelForCommands;
 		instance.autoKillTickingEntities = Config.autoKillTickingEntities;
+		instance.killPlayersInstead = Config.killPlayersInstead;
 		instance.tickingExceptionThreshold = Config.tickingExceptionThreshold;
 		instance.handleTickingEntities = Config.handleTickingEntities;
 		instance.handleTickingBlockEntities = Config.handleTickingBlockEntities;
