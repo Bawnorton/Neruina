@@ -10,10 +10,13 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+
+//~ if >=26.1 'DimensionDataStorage' -> 'SavedDataStorage'
+import net.minecraft.world.level.storage.SavedDataStorage;
 
 import java.util.List;
 
@@ -37,7 +40,8 @@ public final class PersitanceHandler extends SavedData {
 
 	//? if >1.21.1 {
 	private static final SavedDataType<PersitanceHandler> type = new SavedDataType<>(
-			Neruina.MOD_ID,
+			//$ if >=26.1 'ResourceLocation.fromNamespaceAndPath(Neruina.MOD_ID, "persistance"),' else 'Neruina.MOD_ID,'
+			Identifier.fromNamespaceAndPath(Neruina.MOD_ID, "persistance"),
 			PersitanceHandler::new,
 			CODEC,
 			null
@@ -58,7 +62,8 @@ public final class PersitanceHandler extends SavedData {
 			Neruina.LOGGER.error("Level is null, unable to save persistent state.");
 			return;
 		}
-		DimensionDataStorage dataStorage = level.getDataStorage();
+		//~ if >=26.1 'DimensionDataStorage' -> 'SavedDataStorage'
+		SavedDataStorage dataStorage = level.getDataStorage();
 		//? if <=1.20.1 {
 		/*PersitanceHandler handler = dataStorage.computeIfAbsent(
 				PersitanceHandler::load,

@@ -48,7 +48,7 @@
   "neruina.cancel": "Cancel",
   "neruina.cancel.tooltip": "Cancels the authentication request.",
   "neruina.clear": "Clear",
-  "neruina.clear.tooltip": "Clears all tracked ticking entries. This will not affect any entities that are currently suspended.",
+  "neruina.clear.tooltip": "Clears all tracked ticking entries. This cannot be undone. This will not affect any entries that are currently suspended, they will remain suspended.",
   "neruina.copy_crash": "Copy Crash",
   "neruina.copy_crash.tooltip": "Copies the caught ticking exception to your clipboard",
   "neruina.info": "What Is This?",

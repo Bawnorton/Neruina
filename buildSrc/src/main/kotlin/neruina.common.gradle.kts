@@ -22,8 +22,17 @@ tasks {
             val atExclude = it.name.endsWith("-accesstransformer.cfg") && it.name != "$minecraft-accesstransformer.cfg"
             awExclude || atExclude
         }
-        val compatibleVersionString = mod("compatible_versions")!!
-        val compatibleVersions = compatibleVersionString.split(",").map { it.trim() }
+
+        fun listProp(name: String): List<String> {
+            var index = 0;
+            var list = mutableListOf<String>()
+            while (true) {
+                val element = project.findProperty("$name.$index") ?: break
+                list.add(element as String)
+                index++
+            }
+            return list
+        }
 
         val props = mapOf(
             "mod_id" to mod("id"),
@@ -32,7 +41,7 @@ tasks {
             "mod_description" to mod("description"),
             "mod_license" to mod("license"),
             "minecraft_version" to minecraft,
-            "minecraft_dependency" to compatibleVersions.first(),
+            "minecraft_dependency" to listProp("mod.compatible_versions").first(),
             "pack_format" to 71
         )
 

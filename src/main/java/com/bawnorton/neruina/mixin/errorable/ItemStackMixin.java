@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -30,8 +31,9 @@ abstract class ItemStackMixin implements Errorable {
 	@Shadow
 	public abstract CompoundTag getTag();
 	*///?} else {
+	@Shadow
 	@Final
-	PatchedDataComponentMap components;
+    private PatchedDataComponentMap components;
 	//?}
 
 	@Unique
@@ -111,8 +113,12 @@ abstract class ItemStackMixin implements Errorable {
 		components.applyPatch(builder.build());
 	}
 
-	@Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("TAIL"))
-	private void readErroredFromComponents(ItemLike item, int count, PatchedDataComponentMap components, CallbackInfo ci) {
+	@Inject(
+			//~ if >=26.1 'Lnet/minecraft/world/level/ItemLike' -> 'Lnet/minecraft/core/Holder'
+			method = "<init>(Lnet/minecraft/core/Holder;ILnet/minecraft/core/component/PatchedDataComponentMap;)V",
+			at = @At("TAIL")
+	)
+	private void readErroredFromComponents(CallbackInfo ci) {
 		CustomData data = components.get(DataComponents.CUSTOM_DATA);
 		if (data == null) return;
 

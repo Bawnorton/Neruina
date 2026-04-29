@@ -1,0 +1,21 @@
+{
+  "$schema": "https://stonecutter.kikugie.dev/settings-schema/latest.json",
+  "versions": [
+    "1.20.1-fabric:1.20.1:build.fabric.gradle.kts",
+    "1.20.1-forge:1.20.1:build.forge.gradle.kts",
+    "1.21.1-fabric:1.21.1:build.fabric.gradle.kts",
+    "1.21.1-neoforge:1.21.1:build.neoforge.gradle.kts",
+    "1.21.5-fabric:1.21.5:build.fabric.gradle.kts",
+    "1.21.5-neoforge:1.21.5:build.neoforge.gradle.kts",
+    "1.21.6-fabric:1.21.6:build.fabric.gradle.kts",
+    "1.21.6-neoforge:1.21.6:build.neoforge.gradle.kts",
+    "1.21.8-fabric:1.21.8:build.fabric.gradle.kts",
+    "1.21.8-neoforge:1.21.8:build.neoforge.gradle.kts",
+    "1.21.10-fabric:1.21.10:build.fabric.gradle.kts",
+    "1.21.10-neoforge:1.21.10:build.neoforge.gradle.kts",
+    "1.21.11-fabric:1.21.11:build.fabric.gradle.kts",
+    "1.21.11-neoforge:1.21.11:build.neoforge.gradle.kts",
+    "26.1.2-fabric:26.1.2:build.fabric-unobf.gradle.kts",
+    "26.1.2-neoforge:26.1.2:build.neoforge.gradle.kts"
+  ]
+}

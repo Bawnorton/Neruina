@@ -1,34 +1,22 @@
 pluginManagement {
-	repositories {
-		maven("https://maven.fabricmc.net/")
-		maven("https://maven.minecraftforge.net/")
-		maven("https://maven.neoforged.net/releases/")
-		maven("https://maven.kikugie.dev/releases/")
-		maven("https://maven.kikugie.dev/snapshots/")
-		mavenCentral()
-		gradlePluginPortal()
-	}
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven("https://maven.fabricmc.net/")
+        maven("https://maven.neoforged.net/releases/")
+        maven("https://maven.minecraftforge.net/")
+        maven("https://maven.kikugie.dev/releases")
+        maven("https://maven.kikugie.dev/snapshots")
+    }
 }
 
 plugins {
-	id("dev.kikugie.stonecutter") version "0.7+"
+    id("dev.kikugie.stonecutter") version "0.9.2"
 }
 
 stonecutter {
-    create(rootProject) {
-        fun mc(mcVersion: String, name: String = mcVersion, loaders: Iterable<String>) =
-            loaders.forEach { version("$name-$it", mcVersion).buildscript = "build.$it.gradle.kts" }
-
-        mc("1.20.1", loaders = listOf("fabric", "forge"))
-        mc("1.21.1", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.5", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.6", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.8", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.10", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.11", loaders = listOf("fabric", "neoforge"))
-
-        vcsVersion = "1.21.11-fabric"
-    }
+    create(rootProject, file("versions.json"))
+    // vcsVersion = "26.1.2-fabric"
 }
 
 gradle.beforeProject {

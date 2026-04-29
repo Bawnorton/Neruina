@@ -1,3 +1,8 @@
+# 3.3.0
+
+- Update to 26.1.2
+- Improve clear tooltip
+
 # 3.2.2
 
 - Add config option to kill players instead of kicking them (disabled by default)

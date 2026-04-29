@@ -68,7 +68,11 @@ public final class MessageHandler {
 				Texter.format(message),
 				actions != null ? Texter.concatDelimited(Texter.LINE_BREAK, actions) : null
 		);
-		player.displayClientMessage(pad ? Texter.pad(message) : message, false);
+		//? if >=26.1 {
+		player.sendSystemMessage(pad ? Texter.pad(message) : message);
+		//?} else {
+		/*player.displayClientMessage(pad ? Texter.pad(message) : message, false);
+		*///?}
 	}
 
 	public Component generateEntityActions(Player forPlayer, Entity entity) {

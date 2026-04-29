@@ -141,7 +141,11 @@ public final class GithubAuthManager {
 	}
 
 	private static String getAuthorisationCode(LoginRecord record) throws IOException, AbortedException {
-		String state = RandomStringUtils.randomAlphabetic(8);
+		//? if forge || neoforge && <=1.21.1 {
+		/*String state = RandomStringUtils.randomAlphabetic(8);
+		*///?} else {
+		String state = RandomStringUtils.secure().nextAlphabetic(8);
+		//?}
 		HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
 		AtomicReference<String> code = new AtomicReference<>();

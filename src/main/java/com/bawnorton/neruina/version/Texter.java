@@ -130,9 +130,9 @@ public interface Texter {
 	static HoverEvent hoverEvent(HoverEvent.Action action, Object value) {
 		return switch (action) {
 			case SHOW_TEXT -> new HoverEvent.ShowText((Component) value);
-			case SHOW_ITEM -> new HoverEvent.ShowItem((ItemStack) value);
 			case SHOW_ENTITY -> new HoverEvent.ShowEntity((HoverEvent.EntityTooltipInfo) value);
-		};
+            default -> throw new IllegalArgumentException("Unsupported hover event action: " + action);
+        };
 	}
 	//?}
 }

@@ -1,7 +1,6 @@
 package neruina.utils
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import java.util.function.BiConsumer
 import java.util.function.Consumer
@@ -28,25 +27,4 @@ fun Project.applyMixinDebugSettings(vmArgConsumer: Consumer<String>, propertyCon
     }
     vmArgConsumer.accept("-javaagent:$mixinJarFile")
     vmArgConsumer.accept("-XX:+AllowEnhancedClassRedefinition")
-}
-
-fun Project.remoteDepBuilder(project: Project, depResolver: (String, String) -> Dependency) : RemoteDepBuilder {
-    return RemoteDepBuilder(project, depResolver)
-}
-
-class RemoteDepBuilder(private val project: Project, private val depResolver: (String, String) -> Dependency) {
-    private val minecraft: String by lazy {
-        project.extensions.extraProperties.get("minecraft") as String
-    }
-
-    fun dep(id: String, handler: (dep: Dependency) -> Unit) : RemoteDepBuilder {
-        var dep: Dependency? = null
-        try {
-            dep = depResolver(id, minecraft)
-        } catch (e: Exception) {
-            project.logger.warn("Could not find remote dependency '$id' for Minecraft $minecraft. ", e)
-        }
-        dep?.let { handler(it) }
-        return this
-    }
 }

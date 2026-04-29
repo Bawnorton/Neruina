@@ -7,7 +7,6 @@ import com.bawnorton.neruina.util.annotation.Version;
 import com.bawnorton.neruina.platform.ModLoader;
 import com.bawnorton.neruina.platform.Platform;
 import com.bawnorton.neruina.version.ComparableVersion;
-import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;

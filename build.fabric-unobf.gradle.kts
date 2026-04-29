@@ -6,7 +6,7 @@ plugins {
     kotlin("jvm")
     `maven-publish`
     id("neruina.common")
-    id("fabric-loom")
+    id("net.fabricmc.fabric-loom")
     id("me.modmuss50.mod-publish-plugin")
     id("com.google.devtools.ksp") version "2.2.0-2.0.2"
     id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.15"
@@ -31,15 +31,9 @@ base.archivesName = "${mod("id")}-${mod("version")}+$minecraft-$loader"
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraft")
-    mappings(loom.layered {
-        officialMojangMappings()
-        deps("parchment") {
-            parchment("org.parchmentmc.data:parchment-$it@zip")
-        }
-    })
 
-    modImplementation("net.fabricmc:fabric-loader:0.18.2")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${deps("fabric_api")}")
+    implementation("net.fabricmc:fabric-loader:0.19.2")
+    implementation("net.fabricmc.fabric-api:fabric-api:${deps("fabric_api")}")
 
     deps("kohsuke_github") {
         include(implementation("org.kohsuke:github-api:$it")!!)
@@ -51,19 +45,14 @@ dependencies {
         include(implementation("org.apache.httpcomponents:httpclient:$it")!!)
     }
     deps("configurable") {
-        modImplementation(annotationProcessor("com.bawnorton.configurable:configurable-$loader:$it")!!)
+        implementation(annotationProcessor("com.bawnorton.configurable:configurable-$loader:$it")!!)
     }
 }
 
 java {
     withSourcesJar()
-    if(stonecutter.eval(minecraft, "<=1.20.1")) {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    } else {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 loom {
@@ -87,10 +76,6 @@ loom {
             applyMixinDebugSettings(::vmArg, ::property)
         }
     }
-
-    mixin {
-        useLegacyMixinAp = true
-    }
 }
 
 fletchingTable {
@@ -100,19 +85,19 @@ fletchingTable {
 }
 
 stonecutter {
-  replacements.string(eval(current.version, ">=1.21.11")) {
-    replace("net.minecraft.resources.ResourceLocation", "net.minecraft.resources.Identifier")
-  }
-  replacements.string(eval(current.version, ">=1.21.11")) {
-    replace("ResourceLocation", "Identifier")
-  }
+    replacements.string(eval(current.version, ">=1.21.11")) {
+        replace("net.minecraft.resources.ResourceLocation", "net.minecraft.resources.Identifier")
+    }
+    replacements.string(eval(current.version, ">=1.21.11")) {
+        replace("ResourceLocation", "Identifier")
+    }
 }
 
 tasks {
     register<Copy>("buildAndCollect") {
         group = "build"
-        from(remapJar.map { it.archiveFile })
-        into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
+        from(jar.map { it.archiveFile })
+        into(rootProject.layout.buildDirectory.file("libs/${mod("version")}"))
         dependsOn("build")
     }
 
@@ -133,7 +118,7 @@ extensions.configure<PublishingExtension> {
             name = "bawnorton"
             url = uri("https://maven.bawnorton.com/releases")
 
-            if(isPublishing) {
+            if (isPublishing) {
                 credentials {
                     username = onePassword["op://Private/Maven API Key/username"].get()
                     password = onePassword["op://Private/Maven API Key/credential"].get()

@@ -8,6 +8,7 @@ plugins {
   id("me.modmuss50.mod-publish-plugin")
   id("com.google.devtools.ksp") version "2.2.0-2.0.2"
   id("dev.kikugie.fletching-table") version "0.1.0-alpha.15"
+  id("dev.isxander.secrets") version "0.1.0"
 }
 
 repositories {
@@ -20,6 +21,9 @@ repositories {
 
 val minecraft: String by project
 val loader: String by project
+
+sc.properties.tags(minecraft)
+
 base.archivesName = "${mod("id")}-${mod("version")}+$minecraft-$loader"
 
 dependencies {
@@ -149,14 +153,21 @@ tasks {
   }
 }
 
+val isPublishing = gradle.startParameter.taskNames.any {
+  it.contains("publish", ignoreCase = true)
+}
+
 extensions.configure<PublishingExtension> {
   repositories {
     maven {
       name = "bawnorton"
       url = uri("https://maven.bawnorton.com/releases")
-      credentials(PasswordCredentials::class)
-      authentication {
-        create<BasicAuthentication>("basic")
+
+      if(isPublishing) {
+        credentials {
+          username = onePassword["op://Private/Maven API Key/username"].get()
+          password = onePassword["op://Private/Maven API Key/credential"].get()
+        }
       }
     }
   }
@@ -172,8 +183,8 @@ extensions.configure<PublishingExtension> {
 }
 
 publishMods {
-  val mrToken = providers.gradleProperty("MODRINTH_TOKEN")
-  val cfToken = providers.gradleProperty("CURSEFORGE_TOKEN")
+  val mrTokenProvider = onePassword["op://Private/Modrinth API Key/credential"]
+  val cfTokenProvider = onePassword["op://Private/Curseforge API Key/credential"]
 
   type = BETA
   file = tasks.named<Jar>("reobfJar").map { it.archiveFile.get() }
@@ -184,18 +195,17 @@ publishMods {
   changelog = provider { rootProject.file("CHANGELOG.md").readText() }
   modLoaders.add(loader)
 
-  val compatibleVersionString = mod("compatible_versions")!!
-  val compatibleVersions = compatibleVersionString.split(",").map { it.trim() }
+  val compatibleVersions = sc.properties.raw("mod", "compatible_versions").to<List<String>>()
 
   modrinth {
     projectId = property("publishing.modrinth") as String
-    accessToken = mrToken
+    accessToken = mrTokenProvider
     minecraftVersions.addAll(compatibleVersions)
   }
 
   curseforge {
     projectId = property("publishing.curseforge") as String
-    accessToken = cfToken
+    accessToken = cfTokenProvider
     minecraftVersions.addAll(compatibleVersions)
   }
 }
