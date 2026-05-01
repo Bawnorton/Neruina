@@ -91,16 +91,6 @@ legacyForge {
 
             systemProperty("terminal.ansi", "true")
         }
-
-        register("data") {
-            ideName = "Forge Data Generation $minecraft"
-            data()
-
-            programArguments.addAll(
-                "--mod", "${mod("id")}",
-                "--output", project.file("src/main/generated").toString()
-            )
-        }
     }
 
     afterEvaluate {
@@ -134,13 +124,17 @@ stonecutter {
     }
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDir("../1.20.1-fabric/src/main/generated")
+        }
+    }
+}
+
 tasks {
     named("createMinecraftArtifacts") {
         dependsOn("stonecutterGenerate")
-    }
-
-    build {
-        dependsOn("runData")
     }
 
     register<Copy>("buildAndCollect") {
@@ -151,7 +145,12 @@ tasks {
     }
 
     processResources {
+        dependsOn(":1.20.1-fabric:runDatagen")
         exclude("fabric.mod.json", "**/neoforge.mods.toml", "neruina.mixins.json")
+    }
+
+    named<Jar>("sourcesJar") {
+        dependsOn(":1.20.1-fabric:runDatagen")
     }
 
     named<Jar>("jar") {

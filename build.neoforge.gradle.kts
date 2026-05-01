@@ -138,6 +138,15 @@ stonecutter {
     }
 }
 
+
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/generated")
+        }
+    }
+}
+
 tasks {
     named("createMinecraftArtifacts") {
         dependsOn("stonecutterGenerate")
