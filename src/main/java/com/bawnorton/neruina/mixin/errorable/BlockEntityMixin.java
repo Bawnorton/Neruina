@@ -101,7 +101,7 @@ abstract class BlockEntityMixin implements Errorable {
   )
   private void loadAdditional(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
     //? if <=1.21.1 {
-    /^neruina$errored = tag.getBoolean("neruina$errored");
+    neruina$errored = tag.getBoolean("neruina$errored");
     if (tag.contains("neruina$tickingEntryId")) {
       try {
         neruina$tickingEntryId = UUID.fromString(tag.getString("neruina$tickingEntryId"));
@@ -110,15 +110,15 @@ abstract class BlockEntityMixin implements Errorable {
 				neruina$clearErrored();
 			}
     }
-    ^///?} else {
-    neruina$errored = tag.getBooleanOr("neruina$errored", false);
+    //?} else {
+    /^neruina$errored = tag.getBooleanOr("neruina$errored", false);
 		try {
       neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
 		} catch (IllegalArgumentException e) {
 			neruina$tickingEntryId = null;
 			neruina$clearErrored();
 		}
-    //?}
+    ^///?}
   }
   *///?} else {
 	@Inject(

@@ -83,7 +83,7 @@ public final class Platform {
 	}
 
 	//? if >=1.21.10 {
-	public static boolean isModLoaded(String modid) {
+	/^public static boolean isModLoaded(String modid) {
 		List<ModInfo> mods = FMLLoader.getCurrent().getLoadingModList().getMods();
 		for (ModInfo mod : mods) {
 			if (mod.getModId().equals(modid)) {
@@ -124,8 +124,8 @@ public final class Platform {
 	public static boolean isDev() {
 		return !FMLLoader.getCurrent().isProduction();
 	}
-	//?} else {
-	/^public static boolean isModLoaded(String modid) {
+	^///?} else {
+	public static boolean isModLoaded(String modid) {
 		List<ModInfo> mods = LoadingModList.get().getMods();
 		for (ModInfo mod : mods) {
 			if (mod.getModId().equals(modid)) {
@@ -166,7 +166,7 @@ public final class Platform {
 	public static boolean isDev() {
 		return !FMLLoader.isProduction();
 	}
-	^///?}
+	//?}
 }
 *///?} elif forge {
 

@@ -1,3 +1,8 @@
+# 3.3.1
+
+- Fix pack.mcmeta by generating it
+- Fix fabric publishing
+
 # 3.3.0
 
 - Update to 26.1.2

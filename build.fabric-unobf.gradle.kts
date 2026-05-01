@@ -56,6 +56,14 @@ java {
 }
 
 loom {
+    fabricApi {
+        configureDataGeneration {
+            createRunConfiguration = true
+            client = true
+            modId = mod("id")
+        }
+    }
+
     runConfigs.all {
         ideConfigGenerated(true)
         runDir = "../../run"
@@ -71,6 +79,10 @@ loom {
         name = "Fabric Server $minecraft"
     }
 
+    runConfigs["datagen"].apply {
+        name = "Fabric Data Generation $minecraft"
+    }
+
     afterEvaluate {
         runConfigs.configureEach {
             applyMixinDebugSettings(::vmArg, ::property)
@@ -79,8 +91,16 @@ loom {
 }
 
 fletchingTable {
+    fabric {
+        entrypointMappings.put("fabric-datagen", "net.fabricmc.fabric.api.datagen.v1.FabricDataGeneratorEntrypoint")
+    }
+
     mixins.register("main") {
         mixin("default", "${mod("id")}.mixins.json")
+    }
+
+    j52j.register("main") {
+        extension("json", "*.json5")
     }
 }
 
@@ -94,6 +114,14 @@ stonecutter {
 }
 
 tasks {
+    jar {
+        dependsOn("runDatagen")
+    }
+
+    named<Jar>("sourcesJar") {
+        dependsOn("runDatagen")
+    }
+
     register<Copy>("buildAndCollect") {
         group = "build"
         from(jar.map { it.archiveFile })
@@ -102,9 +130,7 @@ tasks {
     }
 
     processResources {
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-        exclude("**/neoforge.mods.toml, **/mods.toml")
+        exclude("**/neoforge.mods.toml, **/mods.toml", "neruina-forge.mixins.json")
     }
 }
 

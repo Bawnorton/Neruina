@@ -13,12 +13,11 @@
     "issues": "https://github.com/Bawnorton/${mod_name}/issues"
   },
   "license": "MIT",
-  "icon": "assets/neruina/icon.png",
+  "icon": "assets/${mod_id}/icon.png",
   "environment": "*",
   "depends": {
-    "minecraft": "~${minecraft_dependency}",
     "fabricloader": ">=0.16.0",
-    "configurable": ">=3.5.1"
+    "minecraft": "~${minecraft_dependency}"
   },
   "breaks": {
     "eer": "*"

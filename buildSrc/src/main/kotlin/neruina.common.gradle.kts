@@ -1,3 +1,4 @@
+import neruina.utils.deps
 import neruina.utils.mod
 
 plugins {
@@ -34,6 +35,10 @@ tasks {
             return list
         }
 
+        val configurableDep = if (loader == "fabric") deps("configurable")?.let {
+            "\", \"configurable\": \"~${it.split("+")[0]}"
+        } ?: "" else ""
+
         val props = mapOf(
             "mod_id" to mod("id"),
             "mod_name" to mod("name"),
@@ -41,8 +46,7 @@ tasks {
             "mod_description" to mod("description"),
             "mod_license" to mod("license"),
             "minecraft_version" to minecraft,
-            "minecraft_dependency" to listProp("mod.compatible_versions").first(),
-            "pack_format" to 71
+            "minecraft_dependency" to listProp("mod.compatible_versions").first() + configurableDep,
         )
 
         inputs.properties(props)
