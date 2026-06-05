@@ -1,3 +1,8 @@
+# 3.3.2
+
+- Update ru_ru.json (@mpustovoi)
+- Limit size of sent chat messages
+
 # 3.3.1
 
 - Fix pack.mcmeta by generating it
