@@ -113,9 +113,51 @@ public final class MessageHandler {
 		PrintWriter writer = new PrintWriter(traceString);
 		entry.error().printStackTrace(writer);
 		String trace = traceString.toString();
+		int maxChars = 32678;
+		if (trace.length() > maxChars) {
+			trace = truncateStackTrace(trace, maxChars);
+		}
 		writer.flush();
 		writer.close();
 		return generateAction("neruina.copy_crash", ChatFormatting.GOLD, ClickEvent.Action.COPY_TO_CLIPBOARD, trace);
+	}
+
+	private String truncateStackTrace(String trace, int maxChars) {
+		String[] lines = trace.split("\\r?\\n");
+		if (lines.length <= 4) {
+			return trace.substring(0, maxChars - 3) + "...";
+		}
+
+		StringBuilder header = new StringBuilder();
+		StringBuilder footer = new StringBuilder();
+
+		int headIndex = 0;
+		int tailIndex = lines.length - 1;
+
+		String truncationMessage = "\n... [Truncated " + lines.length + " lines] ...\n";
+		int currentLength = truncationMessage.length();
+
+		boolean toggle = true;
+		while (headIndex <= tailIndex) {
+			if (toggle) {
+				String line = lines[headIndex] + "\n";
+				if (currentLength + line.length() > maxChars) break;
+
+				header.append(line);
+				currentLength += line.length();
+				headIndex++;
+			} else {
+				String line = lines[tailIndex] + "\n";
+				if (currentLength + line.length() > maxChars) break;
+
+				footer.insert(0, line);
+				currentLength += line.length();
+				tailIndex--;
+			}
+			toggle = !toggle;
+		}
+
+		return header + truncationMessage + footer;
 	}
 
 	public Component generateReportAction(Player forPlayer, TickingEntry entry) {
