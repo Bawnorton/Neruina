@@ -24,14 +24,19 @@ public final class ClientTickHandler {
 			//?} else {
 			/*client.getConnection().onDisconnect(Texter.translatable("menu.savingLevel"));
 			*///?}
-			client.setScreen(new TitleScreen());
+			//$ if >26.1 'setScreenAndShow' else 'setScreen'
+			setScreenAndShow
 			//? if <=1.21.1 {
 			/*client.getToasts()
 			 *///?} else {
-			client.getToastManager()
+			//$ if >26.1 'gui.toastManager' else 'getToastManager'
+			gui.toastManager
 			//?}
-					.addToast(SystemToast.multiline(
-							client,
+			//$ if >26.1 'new SystemToast' else 'SystemToast.multiline'
+					new SystemToast
+							//? if <26.2 {
+							/*client,
+							*///?}
 							//? if >1.20.1 {
 							SystemToast.SystemToastId.WORLD_ACCESS_FAILURE,
 							//?} else {

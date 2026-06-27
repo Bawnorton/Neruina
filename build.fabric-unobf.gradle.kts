@@ -32,7 +32,7 @@ base.archivesName = "${mod("id")}-${mod("version")}+$minecraft-$loader"
 dependencies {
     minecraft("com.mojang:minecraft:$minecraft")
 
-    implementation("net.fabricmc:fabric-loader:0.19.2")
+    implementation("net.fabricmc:fabric-loader:0.19.3")
     implementation("net.fabricmc.fabric-api:fabric-api:${deps("fabric_api")}")
 
     deps("kohsuke_github") {
