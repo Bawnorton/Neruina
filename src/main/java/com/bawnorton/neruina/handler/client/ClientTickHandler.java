@@ -24,22 +24,34 @@ public final class ClientTickHandler {
 			//?} else {
 			/*client.getConnection().onDisconnect(Texter.translatable("menu.savingLevel"));
 			*///?}
-			client.setScreen(new TitleScreen());
+			//? if >26.1 {
+			client.setScreenAndShow(new TitleScreen());
+			//?} else {
+			/*client.setScreen(new TitleScreen());
+			*///?}
 			//? if <=1.21.1 {
 			/*client.getToasts()
-			 *///?} else {
-			client.getToastManager()
+			 *///?} elif <26.2 {
+			/*client.getToastManager()
+			*///?} else {
+			client.gui.toastManager()
 			//?}
-					.addToast(SystemToast.multiline(
-							client,
-							//? if >1.20.1 {
-							SystemToast.SystemToastId.WORLD_ACCESS_FAILURE,
-							//?} else {
-							/*SystemToast.SystemToastIds.WORLD_ACCESS_FAILURE,
-							*///?}
-							Texter.translatable("neruina.toast.title"),
-							Texter.translatable("neruina.toast.desc")
-					));
+					.addToast(
+                            //? if <26.2 {
+							/*SystemToast.multiline(
+                                client,
+							*///?} else {
+                            new SystemToast(
+							//?}
+                                //? if >1.20.1 {
+                                SystemToast.SystemToastId.WORLD_ACCESS_FAILURE,
+                                //?} else {
+                                /*SystemToast.SystemToastIds.WORLD_ACCESS_FAILURE,
+                                *///?}
+                                Texter.translatable("neruina.toast.title"),
+                                Texter.translatable("neruina.toast.desc")
+					    )
+                    );
 		}
 	}
 }
