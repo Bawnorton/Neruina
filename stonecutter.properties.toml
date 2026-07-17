@@ -60,7 +60,7 @@ mod.compatible_versions=["1.21.9", "1.21.10"]
 
 ["1.21.11"]
 deps.neoforge="21.11.42"
-deps.fabric_api="0.141.3+1.21.11"
+deps.fabric_api="0.141.5+1.21.11"
 deps.parchment="1.21.10:2025.10.12"
 deps.configurable="3.5.2+1.21.11"
 deps.http_core="4.4"
@@ -69,8 +69,8 @@ deps.http_client="4.5"
 mod.compatible_versions=["1.21.11"]
 
 ["26.1.2"]
-deps.neoforge="26.1.2.30-beta"
-deps.fabric_api="0.147.0+26.1.2"
+deps.neoforge="26.1.2.82"
+deps.fabric_api="0.155.2+26.1.2"
 deps.configurable="3.5.2+26.2"
 deps.http_core="4.4"
 deps.http_client="4.5"
@@ -78,8 +78,8 @@ deps.http_client="4.5"
 mod.compatible_versions=["26.1", "26.1.1", "26.1.2"]
 
 ["26.2"]
-deps.neoforge="26.2.0.7-beta"
-deps.fabric_api="0.153.0+26.2"
+deps.neoforge="26.2.0.23-beta"
+deps.fabric_api="0.155.2+26.2"
 deps.configurable="3.5.2+26.2"
 deps.http_core="4.4"
 deps.http_client="4.5"
