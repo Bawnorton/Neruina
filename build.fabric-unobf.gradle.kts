@@ -189,6 +189,7 @@ publishMods {
         projectId = property("publishing.curseforge") as String
         accessToken = cfTokenProvider
         minecraftVersions.addAll(compatibleVersions)
+        server.set(true)
         requires("configurable")
     }
 }

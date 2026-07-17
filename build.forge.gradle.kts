@@ -223,6 +223,7 @@ publishMods {
     curseforge {
         projectId = property("publishing.curseforge") as String
         accessToken = cfTokenProvider
+        server.set(true)
         minecraftVersions.addAll(compatibleVersions)
     }
 }
