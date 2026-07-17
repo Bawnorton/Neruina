@@ -1,4 +1,4 @@
-mod.version="3.3.2"
+mod.version="3.3.3"
 mod.group="com.bawnorton"
 mod.id="neruina"
 mod.name="Neruina"
@@ -22,7 +22,7 @@ mod.compatible_versions=["1.20", "1.20.1"]
 deps.neoforge="21.1.196"
 deps.fabric_api="0.116.4+1.21.1"
 deps.parchment="1.21.1:2024.11.17"
-deps.configurable="3.5.1+1.21.1"
+deps.configurable="3.5.2+1.21.1"
 
 mod.compatible_versions=["1.21.1", "1.21.2", "1.21.3", "1.21.4"]
 
@@ -30,7 +30,7 @@ mod.compatible_versions=["1.21.1", "1.21.2", "1.21.3", "1.21.4"]
 deps.neoforge="21.5.95"
 deps.fabric_api="0.128.2+1.21.5"
 deps.parchment="1.21.5:2025.06.15"
-deps.configurable="3.5.1+1.21.5"
+deps.configurable="3.5.2+1.21.5"
 
 mod.compatible_versions=["1.21.5"]
 
@@ -38,7 +38,7 @@ mod.compatible_versions=["1.21.5"]
 deps.neoforge="21.6.20-beta"
 deps.fabric_api="0.128.2+1.21.6"
 deps.parchment="1.21.6:2025.06.29"
-deps.configurable="3.5.1+1.21.5"
+deps.configurable="3.5.2+1.21.5"
 
 mod.compatible_versions=["1.21.6", "1.21.7"]
 
@@ -46,7 +46,7 @@ mod.compatible_versions=["1.21.6", "1.21.7"]
 deps.neoforge="21.8.29"
 deps.fabric_api="0.130.0+1.21.8"
 deps.parchment="1.21.8:2025.07.20"
-deps.configurable="3.5.1+1.21.5"
+deps.configurable="3.5.2+1.21.5"
 
 mod.compatible_versions=["1.21.8"]
 
@@ -54,7 +54,7 @@ mod.compatible_versions=["1.21.8"]
 deps.neoforge="21.10.64"
 deps.fabric_api="0.138.4+1.21.10"
 deps.parchment="1.21.10:2025.10.12"
-deps.configurable="3.5.1+1.21.10"
+deps.configurable="3.5.2+1.21.10"
 
 mod.compatible_versions=["1.21.9", "1.21.10"]
 
@@ -62,7 +62,7 @@ mod.compatible_versions=["1.21.9", "1.21.10"]
 deps.neoforge="21.11.42"
 deps.fabric_api="0.141.3+1.21.11"
 deps.parchment="1.21.10:2025.10.12"
-deps.configurable="3.5.1+1.21.11"
+deps.configurable="3.5.2+1.21.11"
 deps.http_core="4.4"
 deps.http_client="4.5"
 
@@ -71,7 +71,7 @@ mod.compatible_versions=["1.21.11"]
 ["26.1.2"]
 deps.neoforge="26.1.2.30-beta"
 deps.fabric_api="0.147.0+26.1.2"
-deps.configurable="3.5.1+26.1.2"
+deps.configurable="3.5.2+26.2"
 deps.http_core="4.4"
 deps.http_client="4.5"
 
@@ -80,7 +80,7 @@ mod.compatible_versions=["26.1", "26.1.1", "26.1.2"]
 ["26.2"]
 deps.neoforge="26.2.0.7-beta"
 deps.fabric_api="0.153.0+26.2"
-deps.configurable="3.5.1+26.2"
+deps.configurable="3.5.2+26.2"
 deps.http_core="4.4"
 deps.http_client="4.5"
 

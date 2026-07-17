@@ -1,3 +1,7 @@
+# 3.3.3
+
+- Update to 26.2 (@MCJEModder2026)
+
 # 3.3.2
 
 - Update ru_ru.json (@mpustovoi)
