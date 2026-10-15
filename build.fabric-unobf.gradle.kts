@@ -45,7 +45,11 @@ dependencies {
         include(implementation("org.apache.httpcomponents:httpclient:$it")!!)
     }
     deps("configurable") {
-        implementation(annotationProcessor("com.bawnorton.configurable:configurable-$loader:$it")!!)
+        val configurable = "com.bawnorton.configurable:configurable-$loader:$it"
+        annotationProcessor(configurable)
+        implementation(configurable) {
+            exclude(group = "net.fabricmc.fabric-api", module = "fabric-api")
+        }
     }
 }
 
