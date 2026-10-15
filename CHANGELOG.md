@@ -1,3 +1,7 @@
+# 3.3.4
+
+- Update to 26.3
+
 # 3.3.3
 
 - Update to 26.2 (@MCJEModder2026)

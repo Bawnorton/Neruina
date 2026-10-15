@@ -22,8 +22,8 @@ repositories {
     maven("https://cursemaven.com")
 }
 
-val minecraft: String by project
-val loader: String by project
+val minecraft: String = project.property("minecraft") as String
+val loader: String = project.property("loader") as String
 
 sc.properties.tags(minecraft)
 
@@ -32,7 +32,7 @@ base.archivesName = "${mod("id")}-${mod("version")}+$minecraft-$loader"
 dependencies {
     minecraft("com.mojang:minecraft:$minecraft")
 
-    implementation("net.fabricmc:fabric-loader:0.19.3")
+    implementation("net.fabricmc:fabric-loader:0.19.5")
     implementation("net.fabricmc.fabric-api:fabric-api:${deps("fabric_api")}")
 
     deps("kohsuke_github") {

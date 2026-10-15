@@ -47,9 +47,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-//? if >=1.21.11 {
-import net.minecraft.util.Util;
-//?} else {
+//? if >=26.3 {
+import com.mojang.blaze3d.Blaze3D;
+//? } elif >=1.21.11 {
+/*import net.minecraft.util.Util;
+*///?} else {
 /*import net.minecraft.Util;
  *///?}
 
@@ -173,7 +175,8 @@ public final class GithubAuthManager {
 					.addParameter("client_id", CLIENT_ID)
 					.addParameter("state", state);
 			URI uri = builder.build();
-			Util.getPlatform().openUri(uri);
+			//~ if >=26.3 'Util.getPlatform' -> 'Blaze3D'
+			Blaze3D.openUri(uri);
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
