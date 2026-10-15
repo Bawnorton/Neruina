@@ -175,7 +175,7 @@ public final class GithubAuthManager {
 					.addParameter("client_id", CLIENT_ID)
 					.addParameter("state", state);
 			URI uri = builder.build();
-			//~ if >=26.3 'Util.getPlatform' -> 'Blaze3D'
+			//~ if >=26.3 'Util.getPlatform()' -> 'Blaze3D'
 			Blaze3D.openUri(uri);
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
