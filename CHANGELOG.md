@@ -1,6 +1,7 @@
 # 3.3.4
 
 - Update to 26.3
+- Update zh_cn lang (@UraraChiya)
 
 # 3.3.3
 
