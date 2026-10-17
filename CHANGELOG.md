@@ -1,3 +1,7 @@
+# 3.3.5
+
+- Fix UUID parsing
+
 # 3.3.4
 
 - Update to 26.3

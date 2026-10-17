@@ -124,11 +124,14 @@ abstract class ItemStackMixin implements Errorable {
 
 		CompoundTag tag = data.copyTag();
 		//? if <=1.21.1 {
-    /*neruina$errored = tag.getBoolean("neruina$errored");
-    if (tag.contains("neruina$tickingEntryId")) {
-      neruina$tickingEntryId = tag.getUUID("neruina$tickingEntryId");
-    }
-    *///?} else {
+		/*neruina$errored = tag.getBoolean("neruina$errored");
+		if (tag.contains("neruina$tickingEntryId")) {
+			String id = tag.getString("neruina$tickingEntryId");
+			try {
+				neruina$tickingEntryId = UUID.fromString(id);
+			} catch (IllegalArgumentException ignored) {}
+		}
+    	*///?} else {
 		neruina$errored = tag.getBooleanOr("neruina$errored", false);
 		neruina$tickingEntryId = tag.getString("neruina$tickingEntryId").map(UUID::fromString).orElse(null);
 		//?}
